@@ -1,0 +1,11 @@
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\bin\Debug\net8.0\gerenciador.financas.Core.deps.json
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\bin\Debug\net8.0\gerenciador.financas.Core.dll
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\bin\Debug\net8.0\gerenciador.financas.Core.pdb
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.AssemblyInfoInputs.cache
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.AssemblyInfo.cs
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.csproj.CoreCompileInputs.cache
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.dll
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\refint\gerenciador.financas.Core.dll
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.pdb
+C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\Core\obj\Debug\net8.0\ref\gerenciador.financas.Core.dll

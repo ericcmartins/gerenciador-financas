@@ -1,0 +1,8 @@
+# Build
+bin/
+obj/
+.vs/
+
+# Configurações locais
+*.user
+*.suo

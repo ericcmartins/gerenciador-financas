@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "gerenciador.financas.Core/1.0.0": {
+        "runtime": {
+          "gerenciador.financas.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "gerenciador.financas.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
