@@ -1,0 +1,23 @@
+using gerenciador.financas.Infra.Vendors.Entities;
+
+namespace infra
+{
+
+    public class ClienteRepository : IClienteRepository
+    {
+        public ClienteRepository()
+        {
+
+        }
+
+        public ClienteResponseInfra ConsultaDadosCadastrais(string cpf)
+        {
+
+
+        }
+
+
+    }
+}
+
+
