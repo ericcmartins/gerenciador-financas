@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("gerenciador.financas.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+17bce8548ff35fe62fa3788f44229120fb77ec88")]
 [assembly: System.Reflection.AssemblyProductAttribute("gerenciador.financas.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("gerenciador.financas.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
