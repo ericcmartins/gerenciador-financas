@@ -21,3 +21,7 @@ C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core\obj\Debug\net8.0\refint\gerenciador.financas.Core.dll
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.pdb
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core\obj\Debug\net8.0\ref\gerenciador.financas.Core.dll
+C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core\bin\Debug\net8.0\gerenciador.financas.Infra.dll
+C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core\bin\Debug\net8.0\gerenciador.financas.Infra.pdb
+C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core\obj\Debug\net8.0\gerenciador.financas.Core.csproj.AssemblyReference.cache
+C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Core\obj\Debug\net8.0\gerencia.B26A9340.Up2Date

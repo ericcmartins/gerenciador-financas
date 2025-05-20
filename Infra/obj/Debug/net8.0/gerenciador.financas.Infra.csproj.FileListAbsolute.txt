@@ -16,15 +16,12 @@ C:\Users\ericc\OneDrive\Eric\Faculdade\3°Semestre\Banco2\gerenciador-financas\I
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\bin\Debug\net8.0\gerenciador.financas.Infra.deps.json
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\bin\Debug\net8.0\gerenciador.financas.Infra.dll
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\bin\Debug\net8.0\gerenciador.financas.Infra.pdb
-C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\bin\Debug\net8.0\gerenciador.financas.Core.dll
-C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\bin\Debug\net8.0\gerenciador.financas.Core.pdb
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.csproj.AssemblyReference.cache
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.AssemblyInfoInputs.cache
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.AssemblyInfo.cs
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.csproj.CoreCompileInputs.cache
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.sourcelink.json
-C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerencia.AAE0E63D.Up2Date
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.dll
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\refint\gerenciador.financas.Infra.dll
 C:\Users\ericc\Documents\workloads\GerenciadorFinancas\gerenciador-financas\Infra\obj\Debug\net8.0\gerenciador.financas.Infra.pdb
