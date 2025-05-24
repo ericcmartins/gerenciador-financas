@@ -1,6 +1,6 @@
-namespace gerenciador.financas.Infra.Vendors.Entities
+namespace gerenciador.financas.Core.Entities
 {
-    public class ClienteResponseInfra
+    public class ClienteResponseService
     {
         public int id_usuario { get; set; }
         public string nome { get; set; }

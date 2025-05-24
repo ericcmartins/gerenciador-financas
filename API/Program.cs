@@ -24,3 +24,7 @@ app.UseAuthorization();
 app.MapControllers(); 
 
 app.Run();
+
+
+services.AddScoped<IDbConnectionHandler>(_ => new SqlServerConnection(Configuration.GetConnectionString("DefaultConnection")));
+services.AddScoped<ClienteRepository>();

@@ -1,9 +1,0 @@
-using gerenciador.financas.Infra.Vendors.Entities;
-
-namespace infra
-{
-    public interface IClienteRepository
-    {
-        public ClienteResponseInfra ConsultaDadosCadastrais(string cpf);
-    }
-}
