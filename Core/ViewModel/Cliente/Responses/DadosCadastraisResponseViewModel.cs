@@ -1,6 +1,6 @@
-namespace gerenciador.financas.Infra.Vendors.Entities
+namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class DadosPessoaisRequestInfra
+    public class DadosPessoaisResponseViewModel
     {
         public string nome { get; set; }
         public string cpf { get; set; }

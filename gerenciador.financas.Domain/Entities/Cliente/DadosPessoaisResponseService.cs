@@ -1,6 +1,6 @@
-namespace gerenciador.financas.Infra.Vendors.Entities
+namespace gerenciador.financas.Domain.Entities.Cliente
 {
-    public class DadosPessoaisRequestInfra
+    public class DadosPessoaisResponseService
     {
         public string nome { get; set; }
         public string cpf { get; set; }
@@ -9,5 +9,4 @@ namespace gerenciador.financas.Infra.Vendors.Entities
         public DateTime data_nascimento { get; set; }
         public string telefone { get; set; }
     }
-
 }

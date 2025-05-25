@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\gerenciador.financas.Core.csproj" />
+    <ProjectReference Include="..\Core\gerenciador.financas.Application.csproj" />
     <ProjectReference Include="..\Infra\gerenciador.financas.Infra.csproj" />
   </ItemGroup>
 

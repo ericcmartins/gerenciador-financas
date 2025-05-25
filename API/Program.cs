@@ -1,8 +1,16 @@
+using gerenciador.financas.Application.Services;
+using gerenciador.financas.Infra.Vendors.Repositories;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona serviços ao container.
+var connectionString = builder.Configuration.GetConnectionString("SqlServer");
+builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
+
 builder.Services.AddControllers(); // Habilita controllers
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -21,10 +29,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.MapControllers(); 
+app.MapControllers();
+
+
 
 app.Run();
-
-
-services.AddScoped<IDbConnectionHandler>(_ => new SqlServerConnection(Configuration.GetConnectionString("DefaultConnection")));
-services.AddScoped<ClienteRepository>();
