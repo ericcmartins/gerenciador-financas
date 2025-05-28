@@ -8,14 +8,14 @@ namespace gerenciador.financas.Infra.Vendors.Entities
 {
     public class DadosPessoaisResponseInfra
     {
-        public int id_usuario { get; set; }
-        public string nome { get; set; }
-        public string cpf { get; set; }
-        public string email { get; set; }
-        public string senha { get; set; }
-        public DateTime data_nascimento { get; set; }
-        public string telefone { get; set; }
+        public int IdUsuario { get; set; }
+        public string Nome { get; set; }
+        public string Cpf { get; set; }
+        public string Email { get; set; }
+        public string Senha { get; set; } 
+        public DateTime DataNascimento { get; set; }
+        public string Telefone { get; set; }
     }
-        
+
 }
 

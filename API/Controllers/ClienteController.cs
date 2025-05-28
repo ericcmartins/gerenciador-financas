@@ -4,6 +4,12 @@ using API.ViewModel.Cliente;
 using gerenciador.financas.Application.Services;
 using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Extensions;
+using Core.ViewModel;
+using System.Net;
+using gerenciador.financas.Domain.Entities.Cliente;
+using gerenciador.financas.Application.Extensions;
+using gerenciador.financas.Application.ViewModel.Cliente;
+using gerenciador.financas.Domain.Utils;
 
 namespace gerenciador.financas.API.Controllers
 {
@@ -25,18 +31,24 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObterDadosCadastrais([Required] string cpf)
         {
+            if (!CpfValidator.ValidaCpf(cpf))
+                return BadRequest("Cpf Inválido");
+
             try
             {
                 var response = await _clienteService.GetDadosPessoais(cpf);
-                if (response == null)
-                    return NotFound("Dados não encontrados.");
 
-                var viewModel = MapperProfile.DadosPessoaisServiceToViewModel(response);
-                return Ok(viewModel);
+                if (response is null)
+                {
+                    return NotFound("Nenhuma informação corresponde ao cpf informado");
+                }
+
+                return Ok(response.ToViewModel());
             }
+
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
             }
         }
 

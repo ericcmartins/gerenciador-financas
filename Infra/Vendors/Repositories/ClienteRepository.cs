@@ -1,7 +1,6 @@
 using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
-using Infra.Vendors.Entities;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -15,42 +14,33 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _connectionHandler = connectionHandler;
         }
 
-        public async Task<TResultInfra<DadosPessoaisResponseInfra>> GetDadosPessoais(string cpf)
+        public async Task<DadosPessoaisResponseInfra?> GetDadosPessoais(string cpf)
         {
-            using (var connection = _connectionHandler.CreateConnection())
-            {
-                var instrucaoSql = @"SELECT * FROM usuario WHERE cpf = @cpf";
+            using var connection = _connectionHandler.CreateConnection();
 
-                var response = connection.QueryFirstOrDefault<DadosPessoaisResponseInfra>(instrucaoSql, new { cpf });
+            var instrucaoSql = @"SELECT * FROM usuario WHERE cpf = @cpf";
 
-                if (response is null)
-                {
-                    return TResultInfra<DadosPessoaisResponseInfra>.Fail(ErrosInfra.NotFound, "Usuário não encontrado.");
-                }
-
-                return TResultInfra<DadosPessoaisResponseInfra>.Ok(response);
-            }
+            return await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(instrucaoSql, new { cpf }); ;
+            
         }
 
-        public async Task<TResultInfra<string>> InsertDadosPessoais(DadosPessoaisRequestInfra dadosPessoais)
-        {
-            using (var connection = _connectionHandler.CreateConnection())
-            {
-                var instrucaoSql = @"INSERT INTO usuario (nome, cpf, email, senha, data_nascimento, telefone)
-                                     VALUES (@nome, @cpf, @email, @senha, @data_nascimento, @telefone)";
+        //public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestInfra dadosPessoais)
+        //{
+        //    using (var connection = _connectionHandler.CreateConnection())
+        //    {
+        //        var instrucaoSql = @"INSERT INTO usuario (nome, cpf, email, senha, data_nascimento, telefone)
+        //                             VALUES (@nome, @cpf, @email, @senha, @data_nascimento, @telefone)";
 
-                var linhasAfetadas = connection.Execute(instrucaoSql, dadosPessoais);
+        //        var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, dadosPessoais);
 
-                if (linhasAfetadas == 1)
-                {
-                    return TResultInfra<string>.Ok("Cadastro realizado com sucesso");
-                }
+        //        if (linhasAfetadas != 1)
+        //            return false;
+                                
+        //        return true;
+        //    }
+        //}
 
-                return TResultInfra<string>.Fail(ErrosInfra.DatabaseError, "Falha ao realizar o cadastro.");
-            }
-        }
-
-        public async Task<TResultInfra<string>> UpdateDadosPessoais(DadosPessoaisRequestInfra dadosPessoais, string cpf)
+        public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestInfra dadosPessoais, string cpf)
         {
             using (var connection = _connectionHandler.CreateConnection())
             {
@@ -62,82 +52,72 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                                          telefone = @telefone
                                      WHERE cpf = @cpf";
 
-                var linhasAfetadas = connection.Execute(instrucaoSql, dadosPessoais);
+                var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, dadosPessoais);
 
-                if (linhasAfetadas == 1)
-                {
-                    return TResultInfra<string>.Ok("Atualização realizada com sucesso");
-                }
+                if (linhasAfetadas != 1)
+                    return false;
 
-                return TResultInfra<string>.Fail(ErrosInfra.NotFound, "Usuário não encontrado para atualização.");
+                return true;
             }
         }
 
-        public async Task<TResultInfra<string>> UpdateSenha(string cpf, string senha)
+        public async Task<bool> UpdateSenha(string cpf, string senha)
         {
             using (var connection = _connectionHandler.CreateConnection())
             {
                 var instrucaoSql = @"UPDATE usuario SET senha = @senha WHERE cpf = @cpf";
 
-                var linhasAfetadas = connection.Execute(instrucaoSql, new { cpf, senha });
+                var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new { cpf, senha });
 
-                if (linhasAfetadas == 1)
-                {
-                    return TResultInfra<string>.Ok("Update de senha realizado com sucesso");
-                }
+                if (linhasAfetadas != 1)
+                    return false;
 
-                return TResultInfra<string>.Fail(ErrosInfra.NotFound, "Usuário não encontrado para atualização de senha.");
+                return true;
             }
         }
 
-        public async Task<TResultInfra<string>> UpdateEmail(string cpf, string email)
+        public async Task<bool> UpdateEmail(string cpf, string email)
         {
             using (var connection = _connectionHandler.CreateConnection())
             {
                 var instrucaoSql = @"UPDATE usuario SET email = @email WHERE cpf = @cpf";
 
-                var linhasAfetadas = connection.Execute(instrucaoSql, new { cpf, email });
+                var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new { cpf, email });
 
-                if (linhasAfetadas == 1)
-                {
-                    return TResultInfra<string>.Ok("Update de email realizado com sucesso");
-                }
+                if (linhasAfetadas != 1)
+                    return false;
 
-                return TResultInfra<string>.Fail(ErrosInfra.NotFound, "Usuário não encontrado para atualização de email.");
+                return true;
             }
         }
 
-        public async Task<TResultInfra<string>> UpdateTelefone(string cpf, string telefone)
+        public async Task<bool> UpdateTelefone(string cpf, string telefone)
         {
             using (var connection = _connectionHandler.CreateConnection())
             {
                 var instrucaoSql = @"UPDATE usuario SET telefone = @telefone WHERE cpf = @cpf";
 
-                var linhasAfetadas = connection.Execute(instrucaoSql, new { cpf, telefone });
+                var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new { cpf, telefone });
 
-                if (linhasAfetadas == 1)
-                {
-                    return TResultInfra<string>.Ok("Update de telefone realizado com sucesso");
-                }
+                if (linhasAfetadas != 1)
+                    return false;
 
-                return TResultInfra<string>.Fail(ErrosInfra.NotFound, "Usuário não encontrado para atualização de telefone.");
+                return true;
             }
         }
 
-        public async Task<TResultInfra<string>> DeleteConta(string cpf)
+        public async Task<bool> DeleteConta(string cpf)
         {
             using (var connection = _connectionHandler.CreateConnection())
             {
                 var instrucaoSql = @"DELETE FROM usuario WHERE cpf = @cpf";
 
-                var linhasAfetadas = connection.Execute(instrucaoSql, new { cpf });
+                var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new { cpf });
 
-                if (linhasAfetadas == 1)
-                {
-                    return TResultInfra<string>.Ok("Delete realizado com sucesso");
-                }
+                if (linhasAfetadas != 1)
+                    return false;
 
-                return TResultInfra<string>.Fail(ErrosInfra.NotFound, "Usuário não encontrado para exclusão.");
+                return true;
             }
         }
     }

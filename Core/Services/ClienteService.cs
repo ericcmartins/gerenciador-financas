@@ -1,8 +1,9 @@
+using gerenciador.financas.Application.Extensions;
 using gerenciador.financas.Domain.Entities.Cliente;
-using gerenciador.financas.Extensions;
+using gerenciador.financas.Domain.Utils;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
-using Infra.Vendors.Entities;
+using gerenciador.financas.Application.Extensions;
 
 namespace gerenciador.financas.Application.Services
 {
@@ -15,23 +16,14 @@ namespace gerenciador.financas.Application.Services
             _clienteRepository = clienteRepository;
         }
 
-        public async Task<TResultInfra<DadosPessoaisResponseService>> GetDadosPessoais(string cpf)
+        public async Task<DadosPessoais?> GetDadosPessoais(string cpf)
         {
             var responseInfra = await _clienteRepository.GetDadosPessoais(cpf);
 
-            if (!responseInfra.Sucesso)
-            {
-                return TResultInfra<DadosPessoaisResponseService>.Fail(responseInfra.TipoErro, responseInfra.MensagemErro);
-            }
+            if (responseInfra is null)
+                return null;
 
-            if (responseInfra.ObjetoClasse == null)
-            {
-                return TResultInfra<DadosPessoaisResponseService>.Fail(ErrosInfra.NotFound, "Usuário não encontrado.");
-            }
-
-            var responseService = MapperProfile.DadosPessoaisInfraToService(responseInfra.ObjetoClasse);
-
-            return TResultInfra<DadosPessoaisResponseService>.Ok(responseService);
+            return responseInfra.ToService();
         }
 
 
