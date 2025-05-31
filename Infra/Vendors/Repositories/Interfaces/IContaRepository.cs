@@ -1,0 +1,17 @@
+﻿using gerenciador.financas.Infra.Vendors.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace gerenciador.financas.Infra.Vendors.Repositories
+{
+    public interface IContaRepository
+    {
+        public Task<IEnumerable<ContaResponseInfra?>> GetConta(int idUsuario);
+        public Task<bool> InsertConta(ContaRequestInfra contaRequest, int idUsuario);
+        public Task<bool> UpdateConta(ContaRequestInfra contaRequest, int idUsuario);
+        public Task<bool> DeleteConta(string numeroConta, int idUsuario);
+    }
+}
