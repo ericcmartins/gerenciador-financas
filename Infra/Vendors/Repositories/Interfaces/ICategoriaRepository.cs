@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface ICategoriaRepository
+    public interface ICategoriaRepository : INotifiable
     {
         public Task<IEnumerable<CategoriaResponseInfra>?> GetCategorias(int idUsuario);
         public Task<bool> InsertCategoria(CategoriaRequestInfra categoriaRequest, int idUsuario);

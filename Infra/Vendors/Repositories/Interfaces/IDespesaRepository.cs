@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IDespesaRepository
+    public interface IDespesaRepository : INotifiable
     {
         public Task<DespesaResponseInfra?> GetDespesas(int idUsuario, int periodo);
         public Task<bool> InsertDespesa(DespesaRequestInfra despesaRequest, int idUsuario);

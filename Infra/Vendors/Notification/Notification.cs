@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace gerenciador.financas.Infra.Vendors.Notification
+namespace gerenciador.financas.Infra.Vendors
 {
     public class Notification
     {

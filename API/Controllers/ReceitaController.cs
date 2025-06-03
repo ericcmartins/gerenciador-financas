@@ -4,13 +4,12 @@ using gerenciador.financas.Application.Services;
 using gerenciador.financas.Application.ViewModel.Cliente;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Infra.Vendors;
 using Core.ViewModel.gerenciador.financas.API.ViewModels;
 
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class ReceitaController : ControllerBase
     {
         private readonly IReceitaService _receitaService;
@@ -23,7 +22,7 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("receita")]
+        [HttpGet("receitas/cliente")]
         [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
@@ -51,7 +50,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("receita")]
+        [HttpPost("receita/cliente")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -78,7 +77,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("receita")]
+        [HttpPut("receita/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -105,7 +104,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("receita")]
+        [HttpDelete("receita/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

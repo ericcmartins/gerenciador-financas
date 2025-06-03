@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IMetodoPagamentoRepository
+    public interface IMetodoPagamentoRepository : INotifiable
     {
         public Task<IEnumerable<MetodoPagamentoResponseInfra?>> GetMetodosPagamento(int idUsuario);
         public Task<bool> InsertMetodoPagamento(MetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario);

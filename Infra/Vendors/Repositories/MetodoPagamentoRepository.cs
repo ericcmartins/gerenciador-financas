@@ -8,10 +8,15 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     public class MetodoPagamentoRepository : IMetodoPagamentoRepository
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
+        private readonly NotificationPool _notificationPool;
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
-        public MetodoPagamentoRepository(ISqlServerConnectionHandler connectionHandler)
+        public MetodoPagamentoRepository(ISqlServerConnectionHandler connectionHandler,
+                                         NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
+            _notificationPool = notificationPool;
         }
 
         public async Task<IEnumerable<MetodoPagamentoResponseInfra?>> GetMetodosPagamento(int idUsuario)

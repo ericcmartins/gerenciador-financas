@@ -1,7 +1,6 @@
 using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
-using gerenciador.financas.Infra.Vendors.Notification;
 using Microsoft.Data.SqlClient;
 using System.Net;
 
@@ -11,7 +10,9 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
         private readonly NotificationPool _notificationPool;
-        public UsuarioRepository(ISqlServerConnectionHandler connectionHandler,
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
+        public UsuarioRepository(ISqlServerConnectionHandler connectionHandler, 
                                  NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;

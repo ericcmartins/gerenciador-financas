@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IListaCompraRepository
+    public interface IListaCompraRepository : INotifiable
     {
         public Task<ListaCompraResponseInfra?> GetListaCompra(string cpf);
         public Task<bool> InsertListaCompra(ListaCompraRequestInfra listaCompraRequest);

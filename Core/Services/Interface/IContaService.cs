@@ -1,14 +1,14 @@
 using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Domain.Entities;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Infra.Vendors;
 
 namespace gerenciador.financas.Application.Services
 {
-    public interface IContaService
+    public interface IContaService : INotifiable
     {
         public Task<IEnumerable<Conta?>> GetConta(int idUsuario);
-        public Task<bool> InsertConta(ContaRequestInfra contaRequest, int idUsuario);
-        public Task<bool> UpdateConta(ContaRequestInfra contaRequest, int idUsuario);
+        public Task<bool> InsertConta(ContaRequestViewModel contaRequest, int idUsuario);
+        public Task<bool> UpdateConta(ContaRequestViewModel contaRequest, int idUsuario);
         public Task<bool> DeleteConta(string numeroConta, int idUsuario);
     }
 }

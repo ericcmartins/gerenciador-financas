@@ -8,10 +8,15 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     public class ContaRepository : IContaRepository
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
+        private readonly NotificationPool _notificationPool;
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
-        public ContaRepository(ISqlServerConnectionHandler connectionHandler)
+        public ContaRepository(ISqlServerConnectionHandler connectionHandler,
+                               NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
+            _notificationPool = notificationPool;
         }
 
         public async Task<IEnumerable<ContaResponseInfra?>> GetConta(int idUsuario)

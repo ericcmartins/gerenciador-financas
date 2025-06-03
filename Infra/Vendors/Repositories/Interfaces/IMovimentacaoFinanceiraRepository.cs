@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IMovimentacaoFinanceiraRepository
+    public interface IMovimentacaoFinanceiraRepository : INotifiable
     {
         public Task<MovimentacaoFinanceiraResponseInfra?> GetMovimentacoesFinanceiras(int idUsuario, int periodo);
         public Task<bool> InsertMovimentacaoFinanceira(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario);

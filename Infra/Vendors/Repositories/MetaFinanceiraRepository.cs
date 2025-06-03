@@ -8,10 +8,15 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     public class MetaFinanceiraRepository : IMetaFinanceiraRepository
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
+        private readonly NotificationPool _notificationPool;
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
-        public MetaFinanceiraRepository(ISqlServerConnectionHandler connectionHandler)
+        public MetaFinanceiraRepository(ISqlServerConnectionHandler connectionHandler,
+                                        NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
+            _notificationPool = notificationPool;
         }
 
         public async Task<MetaFinanceiraResponseInfra?> GetMetasFinanceiras(int idUsuario)

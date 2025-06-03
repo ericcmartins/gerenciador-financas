@@ -4,13 +4,13 @@ using gerenciador.financas.Application.Services;
 using gerenciador.financas.Application.ViewModel.Cliente;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Infra.Vendors;
 using Core.ViewModel.gerenciador.financas.API.ViewModels;
+using gerenciador.financas.Domain.Entities;
 
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
@@ -33,7 +33,7 @@ namespace gerenciador.financas.API.Controllers
             try
             {
                 var response = await _usuarioService.GetDadosPessoais(idUsuario);
-                if (_notificationPool.HasNotifications())
+                if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -59,8 +59,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
-                if (_notificationPool.HasNotifications())
+                var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+                if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -86,8 +86,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
-                if (_notificationPool.HasNotifications())
+                var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
+                if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -114,8 +114,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _usuarioService.DeleteConta(idUsuario);
-                if (_notificationPool.HasNotifications())
+                var response = await _usuarioService.DeleteConta(idUsuario);
+                if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 

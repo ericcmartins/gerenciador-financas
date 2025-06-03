@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IReceitaRepository
+    public interface IReceitaRepository : INotifiable
     {
         public Task<ReceitaResponseInfra?> GetReceita(int idUsuario);
         public Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario);

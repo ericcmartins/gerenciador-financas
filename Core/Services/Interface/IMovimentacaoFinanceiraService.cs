@@ -1,10 +1,10 @@
 using gerenciador.financas.API.ViewModel.Cliente;
-using gerenciador.financas.Domain.Entities.Cliente;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Infra.Vendors;
+using gerenciador.financas.Infra.Vendors.Entities;
 
 namespace gerenciador.financas.Application.Services
 {
-    public interface IMovimentacaoFinanceiraUsuarioService
+    public interface IMovimentacaoFinanceiraService : INotifiable
     {
         public Task<MovimentacaoFinanceiraResponseInfra?> GetMovimentacoesFinanceiras(int idUsuario, int periodo);
         public Task<bool> InsertMovimentacaoFinanceira(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IMetaFinanceiraRepository
+    public interface IMetaFinanceiraRepository : INotifiable
     {
         public Task<MetaFinanceiraResponseInfra?> GetMetasFinanceiras(int idUsuario);
         public Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario);

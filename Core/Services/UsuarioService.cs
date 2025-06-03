@@ -1,7 +1,7 @@
 using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Application.Extensions;
-using gerenciador.financas.Domain.Entities.Cliente;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Domain.Entities;
+using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
@@ -10,6 +10,8 @@ namespace gerenciador.financas.Application.Services
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly NotificationPool _notificationPool;
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
         public UsuarioService(IUsuarioRepository usuarioRepository, 
                               NotificationPool notificationPool)
         {
@@ -17,11 +19,10 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-        public async Task<DadosPessoais?> GetDadosPessoais(int idUsuario)
+        public async Task<Usuario?> GetDadosPessoais(int idUsuario)
         {
             var responseInfra = await _usuarioRepository.GetDadosPessoais(idUsuario);
-
-            if (responseInfra is null)
+            if (HasNotifications)
                 return null;
 
             return responseInfra.ToService();

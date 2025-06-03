@@ -5,12 +5,18 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace gerenciador.financas.Infra.Vendors.Notification
+namespace gerenciador.financas.Infra.Vendors
 {
-    public class NotificationPool : INotificationPool
+    public class NotificationPool
     {
-        private readonly List<Notification> _notifications = new();
+        private readonly List<Notification> _notifications;
         public IReadOnlyCollection<Notification> Notifications => _notifications.AsReadOnly();
+        public bool HasNotications => Notifications.Count > 0;
+
+        public NotificationPool()
+        {
+            _notifications = [];
+        }
         public void AddNotification(int code, string mensagem)
         {
             _notifications.Add(new Notification(code, mensagem));
@@ -18,10 +24,6 @@ namespace gerenciador.financas.Infra.Vendors.Notification
         public void AddNotification(Notification notification)
         {
             _notifications.Add(notification);
-        }
-        public bool HasNotifications()
-        {
-            return _notifications.Any();
         }
     }
 }

@@ -1,8 +1,9 @@
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IUsuarioRepository
+    public interface IUsuarioRepository : INotifiable
     {
         public Task<DadosPessoaisResponseInfra?> GetDadosPessoais(int idUsuario);
         public Task<bool> InsertDadosPessoais(DadosPessoaisRequestInfra dadosPessoais);

@@ -1,12 +1,12 @@
 using gerenciador.financas.API.ViewModel.Cliente;
-using gerenciador.financas.Domain.Entities.Cliente;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Domain.Entities;
+using gerenciador.financas.Infra.Vendors;
 
 namespace gerenciador.financas.Application.Services
 {
-    public interface IUsuarioService
+    public interface IUsuarioService : INotifiable
     {
-        public Task<DadosPessoais?> GetDadosPessoais(int idUsuario);
+        public Task<Usuario?> GetDadosPessoais(int idUsuario);
         public Task<bool> InsertDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais);
         public Task<bool> UpdateDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais, int idUsuario);
         public Task<bool> DeleteConta(int idUsuario);

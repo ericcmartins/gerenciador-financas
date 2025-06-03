@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IContaRepository
+    public interface IContaRepository : INotifiable
     {
         public Task<IEnumerable<ContaResponseInfra?>> GetConta(int idUsuario);
         public Task<bool> InsertConta(ContaRequestInfra contaRequest, int idUsuario);

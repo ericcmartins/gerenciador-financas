@@ -8,10 +8,15 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     public class CategoriaRepository : ICategoriaRepository
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
+        private readonly NotificationPool _notificationPool;
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
-        public CategoriaRepository(ISqlServerConnectionHandler connectionHandler)
+        public CategoriaRepository(ISqlServerConnectionHandler connectionHandler,
+                                   NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
+            _notificationPool = notificationPool;
         }
 
         public async Task<IEnumerable<CategoriaResponseInfra>?> GetCategorias(int idUsuario)

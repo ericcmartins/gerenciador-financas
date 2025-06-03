@@ -4,7 +4,7 @@ using gerenciador.financas.Application.Services;
 using gerenciador.financas.Application.ViewModel.Cliente;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Infra.Vendors;
 using Core.ViewModel.gerenciador.financas.API.ViewModels;
 
 namespace gerenciador.financas.API.Controllers
@@ -23,7 +23,7 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("despesa")]
+        [HttpGet("despesas/cliente")]
         [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
@@ -51,7 +51,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("despesa")]
+        [HttpPost("despesa/cliente")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -78,7 +78,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("despesa")]
+        [HttpPut("despesa/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -105,7 +105,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("despesa")]
+        [HttpDelete("despesa/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
