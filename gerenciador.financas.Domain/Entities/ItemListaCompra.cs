@@ -1,11 +1,12 @@
 namespace gerenciador.financas.Domain.Entities
 {
-    public class DadosPessoais
+    public class ItemListaCompra
     {
-        public string Nome { get; set; }
-        public string Email { get; set; }
-        public string Senha { get; set; }
-        public DateTime DataNascimento { get; set; }
-        public string Telefone { get; set; }
+        public int IdItem { get; set; }
+        public string Descricao { get; set; }
+        public int Quantidade { get; set; }
+        public string Prioridade { get; set; }
+        public string Comprado { get; set; }
+        public int IdLista { get; set; }
     }
 }

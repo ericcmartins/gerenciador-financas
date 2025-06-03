@@ -13,13 +13,13 @@ namespace gerenciador.financas.API.Controllers
     [Route("[controller]")]
     public class MetodoPagamentoController : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService;
+        private readonly IMetodoPagamentoService _metodoPagamentoService;
         private readonly NotificationPool _notificationPool;
 
-        public MetodoPagamentoController(IUsuarioService usuarioService, 
+        public MetodoPagamentoController(IMetodoPagamentoService metodoPagamentoService, 
                                  NotificationPool notificationPool)
         {
-            _usuarioService = usuarioService;
+            _metodoPagamentoService = metodoPagamentoService;
             _notificationPool = notificationPool;
         }
 

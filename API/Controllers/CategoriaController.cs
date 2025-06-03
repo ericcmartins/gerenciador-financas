@@ -11,11 +11,11 @@ namespace gerenciador.financas.API.Controllers
     [Route("[controller]")]
     public class CategoriaController : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService;
+        private readonly ICategoriaService _categoriaService;
 
-        public CategoriaController(IUsuarioService usuarioService)
+        public CategoriaController(ICategoriaService categoriaService)
         {
-            _usuarioService = usuarioService;
+            _categoriaService = categoriaService;
         }
 
         [HttpGet("cliente/{cpf}/dados")]

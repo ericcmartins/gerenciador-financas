@@ -13,13 +13,13 @@ namespace gerenciador.financas.API.Controllers
     [Route("[controller]")]
     public class ContaController : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService;
+        private readonly IContaService _contaService;
         private readonly NotificationPool _notificationPool;
 
-        public ContaController(IUsuarioService usuarioService, 
+        public ContaController(IContaService contaService, 
                                  NotificationPool notificationPool)
         {
-            _usuarioService = usuarioService;
+            _contaService = contaService;
             _notificationPool = notificationPool;
         }
 

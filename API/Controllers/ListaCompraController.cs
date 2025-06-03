@@ -13,13 +13,13 @@ namespace gerenciador.financas.API.Controllers
     [Route("[controller]")]
     public class ListaCompraController : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService;
+        private readonly IListaCompraService _listaCompraService;
         private readonly NotificationPool _notificationPool;
 
-        public ListaCompraController(IUsuarioService usuarioService, 
+        public ListaCompraController(IListaCompraService listaCompraService, 
                                  NotificationPool notificationPool)
         {
-            _usuarioService = usuarioService;
+            _listaCompraService = listaCompraService;
             _notificationPool = notificationPool;
         }
 

@@ -13,13 +13,13 @@ namespace gerenciador.financas.API.Controllers
     [Route("[controller]")]
     public class ReceitaController : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService;
+        private readonly IReceitaService _receitaService;
         private readonly NotificationPool _notificationPool;
 
-        public ReceitaController(IUsuarioService usuarioService, 
+        public ReceitaController(IReceitaService receitaService, 
                                  NotificationPool notificationPool)
         {
-            _usuarioService = usuarioService;
+            _receitaService = receitaService;
             _notificationPool = notificationPool;
         }
 
