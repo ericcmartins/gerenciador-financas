@@ -1,4 +1,4 @@
-namespace gerenciador.financas.Domain.Entities.Cliente
+namespace gerenciador.financas.Domain.Entities
 {
     public class DadosPessoais
     {

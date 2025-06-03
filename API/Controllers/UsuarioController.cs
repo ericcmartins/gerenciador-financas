@@ -23,7 +23,7 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("usuario/{id}/dados")]
+        [HttpGet("dados")]
         [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
@@ -51,7 +51,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("usuario/dados")]
+        [HttpPost("dados")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -59,58 +59,77 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+                 var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+                if (_notificationPool.HasNotifications())
+                {
+                    var notificacao = _notificationPool.Notifications.First();
 
-                if (!response)
-                    return BadRequest("Ocorreu um erro interno");
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
 
-                return Created("cliente/dados", response);
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                return Created();
             }
+
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
 
-        [HttpPut("usuario/{id}/dados")]
+        [HttpPut("dados")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required] int idUsuario)
+        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
+                 var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
+                if (_notificationPool.HasNotifications())
+                {
+                    var notificacao = _notificationPool.Notifications.First();
 
-                if (!response)
-                    return BadRequest("Ocorreu um erro interno");
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
 
                 return NoContent();
             }
+
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
 
-        [HttpDelete("usuario/{id}/dados")]
+        [HttpDelete("dados")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required] int idUsuario)
+
+        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery]int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.DeleteConta(idUsuario);
+                 var response = await _usuarioService.DeleteConta(idUsuario);
+                if (_notificationPool.HasNotifications())
+                {
+                    var notificacao = _notificationPool.Notifications.First();
 
-                if (!response)
-                    return BadRequest("Ocorreu um erro interno");
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
 
                 return NoContent();
             }
+
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
     }

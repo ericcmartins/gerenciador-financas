@@ -4,6 +4,8 @@ using gerenciador.financas.Application.Services;
 using gerenciador.financas.Application.ViewModel.Cliente;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using gerenciador.financas.Infra.Vendors.Notification;
+using Core.ViewModel.gerenciador.financas.API.ViewModels;
 
 namespace gerenciador.financas.API.Controllers
 {
@@ -12,26 +14,32 @@ namespace gerenciador.financas.API.Controllers
     public class MetodoPagamentoController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly NotificationPool _notificationPool;
 
-        public MetodoPagamentoController(IUsuarioService usuarioService)
+        public MetodoPagamentoController(IUsuarioService usuarioService, 
+                                 NotificationPool notificationPool)
         {
             _usuarioService = usuarioService;
+            _notificationPool = notificationPool;
         }
 
-        [HttpGet("cliente/{cpf}/dados")]
+        [HttpGet("dados")]
         [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ObterDadosCadastrais([Required] int idUsuario)
         {
             try
             {
                 var response = await _usuarioService.GetDadosPessoais(idUsuario);
-
-                if (response is null)
+                if (_notificationPool.HasNotifications())
                 {
-                    return NotFound("Nenhuma informação corresponde ao cpf informado");
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
                 return Ok(response.ToViewModel());
@@ -39,11 +47,11 @@ namespace gerenciador.financas.API.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
 
-        [HttpPost("cliente/dados")]
+        [HttpPost("dados")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -51,58 +59,77 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+                 var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+                if (_notificationPool.HasNotifications())
+                {
+                    var notificacao = _notificationPool.Notifications.First();
 
-                if (!response)
-                    return BadRequest("Ocorreu um erro interno");
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
 
-                return Created("cliente/dados", response);
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                return Created();
             }
+
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
 
-        [HttpPut("cliente/{cpf}dados")]
+        [HttpPut("dados")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required] int idUsuario)
+        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
+                 var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
+                if (_notificationPool.HasNotifications())
+                {
+                    var notificacao = _notificationPool.Notifications.First();
 
-                if (!response)
-                    return BadRequest("Ocorreu um erro interno");
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
 
                 return NoContent();
             }
+
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
 
-        [HttpDelete("cliente/{cpf}/dados")]
+        [HttpDelete("dados")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required] int idUsuario)
+
+        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery]int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.DeleteConta(idUsuario);
+                 var response = await _usuarioService.DeleteConta(idUsuario);
+                if (_notificationPool.HasNotifications())
+                {
+                    var notificacao = _notificationPool.Notifications.First();
 
-                if (!response)
-                    return BadRequest("Ocorreu um erro interno");
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
 
                 return NoContent();
             }
+
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
     }

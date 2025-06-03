@@ -31,7 +31,7 @@ namespace gerenciador.financas.API.Controllers
 
                 if (response is null)
                 {
-                    return NotFound("Nenhuma informação corresponde ao cpf informado");
+                    return NotFound("Nenhuma informaï¿½ï¿½o corresponde ao cpf informado");
                 }
 
                 return Ok(response.ToViewModel());
