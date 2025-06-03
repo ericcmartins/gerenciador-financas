@@ -10,7 +10,7 @@ using Core.ViewModel.gerenciador.financas.API.ViewModels;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class ReceitaController : ControllerBase
+    public class ReceitaController : Controller
     {
         private readonly IReceitaService _receitaService;
         private readonly NotificationPool _notificationPool;

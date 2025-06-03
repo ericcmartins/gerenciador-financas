@@ -5,6 +5,5 @@ namespace gerenciador.financas.Domain.Entities
         public string NumeroConta { get; set; }
         public string Tipo { get; set; }
         public string Instituicao { get; set; }
-        public string IdUsuario { get; set; } 
     }
 }

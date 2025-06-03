@@ -6,7 +6,7 @@ namespace gerenciador.financas.Application.Services
 {
     public interface IContaService : INotifiable
     {
-        public Task<IEnumerable<Conta?>> GetConta(int idUsuario);
+        public Task<List<Conta?>> GetContas(int idUsuario);
         public Task<bool> InsertConta(ContaRequestViewModel contaRequest, int idUsuario);
         public Task<bool> UpdateConta(ContaRequestViewModel contaRequest, int idUsuario);
         public Task<bool> DeleteConta(string numeroConta, int idUsuario);

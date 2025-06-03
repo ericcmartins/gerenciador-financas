@@ -10,7 +10,7 @@ using Core.ViewModel.gerenciador.financas.API.ViewModels;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class ListaCompraController : ControllerBase
+    public class ListaCompraController : Controller
     {
         private readonly IListaCompraService _listaCompraService;
         private readonly NotificationPool _notificationPool;

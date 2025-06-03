@@ -6,43 +6,56 @@ using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
 {
-    public class ContaService : IUsuarioService
+    public class ContaService : IContaService
     {
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IContaRepository _contaRepository;
         private readonly NotificationPool _notificationPool;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public ContaService(IUsuarioRepository usuarioRepository, 
+        public ContaService(IContaRepository contaRepository, 
                               NotificationPool notificationPool)
         {
-            _usuarioRepository = usuarioRepository;
+            _contaRepository = contaRepository;
             _notificationPool = notificationPool;
         }
 
-        public async Task<Usuario?> GetDadosPessoais(int idUsuario)
+        public async Task<List<Conta>> GetContas(int idUsuario)
         {
-            var responseInfra = await _usuarioRepository.GetDadosPessoais(idUsuario);
+            var responseInfra = await _contaRepository.GetContas(idUsuario);
             if (HasNotifications)
                 return null;
 
-            return responseInfra.ToService();
+            var contas = responseInfra
+                .Select(c => c.ToService())
+                .ToList();
+
+            return contas;
         }
 
-        public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<bool> InsertConta(ContaRequestViewModel conta, int idUsuario)
         {
-            var resultado = await _usuarioRepository.InsertDadosPessoais(dadosPessoais.ToInfra());
+            var resultado = await _contaRepository.InsertConta(conta.ToInfra(), idUsuario);
+            if (_contaRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
 
-        public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais, int idUsuario)
+        public async Task<bool> UpdateConta(ContaRequestViewModel conta, int idUsuario)
         {
-            var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosPessoais.ToInfra(), idUsuario);
+            var resultado = await _contaRepository.UpdateConta(conta.ToInfra(), idUsuario);
+            if (_contaRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
         
-        public async Task<bool> DeleteConta(int idUsuario)
+        public async Task<bool> DeleteConta(string numeroConta, int idUsuario)
         {
-            var resultado = await _usuarioRepository.DeleteConta(idUsuario);
+            var resultado = await _contaRepository.DeleteConta(numeroConta, idUsuario);
+            if (_contaRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
     }

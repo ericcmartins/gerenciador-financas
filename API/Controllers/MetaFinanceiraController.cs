@@ -10,7 +10,7 @@ using Core.ViewModel.gerenciador.financas.API.ViewModels;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class MetaFinanceiraController : ControllerBase
+    public class MetaFinanceiraController : Controller
     {
         private readonly IMetaFinanceiraService _metaFinanceiraService;
         private readonly NotificationPool _notificationPool;

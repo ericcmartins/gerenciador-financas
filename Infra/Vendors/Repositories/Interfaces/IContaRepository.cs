@@ -9,7 +9,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 {
     public interface IContaRepository : INotifiable
     {
-        public Task<IEnumerable<ContaResponseInfra?>> GetConta(int idUsuario);
+        public Task<List<ContaResponseInfra?>> GetContas(int idUsuario);
         public Task<bool> InsertConta(ContaRequestInfra contaRequest, int idUsuario);
         public Task<bool> UpdateConta(ContaRequestInfra contaRequest, int idUsuario);
         public Task<bool> DeleteConta(string numeroConta, int idUsuario);

@@ -44,7 +44,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, dadosPessoais);
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao criar o usuário");
+                _notificationPool.AddNotification(500, "Erro ao cadastrar o usuário");
                 return false;
             }
 
@@ -75,18 +75,19 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar as informações");
+                _notificationPool.AddNotification(500, "Erro ao atualizar as informações do usuário");
                 return false;
             }
 
             return true;
-
         }
 
         public async Task<bool> DeleteConta(int idUsuario)
         {
             using var connection = _connectionHandler.CreateConnection();
+
             var instrucaoSql = @"DELETE FROM Usuario WHERE IdUsuario = @idUsuario";
+
             var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new { idUsuario });
             if (linhasAfetadas != 1)
             {

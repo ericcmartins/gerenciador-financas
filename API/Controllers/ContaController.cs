@@ -10,7 +10,7 @@ using Core.ViewModel.gerenciador.financas.API.ViewModels;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class ContaController : ControllerBase
+    public class ContaController : Controller
     {
         private readonly IContaService _contaService;
         private readonly NotificationPool _notificationPool;
@@ -23,16 +23,16 @@ namespace gerenciador.financas.API.Controllers
         }
 
         [HttpGet("contas/cliente")]
-        [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<ContaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDadosCadastrais([Required] int idUsuario)
+        public async Task<IActionResult> ObterContas([Required] int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.GetDadosPessoais(idUsuario);
-                if (_usuarioService.HasNotifications)
+                var response = await _contaService.GetContas(idUsuario);
+                if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -41,7 +41,11 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Ok(response.ToViewModel());
+                var viewModel = response
+                    .Select(c => c.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
             }
 
             catch (Exception ex)
@@ -51,15 +55,15 @@ namespace gerenciador.financas.API.Controllers
         }
 
         [HttpPost("conta/cliente")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<IActionResult> InserirConta([Required][FromBody] ContaRequestViewModel conta, [Required] int idUsuario)
         {
             try
             {
-                 var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
-                if (_notificationPool.HasNotifications())
+                var response = await _contaService.InsertConta(conta, idUsuario);
+                if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -81,12 +85,12 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
+        public async Task<IActionResult> AtualizarConta([Required][FromBody] ContaRequestViewModel conta, [Required]int idUsuario)
         {
             try
             {
-                 var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
-                if (_notificationPool.HasNotifications())
+                 var response = await _contaService.UpdateConta(conta, idUsuario);
+                if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -109,12 +113,12 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery]int idUsuario)
+        public async Task<IActionResult> ExcluirConta([Required]int idUsuario, [Required]string numeroConta)
         {
             try
             {
-                 var response = await _usuarioService.DeleteConta(idUsuario);
-                if (_notificationPool.HasNotifications())
+                var response = await _contaService.DeleteConta(numeroConta, idUsuario);
+                if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 

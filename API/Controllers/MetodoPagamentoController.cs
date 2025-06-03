@@ -10,7 +10,7 @@ using Core.ViewModel.gerenciador.financas.API.ViewModels;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class MetodoPagamentoController : ControllerBase
+    public class MetodoPagamentoController : Controller
     {
         private readonly IMetodoPagamentoService _metodoPagamentoService;
         private readonly NotificationPool _notificationPool;

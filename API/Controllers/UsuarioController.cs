@@ -11,7 +11,7 @@ using gerenciador.financas.Domain.Entities;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController : Controller
     {
         private readonly IUsuarioService _usuarioService;
         private readonly NotificationPool _notificationPool;
@@ -23,7 +23,7 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("dados")]
+        [HttpGet("cliente/dados")]
         [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
@@ -51,8 +51,8 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("dados")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+        [HttpPost("cliente/dados")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
@@ -78,7 +78,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("dados")]
+        [HttpPut("cliente/dados")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -105,12 +105,11 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("dados")]
+        [HttpDelete("cliente/dados")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery]int idUsuario)
+        public async Task<IActionResult> ExcluirDadosCadastrais([Required]int idUsuario)
         {
             try
             {

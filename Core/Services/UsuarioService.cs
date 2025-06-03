@@ -22,7 +22,7 @@ namespace gerenciador.financas.Application.Services
         public async Task<Usuario?> GetDadosPessoais(int idUsuario)
         {
             var responseInfra = await _usuarioRepository.GetDadosPessoais(idUsuario);
-            if (HasNotifications)
+            if (_usuarioRepository.HasNotifications)
                 return null;
 
             return responseInfra.ToService();
@@ -31,18 +31,26 @@ namespace gerenciador.financas.Application.Services
         public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais)
         {
             var resultado = await _usuarioRepository.InsertDadosPessoais(dadosPessoais.ToInfra());
+            if (_usuarioRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
 
         public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais, int idUsuario)
         {
             var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosPessoais.ToInfra(), idUsuario);
+            if (_usuarioRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
-        
+
         public async Task<bool> DeleteConta(int idUsuario)
         {
             var resultado = await _usuarioRepository.DeleteConta(idUsuario);
+            if (_usuarioRepository.HasNotifications)
+                return false;
             return resultado;
         }
     }

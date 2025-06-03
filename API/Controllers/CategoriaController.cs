@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class CategoriaController : ControllerBase
+    public class CategoriaController : Controller
     {
         private readonly ICategoriaService _categoriaService;
         private readonly NotificationPool _notificationPool;
