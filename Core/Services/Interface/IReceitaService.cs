@@ -1,14 +1,15 @@
 using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
+using gerenciador.financas.Infra.Vendors.Entities;
 
 namespace gerenciador.financas.Application.Services
 {
     public interface IReceitaService : INotifiable
     {
-        public Task<Receita?> GetReceita(int idUsuario);
-        public Task<bool> InsertReceita(ReceitaRequestViewModel receitaRequest, int idUsuario);
-        public Task<bool> UpdateReceita(ReceitaRequestViewModel receitaRequest, int idUsuario);
-        public Task<bool> DeleteReceita(int idUsuario);
+        public Task<List<Receita?>> GetReceitas(int idUsuario);
+        public Task<bool> InsertReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idConta, int idCategoria);
+        public Task<bool> UpdateReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta);
+        public Task<bool> DeleteReceita(int idUsuario, int idReceita);
     }
 }

@@ -23,16 +23,16 @@ namespace gerenciador.financas.API.Controllers
         }
 
         [HttpGet("metas/cliente")]
-        [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<MetaFinanceiraResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDadosCadastrais([Required] int idUsuario)
+        public async Task<IActionResult> GetMetasFinanceiras([Required] int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.GetDadosPessoais(idUsuario);
-                if (_notificationPool.HasNotifications())
+                var response = await _metaFinanceiraService.GetMetasFinanceiras(idUsuario);
+                if (_metaFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -41,7 +41,11 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Ok(response.ToViewModel());
+                var viewModel = response
+                    .Select(mf => mf.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
             }
 
             catch (Exception ex)
@@ -54,12 +58,12 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<IActionResult> InsertMetaFinanceira([Required][FromBody] MetaFinanceiraRequestViewModel metaFinanceiraRequest, [Required]int idUsuario)
         {
             try
             {
-                 var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
-                if (_notificationPool.HasNotifications())
+                 var response = await _metaFinanceiraService.InsertMetaFinanceira(metaFinanceiraRequest, idUsuario);
+                if (_metaFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -81,12 +85,14 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
+        public async Task<IActionResult> UpdateMetaFinanceira([Required][FromBody] MetaFinanceiraRequestViewModel metaFinanceiraRequest,
+                                                                  [Required] int idUsuario, 
+                                                                  [Required]int idMetaFinanceira)
         {
             try
             {
-                 var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
-                if (_notificationPool.HasNotifications())
+                 var response = await _metaFinanceiraService.UpdateMetaFinanceira(metaFinanceiraRequest, idUsuario, idMetaFinanceira);
+                if (_metaFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -109,12 +115,12 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery]int idUsuario)
+        public async Task<IActionResult> DeleteMetaFinanceira([Required]int idMetaFinanceira, [Required]int idUsuario)
         {
             try
             {
-                 var response = await _usuarioService.DeleteConta(idUsuario);
-                if (_notificationPool.HasNotifications())
+                 var response = await _metaFinanceiraService.DeleteMetaFinanceira(idMetaFinanceira, idUsuario);
+                if (_metaFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 

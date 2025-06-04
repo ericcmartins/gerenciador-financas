@@ -6,43 +6,53 @@ using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
 {
-    public class CategoriaService : IUsuarioService
+    public class CategoriaService : ICategoriaService
     {
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ICategoriaRepository _categoriaRepository;
         private readonly NotificationPool _notificationPool;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public CategoriaService(IUsuarioRepository usuarioRepository, 
+        public CategoriaService(ICategoriaRepository categoriaRepository, 
                               NotificationPool notificationPool)
         {
-            _usuarioRepository = usuarioRepository;
+            _categoriaRepository = categoriaRepository;
             _notificationPool = notificationPool;
         }
 
-        public async Task<Usuario?> GetDadosPessoais(int idUsuario)
+        public async Task<List<Categoria>?> GetCategorias(int idUsuario)
         {
-            var responseInfra = await _usuarioRepository.GetDadosPessoais(idUsuario);
+            var responseInfra = await _categoriaRepository.GetCategorias(idUsuario);
             if (HasNotifications)
                 return null;
 
-            return responseInfra.ToService();
+            var categoriasUsuario = responseInfra
+            .Select(c => c.ToService())
+            .ToList();
+
+            return categoriasUsuario;
         }
 
-        public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<bool> InsertCategoria(CategoriaRequestViewModel categoriaRequest, int idUsuario)
         {
-            var resultado = await _usuarioRepository.InsertDadosPessoais(dadosPessoais.ToInfra());
+            var resultado = await _categoriaRepository.InsertCategoria(categoriaRequest.ToInfra(), idUsuario);
             return resultado;
         }
 
-        public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais, int idUsuario)
+        public async Task<bool> UpdateCategoria(CategoriaRequestViewModel categoriaRequest, int idUsuario)
         {
-            var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosPessoais.ToInfra(), idUsuario);
+            var resultado = await _categoriaRepository.UpdateCategoria(categoriaRequest.ToInfra(), idUsuario);
+            if (_categoriaRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
         
-        public async Task<bool> DeleteConta(int idUsuario)
+        public async Task<bool> DeleteCategoria(string nomeCategoria, int idUsuario)
         {
-            var resultado = await _usuarioRepository.DeleteConta(idUsuario);
+            var resultado = await _categoriaRepository.DeleteCategoria(nomeCategoria, idUsuario);
+            if (_categoriaRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
     }

@@ -22,12 +22,12 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("despesas/cliente")]
-        [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
+        [HttpGet("categorias/cliente")]
+        [ProducesResponseType(typeof(CategoriaResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDadosCadastrais([Required] int idUsuario)
+        public async Task<IActionResult> ObterCategoriasUsuario([Required] int idUsuario)
         {
             try
             {
@@ -41,7 +41,11 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Ok();
+                var viewModel = response
+                    .Select(c => c.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
             }
 
             catch (Exception ex)
@@ -50,15 +54,15 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("despesa/cliente")]
+        [HttpPost("categoria/cliente")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<IActionResult> InserirCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+                var response = await _categoriaService.InsertCategoria(categoriaRequest, idUsuario);
                 if (_categoriaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -77,15 +81,15 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("despesa/cliente")]
+        [HttpPut("categoria/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required] int idUsuario)
+        public async Task<IActionResult> AtualizarCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
+                var response = await _categoriaService.UpdateCategoria(categoriaRequest, idUsuario);
                 if (_categoriaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -104,16 +108,16 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("despesa/cliente")]
+        [HttpDelete("categoria/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery] int idUsuario)
+        public async Task<IActionResult> ExcluirDadosCadastrais([Required]string nomeCategoria, [Required] int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.DeleteConta(idUsuario);
+                var response = await _categoriaService.DeleteCategoria(nomeCategoria, idUsuario);
                 if (_categoriaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();

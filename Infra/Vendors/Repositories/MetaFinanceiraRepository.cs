@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Azure;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
 using Microsoft.Data.SqlClient;
@@ -19,7 +20,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<MetaFinanceiraResponseInfra?> GetMetasFinanceiras(int idUsuario)
+        public async Task<List<MetaFinanceiraResponseInfra?>> GetMetasFinanceiras(int idUsuario)
         {
             using var connection = _connectionHandler.CreateConnection();
 
@@ -27,7 +28,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                                  FROM MetaFinanceira
                                  WHERE IdUsuario = @IdUsuario";
 
-            return await connection.QueryFirstOrDefaultAsync<MetaFinanceiraResponseInfra>(instrucaoSql, new { IdUsuario = idUsuario });
+            var response = await connection.QueryAsync<MetaFinanceiraResponseInfra>(instrucaoSql, new { idUsuario });
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Não foram encontradas metas financeiras para o usuário");
+
+            return responseList;
         }
 
         public async Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario)
@@ -39,48 +47,44 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
             {
-                metaFinanceiraRequest.Descricao,
-                metaFinanceiraRequest.ValorAlvo,
-                metaFinanceiraRequest.ValorAtual,
-                metaFinanceiraRequest.DataInicio,
-                metaFinanceiraRequest.DataLimite,
-                metaFinanceiraRequest.Concluida,
-                IdUsuario = idUsuario
+                metaFinanceiraRequest.Descricao, metaFinanceiraRequest.ValorAlvo, metaFinanceiraRequest.ValorAtual,
+                metaFinanceiraRequest.DataInicio, metaFinanceiraRequest.DataLimite, metaFinanceiraRequest.Concluida, IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao cadastrar meta");
                 return false;
+            }
 
             return true;
         }
 
-        public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraResponse, int idUsuario)
+        public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraResponse, int idUsuario, int idMetaFinanceira)
         {
             using var connection = _connectionHandler.CreateConnection();
 
             var instrucaoSql = @"UPDATE MetaFinanceira
-                                 SET Descricao = @Descricao,
-                                     ValorAlvo = @ValorAlvo,
-                                     ValorAtual = @ValorAtual,
-                                     DataInicio = @DataInicio,
-                                     DataLimite = @DataLimite,
-                                     Concluida = @Concluida
-                                 WHERE IdUsuario = @IdUsuario
-                                   AND Descricao = @Descricao";
+                     SET Descricao = COALESCE(@Descricao, Descricao),
+                         ValorAlvo = COALESCE(@ValorAlvo, ValorAlvo),
+                         ValorAtual = COALESCE(@ValorAtual, ValorAtual),
+                         DataInicio = COALESCE(@DataInicio, DataInicio),
+                         DataLimite = COALESCE(@DataLimite, DataLimite),
+                         Concluida = COALESCE(@Concluida, Concluida)
+                     WHERE IdUsuario = @IdUsuario
+                       AND IdMeta = @IdMeta";
 
             var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
             {
-                metaFinanceiraResponse.Descricao,
-                metaFinanceiraResponse.ValorAlvo,
-                metaFinanceiraResponse.ValorAtual,
-                metaFinanceiraResponse.DataInicio,
-                metaFinanceiraResponse.DataLimite,
-                metaFinanceiraResponse.Concluida,
-                IdUsuario = idUsuario
+                metaFinanceiraResponse.Descricao, metaFinanceiraResponse.ValorAlvo, metaFinanceiraResponse.ValorAtual,
+                metaFinanceiraResponse.DataInicio, metaFinanceiraResponse.DataLimite, metaFinanceiraResponse.Concluida, IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao cadastrar meta");
                 return false;
+            }
 
             return true;
         }
@@ -95,12 +99,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
             {
-                IdUsuario = idUsuario,
-                IdMeta = idMeta
+                IdUsuario = idUsuario, IdMeta = idMeta
             });
 
             if (linhasAfetadas != 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao cadastrar meta");
                 return false;
+            }
 
             return true;
         }

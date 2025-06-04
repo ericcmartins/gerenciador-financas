@@ -6,43 +6,56 @@ using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
 {
-    public class MetaFinanceiraService : IUsuarioService
+    public class MetaFinanceiraService : IMetaFinanceiraService
     {
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IMetaFinanceiraRepository _metaFinanceiraRepository;
         private readonly NotificationPool _notificationPool;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public MetaFinanceiraService(IUsuarioRepository usuarioRepository, 
+        public MetaFinanceiraService(IMetaFinanceiraRepository metaFinanceiraRepository, 
                               NotificationPool notificationPool)
         {
-            _usuarioRepository = usuarioRepository;
+            _metaFinanceiraRepository = metaFinanceiraRepository;
             _notificationPool = notificationPool;
         }
 
-        public async Task<Usuario?> GetDadosPessoais(int idUsuario)
+        public async Task<List<MetaFinanceira?>> GetMetasFinanceiras(int idUsuario)
         {
-            var responseInfra = await _usuarioRepository.GetDadosPessoais(idUsuario);
-            if (HasNotifications)
+            var responseInfra = await _metaFinanceiraRepository.GetMetasFinanceiras(idUsuario);
+            if (_metaFinanceiraRepository.HasNotifications)
                 return null;
 
-            return responseInfra.ToService();
+            var metaFinanceira = responseInfra
+                .Select(mf => mf.ToService())
+                .ToList();
+
+            return metaFinanceira;
         }
 
-        public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario)
         {
-            var resultado = await _usuarioRepository.InsertDadosPessoais(dadosPessoais.ToInfra());
+            var resultado = await _metaFinanceiraRepository.InsertMetaFinanceira(metaFinanceiraRequest.ToInfra(), idUsuario);
+            if (_metaFinanceiraRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
 
-        public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais, int idUsuario)
+        public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario, int idMetaFinanceira)
         {
-            var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosPessoais.ToInfra(), idUsuario);
+            var resultado = await _metaFinanceiraRepository.UpdateMetaFinanceira(metaFinanceiraRequest.ToInfra(), idUsuario, idMetaFinanceira);
+            if (_metaFinanceiraRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
         
-        public async Task<bool> DeleteConta(int idUsuario)
+        public async Task<bool> DeleteMetaFinanceira(int idMetaFinanceira, int idUsuario)
         {
-            var resultado = await _usuarioRepository.DeleteConta(idUsuario);
+            var resultado = await _metaFinanceiraRepository.DeleteMetaFinanceira(idMetaFinanceira, idUsuario);
+            if (_metaFinanceiraRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
     }

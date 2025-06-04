@@ -2,10 +2,10 @@ namespace gerenciador.financas.Application.ViewModel.Cliente
 {
     public class DespesaResponseViewModel
     {
-        public string Nome { get; set; }
-        public string Email { get; set; }
-        public string Senha { get; set; }
-        public DateTime DataNascimento { get; set; }
-        public string Telefone { get; set; }
+        public decimal Valor { get; set; }
+        public string Descricao { get; set; }
+        public DateTime Data { get; set; }
+        public bool Recorrente { get; set; }
+        public int Frequencia { get; set; }
     }
 }

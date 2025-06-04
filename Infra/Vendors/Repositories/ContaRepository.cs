@@ -75,7 +75,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             });
 
             if (linhasAfetadas != 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao atualizar a conta");
                 return false;
+            }
 
             return true;
         }
@@ -93,7 +96,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar as informações da conta");
+                _notificationPool.AddNotification(500, "Erro ao deletar conta");
                 return false;
             }
 

@@ -19,7 +19,7 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<Conta>> GetContas(int idUsuario)
+        public async Task<List<Conta>?> GetContas(int idUsuario)
         {
             var responseInfra = await _contaRepository.GetContas(idUsuario);
             if (HasNotifications)

@@ -9,9 +9,9 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 {
     public interface IReceitaRepository : INotifiable
     {
-        public Task<ReceitaResponseInfra?> GetReceita(int idUsuario);
-        public Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario);
-        public Task<bool> UpdateReceita(ReceitaRequestInfra receitaRequest, int idUsuario);
-        public Task<bool> DeleteReceita(int idUsuario);
+        public Task<List<ReceitaResponseInfra?>> GetReceita(int idUsuario);
+        public Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idConta, int idCategoria);
+        public Task<bool> UpdateReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta);
+        public Task<bool> DeleteReceita(int idUsuario, int idReceita);
     }
 }

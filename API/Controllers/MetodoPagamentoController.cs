@@ -22,17 +22,17 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("dados")]
-        [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
+        [HttpGet("metodospagamento")]
+        [ProducesResponseType(typeof(List<MetodoPagamentoResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDadosCadastrais([Required] int idUsuario)
+        public async Task<IActionResult> ObterMetodosPagamentoUsuario([Required] int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.GetDadosPessoais(idUsuario);
-                if (_notificationPool.HasNotifications())
+                var response = await _metodoPagamentoService.GetMetodosPagamentoUsuario(idUsuario);
+                if (_metodoPagamentoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -41,7 +41,11 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Ok(response.ToViewModel());
+                var viewModel = response
+                    .Select(m => m.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
             }
 
             catch (Exception ex)
@@ -50,16 +54,16 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("metodospagamento/cliente")]
+        [HttpPost("metodopagamento")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<IActionResult> InserirMetodoPagamento([Required][FromBody] MetodoPagamentoRequestViewModel metodoPagamentoRequest, [Required]int idUsuario, [Required] int idConta)
         {
             try
             {
-                 var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
-                if (_notificationPool.HasNotifications())
+                 var response = await _metodoPagamentoService.InsertMetodoPagamento(metodoPagamentoRequest, idUsuario, idConta);
+                if (_metodoPagamentoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -77,16 +81,19 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("metodopagamento/cliente")]
+        [HttpPut("metodopagamento")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
+        public async Task<IActionResult> AtualizarMetodoPagamento([Required][FromBody] MetodoPagamentoRequestViewModel metodoPagamentoRequest, 
+                                                                  [Required] int idUsuario, 
+                                                                  [Required] int idConta,
+                                                                  [Required] int idMetodoPagamento)
         {
             try
             {
-                 var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
-                if (_notificationPool.HasNotifications())
+                 var response = await _metodoPagamentoService.UpdateMetodoPagamento(metodoPagamentoRequest, idUsuario, idConta, idMetodoPagamento);
+                if (_metodoPagamentoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -104,17 +111,17 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("metodopagamento/cliente")]
+        [HttpDelete("metodopagamento")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery]int idUsuario)
+        public async Task<IActionResult> DeletarMetodoPagamento([Required][FromQuery]int idUsuario, [Required]int idMetodoPagamento)
         {
             try
             {
-                 var response = await _usuarioService.DeleteConta(idUsuario);
-                if (_notificationPool.HasNotifications())
+                 var response = await _metodoPagamentoService.DeleteMetodoPagamento(idUsuario, idMetodoPagamento);
+                if (_metodoPagamentoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 

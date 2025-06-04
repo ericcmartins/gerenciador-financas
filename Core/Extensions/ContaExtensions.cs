@@ -5,7 +5,7 @@ using gerenciador.financas.Infra.Vendors.Entities;
 
 namespace gerenciador.financas.Application.Extensions
 {
-    public static class ContaExtension
+    public static class ContaExtensions
     {
         public static Conta ToService(this ContaResponseInfra infra)
         {

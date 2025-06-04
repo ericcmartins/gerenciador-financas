@@ -10,8 +10,7 @@ using Core.ViewModel.gerenciador.financas.API.ViewModels;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class DespesaController : ControllerBase
+    public class DespesaController : Controller
     {
         private readonly IDespesaService _despesaService;
         private readonly NotificationPool _notificationPool;
@@ -23,17 +22,17 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("despesas/cliente")]
-        [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
+        [HttpGet("receitas/cliente")]
+        [ProducesResponseType(typeof(List<ReceitaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDadosCadastrais([Required] int idUsuario)
+        public async Task<IActionResult> ObterReceitasUsuario([Required] int idUsuario)
         {
             try
             {
-                var response = await _usuarioService.GetDadosPessoais(idUsuario);
-                if (_notificationPool.HasNotifications())
+                var response = await _receitaService.GetReceitas(idUsuario);
+                if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -42,7 +41,11 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Ok(response.ToViewModel());
+                var viewModel = response
+                    .Select(r => r.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
             }
 
             catch (Exception ex)
@@ -51,16 +54,20 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("despesa/cliente")]
+        [HttpPost("receita/cliente")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<IActionResult> InserirReceitas([Required][FromBody] ReceitaRequestViewModel receitaRequest,
+                                                         [Required]int idUsuario,                                                       ,
+                                                         [Required]int idCategoria,
+                                                         [Required] int idConta)
+
         {
             try
             {
-                 var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
-                if (_notificationPool.HasNotifications())
+                 var response = await _receitaService.InsertReceita(receitaRequest, idUsuario , idCategoria, idConta); 
+                if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -78,16 +85,20 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("despesa/cliente")]
+        [HttpPut("receita/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
+        public async Task<IActionResult> AtualizarReceita([Required][FromBody] ReceitaRequestViewModel receitaRequest, 
+                                                          [Required]int idUsuario,
+                                                          [Required]int idReceita,
+                                                          [Required]int idCategoria,
+                                                          [Required]int idConta)
         {
             try
             {
-                 var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
-                if (_notificationPool.HasNotifications())
+                 var response = await _receitaService.UpdateReceita(receitaRequest, idUsuario, idReceita, idCategoria, idConta);
+                if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -105,20 +116,20 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("despesa/cliente")]
+        [HttpDelete("receita/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required][FromQuery]int idUsuario)
+        public async Task<IActionResult> ExcluirReceita([Required] int idUsuario, [Required] int idReceita)
         {
             try
             {
-                 var response = await _usuarioService.DeleteConta(idUsuario);
-                if (_notificationPool.HasNotifications())
+                 var response = await _receitaService.DeleteReceita(idUsuario, idReceita);  
+                if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
 
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);

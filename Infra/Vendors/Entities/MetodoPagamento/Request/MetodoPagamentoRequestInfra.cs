@@ -6,7 +6,6 @@ namespace gerenciador.financas.Infra.Vendors.Entities
         public string? Descricao { get; set; }
         public Decimal? Limite { get; set; }
         public string Tipo { get; set; }
-        public int idConta {  get; set; }
     }
 
 }

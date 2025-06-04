@@ -2,11 +2,10 @@ namespace gerenciador.financas.API.ViewModel.Cliente
 {
     public class MetodoPagamentoRequestViewModel
      {
-        public string? Nome { get; set; }
-        public string? Email { get; set; }
-        public string? Senha { get; set; }
-        public DateTime? DataNascimento { get; set; }
-        public string? Telefone { get; set; }
+        public string Nome { get; set; }
+        public string? Descricao { get; set; }
+        public Decimal? Limite { get; set; }
+        public string Tipo { get; set; }
     }
 
 }
