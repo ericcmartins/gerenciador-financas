@@ -6,54 +6,53 @@ using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
 {
-    public class ReceitaService : IReceitaService
+    public class DespesaService : IDespesaService
     {
-        private readonly IReceitaRepository _receitaRepository;
+        private readonly IDespesaRepository _despesaRepository;
         private readonly NotificationPool _notificationPool;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public ReceitaService(IReceitaRepository receitaRepository, 
+        public DespesaService(IDespesaRepository despesaRepository, 
                               NotificationPool notificationPool)
         {
-            _receitaRepository = receitaRepository;
+            _despesaRepository = despesaRepository;
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<Receita?>> GetReceitas(int idUsuario)
+      public async Task<List<Despesa?>> GetDespesas(int idUsuario)
         {
-            var responseInfra = await _receitaRepository.GetReceita(idUsuario);
-            if (_receitaRepository.HasNotifications)
+            var responseInfra = await _despesaRepository.GetDespesas(idUsuario);
+            if (_despesaRepository.HasNotifications)
                 return null;
 
-            var receitas = responseInfra
-                .Select(r => r.ToService())
+            var despesas = responseInfra
+                .Select(d => d.ToService())
                 .ToList();
 
-            return receitas;
+            return despesas;
         }
 
-        public async Task<bool> InsertReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idConta, int idCategoria)
+        public async Task<bool> InsertDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idConta, int idCategoria, int idMetodoPagamento)
         {
-            var resultado = await _receitaRepository.InsertReceita(receitaRequest.ToInfra(), idUsuario, idConta, idCategoria);
-            if (_receitaRepository.HasNotifications)
+            var resultado = await _despesaRepository.InsertDespesa(despesaRequest.ToInfra(), idUsuario, idConta, idCategoria, idMetodoPagamento);
+            if (_despesaRepository.HasNotifications)
                 return false;
 
             return resultado;
         }
 
-        public async Task<bool> UpdateReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
-        {
-            var resultado = await _receitaRepository.UpdateReceita(receitaRequest.ToInfra(), idUsuario, idReceita, idCategoria, idConta);
-            if (_receitaRepository.HasNotifications)
+        public async Task<bool> UpdateDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idDespesa, int idCategoria, int idConta, int idMetodoPagamento)        {
+            var resultado = await _despesaRepository.UpdateDespesa(despesaRequest.ToInfra(), idUsuario, idDespesa, idConta, idCategoria, idMetodoPagamento);
+            if (_despesaRepository.HasNotifications)
                 return false;
 
             return resultado;
         }
         
-        public async Task<bool> DeleteReceita(int idUsuario, int idReceita)
+        public async Task<bool> DeleteDespesa(int idUsuario, int idDespesa)
         {
-            var resultado = await _receitaRepository.DeleteReceita(idUsuario, idReceita);
-           if (_receitaRepository.HasNotifications)
+            var resultado = await _despesaRepository.DeleteDespesa(idUsuario, idDespesa);
+           if (_despesaRepository.HasNotifications)
                 return false;
 
             return resultado;

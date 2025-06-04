@@ -22,17 +22,17 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("receitas/cliente")]
-        [ProducesResponseType(typeof(List<ReceitaResponseViewModel>), StatusCodes.Status200OK)]
+        [HttpGet("despesas/cliente")]
+        [ProducesResponseType(typeof(List<DespesaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterReceitasUsuario([Required] int idUsuario)
+        public async Task<IActionResult> ObterDespesasUsuario([Required] int idUsuario)
         {
             try
             {
-                var response = await _receitaService.GetReceitas(idUsuario);
-                if (_receitaService.HasNotifications)
+                var response = await _despesaService.GetDespesas(idUsuario);
+                if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -42,7 +42,7 @@ namespace gerenciador.financas.API.Controllers
                 }
 
                 var viewModel = response
-                    .Select(r => r.ToViewModel())
+                    .Select(d => d.ToViewModel())
                     .ToList();
 
                 return Ok(viewModel);
@@ -54,20 +54,21 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("receita/cliente")]
+        [HttpPost("despesa/cliente")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirReceitas([Required][FromBody] ReceitaRequestViewModel receitaRequest,
-                                                         [Required]int idUsuario,                                                       ,
+        public async Task<IActionResult> InserirDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest,
+                                                         [Required]int idUsuario,                                                       
                                                          [Required]int idCategoria,
-                                                         [Required] int idConta)
+                                                         [Required]int idConta,
+                                                         [Required]int idMetodoPagamento)
 
         {
             try
             {
-                 var response = await _receitaService.InsertReceita(receitaRequest, idUsuario , idCategoria, idConta); 
-                if (_receitaService.HasNotifications)
+                var response = await _despesaService.InsertDespesa(despesaRequest, idUsuario, idCategoria, idConta, idMetodoPagamento);
+                if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -85,20 +86,21 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("receita/cliente")]
+        [HttpPut("despesa/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarReceita([Required][FromBody] ReceitaRequestViewModel receitaRequest, 
+        public async Task<IActionResult> AtualizarDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest, 
                                                           [Required]int idUsuario,
-                                                          [Required]int idReceita,
+                                                          [Required]int idDespesa,
                                                           [Required]int idCategoria,
-                                                          [Required]int idConta)
+                                                          [Required]int idConta,
+                                                          [Required]int idMetodoPagamento)
         {
             try
             {
-                 var response = await _receitaService.UpdateReceita(receitaRequest, idUsuario, idReceita, idCategoria, idConta);
-                if (_receitaService.HasNotifications)
+                var response = await _despesaService.UpdateDespesa(despesaRequest, idUsuario, idDespesa, idCategoria, idConta, idMetodoPagamento);
+                if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -116,17 +118,17 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("receita/cliente")]
+        [HttpDelete("despesa/cliente")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirReceita([Required] int idUsuario, [Required] int idReceita)
+        public async Task<IActionResult> ExcluirDespesa([Required] int idUsuario, [Required] int idDespesa)
         {
             try
             {
-                 var response = await _receitaService.DeleteReceita(idUsuario, idReceita);  
-                if (_receitaService.HasNotifications)
+                var response = await _despesaService.DeleteDespesa(idUsuario, idDespesa);
+                if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
                     
