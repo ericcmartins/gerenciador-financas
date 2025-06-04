@@ -9,9 +9,9 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 {
     public interface IDespesaRepository : INotifiable
     {
-        public Task<DespesaResponseInfra?> GetDespesas(int idUsuario, int periodo);
-        public Task<bool> InsertDespesa(DespesaRequestInfra despesaRequest, int idUsuario);
-        public Task<bool> UpdateConta(DespesaRequestInfra despesaRequest, int idUsuario);
-        public Task<bool> DeleteDespesa(List<int> idDespesa, int idUsuario);
+        public Task<List<DespesaResponseInfra?>> GetDespesas(int idUsuario);
+        public Task<bool> InsertDespesa(DespesaRequestInfra receitaRequest, int idUsuario, int idConta, int idCategoria, int idMetodoPagamento);
+        public Task<bool> UpdateDespesa(DespesaRequestInfra receitaRequest, int idUsuario, int idDespesa, int idCategoria, int idConta, int idMetodoPagamento);
+        public Task<bool> DeleteDespesa(int idUsuario, int idDespesa);
     }
 }

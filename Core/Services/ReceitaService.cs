@@ -56,6 +56,7 @@ namespace gerenciador.financas.Application.Services
            if (_receitaRepository.HasNotifications)
                 return false;
 
+
             return resultado;
         }
     }
