@@ -19,7 +19,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<DespesaResponseInfra?>> GetDespesas(int idUsuario)
+        public async Task<List<DespesaResponseInfra?>> GetDespesas(int idUsuario, int? periodo)
         {
             using var connection = _connectionHandler.CreateConnection();
 

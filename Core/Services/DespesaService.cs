@@ -19,9 +19,9 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-      public async Task<List<Despesa?>> GetDespesas(int idUsuario)
+      public async Task<List<Despesa?>> GetDespesas(int idUsuario, int? periodo)
         {
-            var responseInfra = await _despesaRepository.GetDespesas(idUsuario);
+            var responseInfra = await _despesaRepository.GetDespesas(idUsuario, periodo);
             if (_despesaRepository.HasNotifications)
                 return null;
 

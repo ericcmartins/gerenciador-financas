@@ -27,11 +27,11 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDespesasUsuario([Required] int idUsuario)
+        public async Task<IActionResult> ObterDespesasUsuario([Required] int idUsuario, int periodo)
         {
             try
             {
-                var response = await _despesaService.GetDespesas(idUsuario);
+                var response = await _despesaService.GetDespesas(idUsuario, periodo);
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();

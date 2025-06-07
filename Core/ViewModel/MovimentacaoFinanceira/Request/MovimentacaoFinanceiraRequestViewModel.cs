@@ -1,7 +1,7 @@
-namespace gerenciador.financas.Infra.Vendors.Entities
+namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class MovimentacaoFinanceiraRequestInfra
-    {
+    public class MovimentacaoFinanceiraRequestViewModel
+     {
         public string TipoMovimentacao { get; set; }
         public Decimal Valor { get; set; }
         public DateTime Data { get; set; }
