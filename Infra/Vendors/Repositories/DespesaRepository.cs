@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -23,12 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"SELECT IdDespesa, Valor, Descricao, Data, Recorrente, Frequencia, 
-                                IdUsuario, IdConta, IdCategoria, IdMetodoPagamento
-                         FROM Despesa
-                         WHERE IdUsuario = @IdUsuario";
-
-            var response = await connection.QueryAsync<DespesaResponseInfra>(instrucaoSql, new { IdUsuario = idUsuario });
+            var response = await connection.QueryAsync<DespesaResponseInfra>(SqlQueries.Despesa.GetDespesas, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
 
@@ -42,12 +38,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"INSERT INTO Despesa (Valor, Descricao, Data, Recorrente, Frequencia, 
-                                               IdUsuario, IdConta, IdCategoria, IdMetodoPagamento)
-                         VALUES (@Valor, @Descricao, @Data, @Recorrente, @Frequencia, 
-                                 @IdUsuario, @IdConta, @IdCategoria, @IdMetodoPagamento)";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.InsertDespesa, new
             {
                 despesaRequest.Valor,
                 despesaRequest.Descricao,
@@ -73,19 +64,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"UPDATE Despesa
-                         SET Valor = COALESCE(@Valor, Valor),
-                             Descricao = COALESCE(@Descricao, Descricao),
-                             Data = COALESCE(@Data, Data),
-                             Recorrente = COALESCE(@Recorrente, Recorrente),
-                             Frequencia = COALESCE(@Frequencia, Frequencia),
-                             IdConta = COALESCE(@IdConta, IdConta),
-                             IdCategoria = COALESCE(@IdCategoria, IdCategoria),
-                             IdMetodoPagamento = COALESCE(@IdMetodoPagamento, IdMetodoPagamento)
-                         WHERE IdUsuario = @IdUsuario
-                           AND IdDespesa = @IdDespesa";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.UpdateDespesa, new
             {
                 despesaRequest.Valor,
                 despesaRequest.Descricao,
@@ -112,11 +91,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"DELETE FROM Despesa
-                         WHERE IdUsuario = @IdUsuario
-                           AND IdDespesa = @IdDespesa";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.DeleteDespesa, new
             {
                 IdUsuario = idUsuario,
                 IdDespesa = idDespesa
@@ -130,5 +105,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             return true;
         }
+
     }
 }

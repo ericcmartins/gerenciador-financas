@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -23,29 +24,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @" SELECT 
-                    IdMovimentacao,
-                    TipoMovimentacao,
-                    Valor,
-                    Data,
-                    Descricao,
-                    FkContaIdConta,
-                    FkUsuarioIdUsuario
-                FROM MovimentacaoConta
-                WHERE FkUsuarioIdUsuario = @IdUsuario
-                /**wherePeriodo**/
-                ORDER BY Data DESC
-            ";
-
-            // se for passado um período (em meses), filtra pelo campo Data
-            if (periodo.HasValue)
-            {
-                instrucaoSql = instrucaoSql.Replace("/**wherePeriodo**/", "AND Data >= DATEADD(MONTH, -@Periodo, GETDATE())");
-            }
-            else
-            {
-                instrucaoSql = instrucaoSql.Replace("/**wherePeriodo**/", "");
-            }
+            var instrucaoSql = SqlQueries.MovimentacaoFinanceira.ApplyPeriodoFilter(
+                SqlQueries.MovimentacaoFinanceira.GetMovimentacoesFinanceiras, periodo);
 
             var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(
                 instrucaoSql, new { IdUsuario = idUsuario, Periodo = periodo }
@@ -58,5 +38,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             return responseList;
         }
+
+
     }
 }

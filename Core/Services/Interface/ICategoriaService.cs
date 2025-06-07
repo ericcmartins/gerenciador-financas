@@ -8,7 +8,7 @@ namespace gerenciador.financas.Application.Services
     {
         public Task<List<Categoria>?> GetCategorias(int idUsuario);
         public Task<bool> InsertCategoria(CategoriaRequestViewModel categoriaRequest, int idUsuario);
-        public Task<bool> UpdateCategoria(CategoriaRequestViewModel categoriaRequest, int idUsuario);
-        public Task<bool> DeleteCategoria(string nomeCategoria, int idUsuario);
+        public Task<bool> UpdateCategoria(CategoriaRequestViewModel categoriaRequest, int idCategoria, int idUsuario);
+        public Task<bool> DeleteCategoria(int idCategoria, int idUsuario);
     }
 }

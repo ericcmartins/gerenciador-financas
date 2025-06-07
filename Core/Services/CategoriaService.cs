@@ -38,18 +38,18 @@ namespace gerenciador.financas.Application.Services
             return resultado;
         }
 
-        public async Task<bool> UpdateCategoria(CategoriaRequestViewModel categoriaRequest, int idUsuario)
+        public async Task<bool> UpdateCategoria(CategoriaRequestViewModel categoriaRequest, int idCategoria, int idUsuario)
         {
-            var resultado = await _categoriaRepository.UpdateCategoria(categoriaRequest.ToInfra(), idUsuario);
+            var resultado = await _categoriaRepository.UpdateCategoria(categoriaRequest.ToInfra(), idCategoria, idUsuario);
             if (_categoriaRepository.HasNotifications)
                 return false;
 
             return resultado;
         }
         
-        public async Task<bool> DeleteCategoria(string nomeCategoria, int idUsuario)
+        public async Task<bool> DeleteCategoria(int idCategoria, int idUsuario)
         {
-            var resultado = await _categoriaRepository.DeleteCategoria(nomeCategoria, idUsuario);
+            var resultado = await _categoriaRepository.DeleteCategoria(idCategoria, idUsuario);
             if (_categoriaRepository.HasNotifications)
                 return false;
 

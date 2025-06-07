@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -23,11 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"SELECT IdCategoria, Nome, Descricao, IdUsuario
-                                 FROM Categoria
-                                 WHERE IdUsuario = @idUsuario";
-
-            var response = await connection.QueryAsync<CategoriaResponseInfra>(instrucaoSql, new { idUsuario });
+            var response = await connection.QueryAsync<CategoriaResponseInfra>(SqlQueries.Categoria.GetCategorias, new { idUsuario });
 
             var responseList = response.ToList();
 
@@ -41,12 +38,11 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"INSERT INTO Categoria (Nome, Descricao, IdUsuario)
-                                 VALUES (@Nome, @Descricao, @IdUsuario)";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.InsertCategoria, new
             {
-                categoriaRequest.Nome, categoriaRequest.Descricao, IdUsuario = idUsuario
+                categoriaRequest.Nome,
+                categoriaRequest.Descricao,
+                IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
@@ -58,19 +54,16 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-        public async Task<bool> UpdateCategoria(CategoriaRequestInfra categoriaRequest, int idUsuario) //ver se troco para id depois
+        public async Task<bool> UpdateCategoria(CategoriaRequestInfra categoriaRequest, int idCategoria, int idUsuario)
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"UPDATE Categoria
-                     SET Nome = COALESCE(@Nome, Nome),
-                         Descricao = COALESCE(@Descricao, Descricao)
-                     WHERE Nome = @NomeFiltro
-                       AND IdUsuario = @IdUsuario";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.UpdateCategoria, new
             {
-                categoriaRequest.Nome, categoriaRequest.Descricao, IdUsuario = idUsuario
+                categoriaRequest.Nome,
+                categoriaRequest.Descricao,
+                IdCategoria = idCategoria,
+                IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
@@ -82,17 +75,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-        public async Task<bool> DeleteCategoria(string nomeCategoria, int idUsuario) //ver se troco pro id também
+        public async Task<bool> DeleteCategoria(int idCategoria, int idUsuario)
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"DELETE FROM Categoria
-                                 WHERE Nome = @NomeCategoria
-                                   AND IdUsuario = @IdUsuario";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.DeleteCategoria, new
             {
-                NomeCategoria = nomeCategoria, IdUsuario = idUsuario
+                IdCategoria = idCategoria,
+                IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)

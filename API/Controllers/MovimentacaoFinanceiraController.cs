@@ -22,7 +22,7 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("despesas/cliente")]
+        [HttpGet("movimentacoesFinanceiras/cliente")]
         [ProducesResponseType(typeof(List<MovimentacaoFinanceiraResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]

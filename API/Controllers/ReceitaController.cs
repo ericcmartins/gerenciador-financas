@@ -59,7 +59,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InserirReceitas([Required][FromBody] ReceitaRequestViewModel receitaRequest,
-                                                         [Required]int idUsuario,                                                       ,
+                                                         [Required]int idUsuario,
                                                          [Required]int idCategoria,
                                                          [Required] int idConta)
 

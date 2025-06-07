@@ -3,6 +3,7 @@ using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
 using Microsoft.Data.SqlClient;
 using System.Net;
+using gerenciador.financas.Infra.Vendors.Queries;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
@@ -12,7 +13,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         private readonly NotificationPool _notificationPool;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public UsuarioRepository(ISqlServerConnectionHandler connectionHandler, 
+
+        public UsuarioRepository(ISqlServerConnectionHandler connectionHandler,
                                  NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
@@ -22,11 +24,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public async Task<DadosPessoaisResponseInfra?> GetDadosPessoais(int idUsuario)
         {
             using var connection = _connectionHandler.CreateConnection();
-            var instrucaoSql = @"SELECT IdUsuario, Nome, Email, Senha, DataNascimento, Telefone 
-                                FROM Usuario 
-                                WHERE IdUsuario = @idUsuario";
 
-            var response = await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(instrucaoSql, new { idUsuario });
+            var response = await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(SqlQueries.Usuario.GetDadosPessoais, new { idUsuario });
 
             if (response == null)
                 _notificationPool.AddNotification(404, "Usuario não encontrado");
@@ -38,10 +37,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"INSERT INTO Usuario (Nome, Email, Senha, DataNascimento, Telefone)
-                                   VALUES (@Nome, @Email, @Senha, @DataNascimento, @Telefone)";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, dadosPessoais);
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.InsertDadosPessoais, dadosPessoais);
             if (linhasAfetadas != 1)
             {
                 _notificationPool.AddNotification(500, "Erro ao cadastrar o usuário");
@@ -55,15 +51,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"UPDATE Usuario 
-                                    SET Nome = COALESCE(@Nome, Nome),
-                                        Email = COALESCE(@Email, Email),
-                                        Senha = COALESCE(@Senha, Senha),
-                                        DataNascimento = COALESCE(@DataNascimento, DataNascimento),
-                                        Telefone = COALESCE(@Telefone, Telefone)
-                                    WHERE IdUsuario = @idUsuario";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.UpdateDadosPessoais, new
             {
                 dadosPessoais.Nome,
                 dadosPessoais.Email,
@@ -86,9 +74,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"DELETE FROM Usuario WHERE IdUsuario = @idUsuario";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new { idUsuario });
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.DeleteConta, new { idUsuario });
             if (linhasAfetadas != 1)
             {
                 _notificationPool.AddNotification(404, "Usuário não encontrado");

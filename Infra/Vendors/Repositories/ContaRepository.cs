@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -23,11 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"SELECT IdConta, NumeroConta, Tipo, Instituicao, IdUsuario
-                                 FROM Conta
-                                 WHERE IdUsuario = @idUsuario";
-
-            var response = await connection.QueryAsync<ContaResponseInfra>(instrucaoSql, new { idUsuario });
+            var response = await connection.QueryAsync<ContaResponseInfra>(SqlQueries.Conta.GetContas, new { idUsuario });
 
             var responseList = response.ToList();
 
@@ -41,18 +38,18 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"INSERT INTO Conta (NumeroConta, Tipo, Instituicao, IdUsuario)
-                                 VALUES (@NumeroConta, @Tipo, @Instituicao, @IdUsuario)";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.InsertConta, new
             {
-                contaRequest.NumeroConta, contaRequest.Tipo, contaRequest.Instituicao, IdUsuario = idUsuario
+                contaRequest.NumeroConta,
+                contaRequest.Tipo,
+                contaRequest.Instituicao,
+                IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
             {
-               _notificationPool.AddNotification(500, "Erro ao cadastrar conta");
-               return false;
+                _notificationPool.AddNotification(500, "Erro ao cadastrar conta");
+                return false;
             }
 
             return true;
@@ -62,16 +59,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"UPDATE Conta
-                                SET Tipo = COALESCE(@Tipo, Tipo),
-                                    Instituicao = COALESCE(@Instituicao, Instituicao)
-                                WHERE NumeroConta = @NumeroConta
-                                  AND IdUsuario = @IdUsuario
-                                ";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.UpdateConta, new
             {
-                contaRequest.Tipo, contaRequest.Instituicao, contaRequest.NumeroConta, IdUsuario = idUsuario
+                contaRequest.Tipo,
+                contaRequest.Instituicao,
+                contaRequest.NumeroConta,
+                IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
@@ -87,11 +80,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"DELETE FROM Conta WHERE NumeroConta = @NumeroConta AND IdUsuario = @IdUsuario";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.DeleteConta, new
             {
-                NumeroConta = numeroConta, IdUsuario = idUsuario
+                NumeroConta = numeroConta,
+                IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)

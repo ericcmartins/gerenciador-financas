@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -24,11 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"SELECT IdMetodo, Nome, Descricao, Limite, Tipo, IdUsuario, IdConta
-                                 FROM MetodoPagamento
-                                 WHERE IdUsuario = @IdUsuario";
-            
-            var response = await connection.QueryAsync<MetodoPagamentoResponseInfra>(instrucaoSql, new { idUsuario });
+            var response = await connection.QueryAsync<MetodoPagamentoResponseInfra>(SqlQueries.MetodoPagamento.GetMetodosPagamentoUsuario, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
 
@@ -42,13 +38,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"INSERT INTO MetodoPagamento (Nome, Descricao, Limite, Tipo, IdUsuario, IdConta)
-                                 VALUES (@Nome, @Descricao, @Limite, @Tipo, @IdUsuario, @IdConta)";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.InsertMetodoPagamento, new
             {
-                metodoPagamentoRequest.Nome, metodoPagamentoRequest.Descricao,metodoPagamentoRequest.Limite,
-                metodoPagamentoRequest.Tipo, IdUsuario = idUsuario, IdConta = idConta
+                metodoPagamentoRequest.Nome,
+                metodoPagamentoRequest.Descricao,
+                metodoPagamentoRequest.Limite,
+                metodoPagamentoRequest.Tipo,
+                IdUsuario = idUsuario,
+                IdConta = idConta
             });
 
             if (linhasAfetadas != 1)
@@ -64,19 +61,15 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"UPDATE MetodoPagamento
-                         SET Nome = COALESCE(@Nome, Nome),
-                             Descricao = COALESCE(@Descricao, Descricao),
-                             Limite = COALESCE(@Limite, Limite),
-                             Tipo = COALESCE(@Tipo, Tipo),
-                             IdConta = @IdConta
-                         WHERE IdUsuario = @IdUsuario
-                           AND Nome = @Nome";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.UpdateMetodoPagamento, new
             {
-                metodoPagamentoRequest.Nome, metodoPagamentoRequest.Descricao, metodoPagamentoRequest.Limite,
-                metodoPagamentoRequest.Tipo, IdConta = idConta, IdUsuario = idUsuario
+                metodoPagamentoRequest.Nome,
+                metodoPagamentoRequest.Descricao,
+                metodoPagamentoRequest.Limite,
+                metodoPagamentoRequest.Tipo,
+                IdConta = idConta,
+                IdUsuario = idUsuario,
+                IdMetodo = idMetodoPagamento
             });
 
             if (linhasAfetadas != 1)
@@ -88,16 +81,11 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-
         public async Task<bool> DeleteMetodoPagamento(int idUsuario, int idMetodoPagamento)
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"DELETE FROM MetodoPagamento
-                                 WHERE IdUsuario = @IdUsuario
-                                   AND IdMetodo = @IdMetodo";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.DeleteMetodoPagamento, new
             {
                 IdUsuario = idUsuario,
                 IdMetodo = idMetodoPagamento

@@ -1,5 +1,5 @@
 using gerenciador.financas.Application.Services;
-using gerenciador.financas.Infra.Vendors.Notification;
+using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.OpenApi.Models;

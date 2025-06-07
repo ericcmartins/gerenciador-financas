@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -23,12 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"SELECT IdReceita, Valor, Descricao, Data, Recorrente, Frequencia, 
-                                FkUsuarioIdUsuario, FkContaIdConta, FkCategoriaUsuarioIdCategoria
-                         FROM Receita
-                         WHERE FkUsuarioIdUsuario = @IdUsuario";
-
-            var response = await connection.QueryAsync<ReceitaResponseInfra>(instrucaoSql, new { IdUsuario = idUsuario });
+            var response = await connection.QueryAsync<ReceitaResponseInfra>(SqlQueries.Receita.GetReceitas, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
 
@@ -38,26 +34,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-
         public async Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idConta, int idCategoria)
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"INSERT INTO Receita (Valor, Descricao, Data, Recorrente, Frequencia, 
-                                               FkUsuarioIdUsuario, FkContaIdConta, FkCategoriaUsuarioIdCategoria)
-                         VALUES (@Valor, @Descricao, @Data, @Recorrente, @Frequencia, 
-                                 @FkUsuarioIdUsuario, @FkContaIdConta, @FkCategoriaUsuarioIdCategoria)";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.InsertReceita, new
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
                 receitaRequest.Data,
                 receitaRequest.Recorrente,
                 receitaRequest.Frequencia,
-                FkUsuarioIdUsuario = idUsuario,
-                FkContaIdConta = idConta,
-                FkCategoriaUsuarioIdCategoria = idCategoria
+                IdUsuario = idUsuario,
+                IdConta = idConta,
+                IdCategoria = idCategoria
             });
 
             if (linhasAfetadas != 1)
@@ -69,32 +59,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-
         public async Task<bool> UpdateReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"UPDATE Receita
-                         SET Valor = COALESCE(@Valor, Valor),
-                             Descricao = COALESCE(@Descricao, Descricao),
-                             Data = COALESCE(@Data, Data),
-                             Recorrente = COALESCE(@Recorrente, Recorrente),
-                             Frequencia = COALESCE(@Frequencia, Frequencia),
-                             FkContaIdConta = COALESCE(@FkContaIdConta, FkContaIdConta),
-                             FkCategoriaUsuarioIdCategoria = COALESCE(@FkCategoriaUsuarioIdCategoria, FkCategoriaUsuarioIdCategoria)
-                         WHERE FkUsuarioIdUsuario = @FkUsuarioIdUsuario
-                           AND IdReceita = @IdReceita";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.UpdateReceita, new
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
                 receitaRequest.Data,
                 receitaRequest.Recorrente,
                 receitaRequest.Frequencia,
-                FkContaIdConta = idConta,
-                FkCategoriaUsuarioIdCategoria = idCategoria,
-                FkUsuarioIdUsuario = idUsuario,
+                IdConta = idConta,
+                IdCategoria = idCategoria,
+                IdUsuario = idUsuario,
                 IdReceita = idReceita
             });
 
@@ -111,13 +89,9 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"DELETE FROM Receita
-                         WHERE FkUsuarioIdUsuario = @FkUsuarioIdUsuario
-                           AND IdReceita = @IdReceita";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.DeleteReceita, new
             {
-                FkUsuarioIdUsuario = idUsuario,
+                IdUsuario = idUsuario,
                 IdReceita = idReceita
             });
 

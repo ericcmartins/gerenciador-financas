@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using Azure;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
+using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
@@ -24,11 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"SELECT Descricao, ValorAlvo, ValorAtual, DataInicio, DataLimite, Concluida, IdUsuario
-                                 FROM MetaFinanceira
-                                 WHERE IdUsuario = @IdUsuario";
-
-            var response = await connection.QueryAsync<MetaFinanceiraResponseInfra>(instrucaoSql, new { idUsuario });
+            var response = await connection.QueryAsync<MetaFinanceiraResponseInfra>(SqlQueries.MetaFinanceira.GetMetasFinanceiras, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
 
@@ -42,13 +38,15 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"INSERT INTO MetaFinanceira (Descricao, ValorAlvo, ValorAtual, DataInicio, DataLimite, Concluida, IdUsuario)
-                                 VALUES (@Descricao, @ValorAlvo, @ValorAtual, @DataInicio, @DataLimite, @Concluida, @IdUsuario)";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.InsertMetaFinanceira, new
             {
-                metaFinanceiraRequest.Descricao, metaFinanceiraRequest.ValorAlvo, metaFinanceiraRequest.ValorAtual,
-                metaFinanceiraRequest.DataInicio, metaFinanceiraRequest.DataLimite, metaFinanceiraRequest.Concluida, IdUsuario = idUsuario
+                metaFinanceiraRequest.Descricao,
+                metaFinanceiraRequest.ValorAlvo,
+                metaFinanceiraRequest.ValorAtual,
+                metaFinanceiraRequest.DataInicio,
+                metaFinanceiraRequest.DataLimite,
+                metaFinanceiraRequest.Concluida,
+                IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
@@ -60,51 +58,44 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-        public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraResponse, int idUsuario, int idMetaFinanceira)
+        public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario, int idMetaFinanceira)
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"UPDATE MetaFinanceira
-                     SET Descricao = COALESCE(@Descricao, Descricao),
-                         ValorAlvo = COALESCE(@ValorAlvo, ValorAlvo),
-                         ValorAtual = COALESCE(@ValorAtual, ValorAtual),
-                         DataInicio = COALESCE(@DataInicio, DataInicio),
-                         DataLimite = COALESCE(@DataLimite, DataLimite),
-                         Concluida = COALESCE(@Concluida, Concluida)
-                     WHERE IdUsuario = @IdUsuario
-                       AND IdMeta = @IdMeta";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.UpdateMetaFinanceira, new
             {
-                metaFinanceiraResponse.Descricao, metaFinanceiraResponse.ValorAlvo, metaFinanceiraResponse.ValorAtual,
-                metaFinanceiraResponse.DataInicio, metaFinanceiraResponse.DataLimite, metaFinanceiraResponse.Concluida, IdUsuario = idUsuario
+                metaFinanceiraRequest.Descricao,
+                metaFinanceiraRequest.ValorAlvo,
+                metaFinanceiraRequest.ValorAtual,
+                metaFinanceiraRequest.DataInicio,
+                metaFinanceiraRequest.DataLimite,
+                metaFinanceiraRequest.Concluida,
+                IdUsuario = idUsuario,
+                IdMetaFinanciera = idMetaFinanceira 
             });
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar meta");
+                _notificationPool.AddNotification(500, "Erro ao atualizar meta financeira");
                 return false;
             }
 
             return true;
         }
 
-        public async Task<bool> DeleteMetaFinanceira(int idMeta, int idUsuario)
+        public async Task<bool> DeleteMetaFinanceira(int idMetaFinanceira, int idUsuario)
         {
             using var connection = _connectionHandler.CreateConnection();
 
-            var instrucaoSql = @"DELETE FROM MetaFinanceira
-                                 WHERE IdUsuario = @IdUsuario
-                                   AND IdMeta = @IdMeta";
-
-            var linhasAfetadas = await connection.ExecuteAsync(instrucaoSql, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.DeleteMetaFinanceira, new
             {
-                IdUsuario = idUsuario, IdMeta = idMeta
+                IdUsuario = idUsuario,
+                IdMetaFinanceira = idMetaFinanceira
             });
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar meta");
+                _notificationPool.AddNotification(500, "Erro ao deletar meta financeira");
                 return false;
             }
 
