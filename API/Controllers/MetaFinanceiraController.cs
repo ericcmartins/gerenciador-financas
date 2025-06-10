@@ -62,7 +62,7 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _metaFinanceiraService.InsertMetaFinanceira(metaFinanceiraRequest, idUsuario);
+                var response = await _metaFinanceiraService.InsertMetaFinanceira(metaFinanceiraRequest, idUsuario);
                 if (_metaFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -72,7 +72,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created();
+                return Created(string.Empty, "meta financeira inserida com sucesso");
             }
 
             catch (Exception ex)
@@ -91,7 +91,7 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _metaFinanceiraService.UpdateMetaFinanceira(metaFinanceiraRequest, idUsuario, idMetaFinanceira);
+                var response = await _metaFinanceiraService.UpdateMetaFinanceira(metaFinanceiraRequest, idUsuario, idMetaFinanceira);
                 if (_metaFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -119,7 +119,7 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _metaFinanceiraService.DeleteMetaFinanceira(idMetaFinanceira, idUsuario);
+                var response = await _metaFinanceiraService.DeleteMetaFinanceira(idMetaFinanceira, idUsuario);
                 if (_metaFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();

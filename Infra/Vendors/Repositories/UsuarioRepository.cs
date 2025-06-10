@@ -23,7 +23,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<DadosPessoaisResponseInfra?> GetDadosPessoais(int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var response = await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(SqlQueries.Usuario.GetDadosPessoais, new { idUsuario });
 
@@ -35,7 +35,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestInfra dadosPessoais)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.InsertDadosPessoais, dadosPessoais);
             if (linhasAfetadas != 1)
@@ -49,7 +49,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestInfra dadosPessoais, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.UpdateDadosPessoais, new
             {
@@ -72,7 +72,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> DeleteConta(int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.DeleteConta, new { idUsuario });
             if (linhasAfetadas != 1)

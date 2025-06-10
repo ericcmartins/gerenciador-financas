@@ -72,7 +72,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created();
+                return Created(string.Empty, "conta inserida com sucesso");
             }
 
             catch (Exception ex)
@@ -85,11 +85,11 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarConta([Required][FromBody] ContaRequestViewModel conta, [Required]int idUsuario)
+        public async Task<IActionResult> AtualizarConta([Required][FromBody] ContaRequestViewModel conta, [Required]int idUsuario, [Required] int idConta)
         {
             try
             {
-                 var response = await _contaService.UpdateConta(conta, idUsuario);
+                 var response = await _contaService.UpdateConta(conta, idUsuario, idConta);
                 if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -113,11 +113,11 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirConta([Required]int idUsuario, [Required]string numeroConta)
+        public async Task<IActionResult> ExcluirConta([Required]int idUsuario, [Required]int idConta)
         {
             try
             {
-                var response = await _contaService.DeleteConta(numeroConta, idUsuario);
+                var response = await _contaService.DeleteConta(idConta, idUsuario);
                 if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();

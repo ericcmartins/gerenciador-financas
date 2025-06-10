@@ -22,7 +22,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<List<ReceitaResponseInfra?>> GetReceita(int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var response = await connection.QueryAsync<ReceitaResponseInfra>(SqlQueries.Receita.GetReceitas, new { IdUsuario = idUsuario });
 
@@ -36,7 +37,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idConta, int idCategoria)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.InsertReceita, new
             {
@@ -61,7 +63,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> UpdateReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.UpdateReceita, new
             {
@@ -87,7 +90,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> DeleteReceita(int idUsuario, int idReceita)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.DeleteReceita, new
             {

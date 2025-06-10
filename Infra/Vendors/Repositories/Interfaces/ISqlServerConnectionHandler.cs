@@ -4,6 +4,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 {
     public interface ISqlServerConnectionHandler
     {
-        IDbConnection CreateConnection();
+        Task<IDbConnection> CreateConnectionAsync();
     }
 }

@@ -41,18 +41,18 @@ namespace gerenciador.financas.Application.Services
             return resultado;
         }
 
-        public async Task<bool> UpdateConta(ContaRequestViewModel conta, int idUsuario)
+        public async Task<bool> UpdateConta(ContaRequestViewModel conta, int idUsuario, int idConta)
         {
-            var resultado = await _contaRepository.UpdateConta(conta.ToInfra(), idUsuario);
+            var resultado = await _contaRepository.UpdateConta(conta.ToInfra(), idUsuario, idConta);
             if (_contaRepository.HasNotifications)
                 return false;
 
             return resultado;
         }
         
-        public async Task<bool> DeleteConta(string numeroConta, int idUsuario)
+        public async Task<bool> DeleteConta(int idConta, int idUsuario)
         {
-            var resultado = await _contaRepository.DeleteConta(numeroConta, idUsuario);
+            var resultado = await _contaRepository.DeleteConta(idConta, idUsuario);
             if (_contaRepository.HasNotifications)
                 return false;
 

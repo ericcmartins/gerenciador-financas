@@ -22,7 +22,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<List<CategoriaResponseInfra>?> GetCategorias(int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var response = await connection.QueryAsync<CategoriaResponseInfra>(SqlQueries.Categoria.GetCategorias, new { idUsuario });
 
@@ -36,7 +37,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> InsertCategoria(CategoriaRequestInfra categoriaRequest, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.InsertCategoria, new
             {
@@ -56,7 +57,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> UpdateCategoria(CategoriaRequestInfra categoriaRequest, int idCategoria, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.UpdateCategoria, new
             {
@@ -77,7 +79,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> DeleteCategoria(int idCategoria, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.DeleteCategoria, new
             {

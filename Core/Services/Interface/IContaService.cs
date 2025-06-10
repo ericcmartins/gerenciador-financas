@@ -8,7 +8,7 @@ namespace gerenciador.financas.Application.Services
     {
         public Task<List<Conta?>> GetContas(int idUsuario);
         public Task<bool> InsertConta(ContaRequestViewModel contaRequest, int idUsuario);
-        public Task<bool> UpdateConta(ContaRequestViewModel contaRequest, int idUsuario);
-        public Task<bool> DeleteConta(string numeroConta, int idUsuario);
+        public Task<bool> UpdateConta(ContaRequestViewModel contaRequest, int idUsuario, int idConta);
+        public Task<bool> DeleteConta(int idConta, int idUsuario);
     }
 }

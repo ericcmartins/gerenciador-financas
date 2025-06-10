@@ -22,7 +22,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<List<MetaFinanceiraResponseInfra?>> GetMetasFinanceiras(int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var response = await connection.QueryAsync<MetaFinanceiraResponseInfra>(SqlQueries.MetaFinanceira.GetMetasFinanceiras, new { IdUsuario = idUsuario });
 
@@ -36,7 +37,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.InsertMetaFinanceira, new
             {
@@ -60,7 +62,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario, int idMetaFinanceira)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.UpdateMetaFinanceira, new
             {
@@ -71,7 +74,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 metaFinanceiraRequest.DataLimite,
                 metaFinanceiraRequest.Concluida,
                 IdUsuario = idUsuario,
-                IdMetaFinanciera = idMetaFinanceira 
+                IdMetaFinanceira = idMetaFinanceira 
             });
 
             if (linhasAfetadas != 1)
@@ -85,7 +88,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> DeleteMetaFinanceira(int idMetaFinanceira, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.DeleteMetaFinanceira, new
             {

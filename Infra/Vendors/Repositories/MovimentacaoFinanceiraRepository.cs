@@ -22,7 +22,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<List<MovimentacaoFinanceiraResponseInfra>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var instrucaoSql = SqlQueries.MovimentacaoFinanceira.ApplyPeriodoFilter(
                 SqlQueries.MovimentacaoFinanceira.GetMovimentacoesFinanceiras, periodo);

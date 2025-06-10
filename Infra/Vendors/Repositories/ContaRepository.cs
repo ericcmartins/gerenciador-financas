@@ -22,7 +22,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<List<ContaResponseInfra?>> GetContas(int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var response = await connection.QueryAsync<ContaResponseInfra>(SqlQueries.Conta.GetContas, new { idUsuario });
 
@@ -36,7 +36,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> InsertConta(ContaRequestInfra contaRequest, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.InsertConta, new
             {
@@ -55,16 +55,17 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-        public async Task<bool> UpdateConta(ContaRequestInfra contaRequest, int idUsuario)
+        public async Task<bool> UpdateConta(ContaRequestInfra contaRequest, int idUsuario, int idConta)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.UpdateConta, new
             {
                 contaRequest.Tipo,
                 contaRequest.Instituicao,
                 contaRequest.NumeroConta,
-                IdUsuario = idUsuario
+                IdUsuario = idUsuario,
+                IdConta = idConta,
             });
 
             if (linhasAfetadas != 1)
@@ -76,13 +77,13 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-        public async Task<bool> DeleteConta(string numeroConta, int idUsuario)
+        public async Task<bool> DeleteConta(int idConta, int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.DeleteConta, new
             {
-                NumeroConta = numeroConta,
+                IdConta = idConta,
                 IdUsuario = idUsuario
             });
 

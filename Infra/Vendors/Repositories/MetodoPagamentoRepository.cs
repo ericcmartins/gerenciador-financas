@@ -22,7 +22,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<List<MetodoPagamentoResponseInfra?>> GetMetodosPagamentoUsuario(int idUsuario)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var response = await connection.QueryAsync<MetodoPagamentoResponseInfra>(SqlQueries.MetodoPagamento.GetMetodosPagamentoUsuario, new { IdUsuario = idUsuario });
 
@@ -36,7 +37,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> InsertMetodoPagamento(MetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.InsertMetodoPagamento, new
             {
@@ -59,7 +61,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> UpdateMetodoPagamento(MetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.UpdateMetodoPagamento, new
             {
@@ -83,7 +86,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> DeleteMetodoPagamento(int idUsuario, int idMetodoPagamento)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.DeleteMetodoPagamento, new
             {

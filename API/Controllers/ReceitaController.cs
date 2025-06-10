@@ -76,7 +76,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created();
+                return Created(string.Empty, "receita inserida com sucesso");
             }
 
             catch (Exception ex)

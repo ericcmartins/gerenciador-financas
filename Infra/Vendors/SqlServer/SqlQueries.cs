@@ -47,14 +47,15 @@ namespace gerenciador.financas.Infra.Vendors.Queries
 
             public const string UpdateConta = @"
                 UPDATE Conta
-                SET Tipo = COALESCE(@Tipo, Tipo),
+                SET NumeroConta = COALESCE(@NumeroConta, NumeroConta),
+                    Tipo = COALESCE(@Tipo, Tipo),
                     Instituicao = COALESCE(@Instituicao, Instituicao)
-                WHERE NumeroConta = @NumeroConta
+                WHERE IdConta = @IdConta
                   AND IdUsuario = @IdUsuario";
 
             public const string DeleteConta = @"
                 DELETE FROM Conta 
-                WHERE NumeroConta = @NumeroConta 
+                WHERE IdConta = @IdConta 
                   AND IdUsuario = @IdUsuario";
         }
         #endregion
@@ -120,7 +121,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
             public const string DeleteMetaFinanceira = @"
                 DELETE FROM MetaFinanceira
                 WHERE IdUsuario = @IdUsuario
-                  AND IdMetaFinanceira = @idMetaFinanceira";
+                  AND IdMetaFinanceira = @IdMetaFinanceira";
         }
         #endregion
 

@@ -22,7 +22,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<List<DespesaResponseInfra?>> GetDespesas(int idUsuario, int? periodo)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var response = await connection.QueryAsync<DespesaResponseInfra>(SqlQueries.Despesa.GetDespesas, new { IdUsuario = idUsuario });
 
@@ -36,7 +37,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> InsertDespesa(DespesaRequestInfra despesaRequest, int idUsuario, int idConta, int idCategoria, int idMetodoPagamento)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.InsertDespesa, new
             {
@@ -62,7 +64,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> UpdateDespesa(DespesaRequestInfra despesaRequest, int idUsuario, int idDespesa, int idCategoria, int idConta, int idMetodoPagamento)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.UpdateDespesa, new
             {
@@ -89,7 +92,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
         public async Task<bool> DeleteDespesa(int idUsuario, int idDespesa)
         {
-            using var connection = _connectionHandler.CreateConnection();
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.DeleteDespesa, new
             {

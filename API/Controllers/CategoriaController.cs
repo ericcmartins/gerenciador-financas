@@ -72,7 +72,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created();
+                return Created(string.Empty, "categoria inserida com sucesso");
             }
 
             catch (Exception ex)

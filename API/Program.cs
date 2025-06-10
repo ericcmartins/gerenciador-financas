@@ -3,15 +3,36 @@ using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.OpenApi.Models;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona serviços ao container.
 var connectionString = builder.Configuration.GetConnectionString("SqlServer");
-builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+//services
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<IContaService, ContaService>();
+builder.Services.AddScoped<IDespesaService, DespesaService>();
+builder.Services.AddScoped<IMetaFinanceiraService, MetaFinanceiraService>();
+builder.Services.AddScoped<IMetodoPagamentoService, MetodoPagamentoService>();
+builder.Services.AddScoped<IMovimentacaoFinanceiraService, MovimentacaoFinanceiraService>();
+builder.Services.AddScoped<IReceitaService, ReceitaService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<NotificationPool>();
+
+
+//infra
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<IContaRepository, ContaRepository>();
+builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
+builder.Services.AddScoped<IMetaFinanceiraRepository, MetaFinanceiraRepository>();
+builder.Services.AddScoped<IMetodoPagamentoRepository, MetodoPagamentoRepository>();
+builder.Services.AddScoped<IMovimentacaoFinanceiraRepository, MovimentacaoFinanceiraRepository>();
+builder.Services.AddScoped<IReceitaRepository, ReceitaRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 builder.Services.AddControllers(); // Habilita controllers
 builder.Services.AddEndpointsApiExplorer();

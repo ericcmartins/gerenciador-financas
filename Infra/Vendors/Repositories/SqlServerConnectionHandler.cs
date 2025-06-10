@@ -13,10 +13,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _connectionString = connectionString;
         }
 
-        public IDbConnection CreateConnection()
+        public async Task<IDbConnection> CreateConnectionAsync()
         {
             var connection = new SqlConnection(_connectionString);
-            connection.Open();
+            await connection.OpenAsync();
             return connection;
         }
     }

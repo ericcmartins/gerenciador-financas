@@ -52,14 +52,14 @@ namespace gerenciador.financas.API.Controllers
         }
 
         [HttpPost("cliente/dados")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
         {
             try
             {
-                var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+               var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -69,7 +69,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created();
+                return Created(string.Empty, "despesa inserido com sucesso");
             }
 
             catch (Exception ex)
