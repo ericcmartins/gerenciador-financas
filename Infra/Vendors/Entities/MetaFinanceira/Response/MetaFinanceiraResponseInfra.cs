@@ -9,6 +9,7 @@ namespace gerenciador.financas.Infra.Vendors.Entities
     public class MetaFinanceiraResponseInfra
     {
         public int? IdMetaFinanceira { get; set; }
+        public string Nome { get; set; }
         public string? Descricao { get; set; }
         public Decimal? ValorAlvo { get; set; }
         public Decimal? ValorAtual { get; set; }

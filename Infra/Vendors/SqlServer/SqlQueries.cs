@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
 using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
 using Microsoft.Data.SqlClient;
@@ -62,7 +64,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         public static class Despesa
         {
             public const string GetDespesaPorId = @"
-                SELECT IdDespesa, Valor, Descricao, DataDespesa AS Data, Recorrente, Frequencia, 
+                SELECT IdDespesa, Valor, Descricao, DataDespesa, Recorrente, Frequencia, 
                        IdUsuario, IdConta, IdCategoria, IdMetodoPagamento
                 FROM Despesa
                 WHERE IdDespesa = @IdDespesa
@@ -111,16 +113,16 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                   AND DataDespesa BETWEEN @DataInicio AND @DataFim;";
 
         public const string InsertDespesa = @"
-                INSERT INTO Despesa (Valor, Descricao, Data, Recorrente, Frequencia, 
+                INSERT INTO Despesa (Valor, Descricao, DataDespesa, Recorrente, Frequencia, 
                                     IdUsuario, IdConta, IdCategoria, IdMetodoPagamento)
-                VALUES (@Valor, @Descricao, @Data, @Recorrente, @Frequencia, 
+                VALUES (@Valor, @Descricao, @DataDespesa, @Recorrente, @Frequencia, 
                         @IdUsuario, @IdConta, @IdCategoria, @IdMetodoPagamento)";
 
         public const string UpdateDespesa = @"
                 UPDATE Despesa
                 SET Valor = COALESCE(@Valor, Valor),
                     Descricao = COALESCE(@Descricao, Descricao),
-                    Data = COALESCE(@Data, Data),
+                    DataDespesa = COALESCE(@DataDespesa, DataDespesa),
                     Recorrente = COALESCE(@Recorrente, Recorrente),
                     Frequencia = COALESCE(@Frequencia, Frequencia),
                     IdConta = COALESCE(@IdConta, IdConta),
@@ -181,7 +183,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 UPDATE MetodoPagamento
                 SET Nome = COALESCE(@Nome, Nome),
                     Descricao = COALESCE(@Descricao, Descricao),
-                    Limite = COALESCE(@Limite, Limite),
+                    Limite = COALESCE(@Limite, Limite), 
                     Tipo = COALESCE(@Tipo, Tipo),
                     IdConta = COALESCE(@IdConta, IdConta)
                 WHERE IdMetodo = @IdMetodo
@@ -189,16 +191,20 @@ namespace gerenciador.financas.Infra.Vendors.Queries
 
             public const string DeleteMetodoPagamento = @"
             EXEC sp_ExcluirMetodoPagamento 
-                @IdMetodoPagamento = @IdMetodoPagamento, 
+                @IdMetodo = @IdMetodo, 
                 @IdUsuario = @IdUsuario";
         }
         #endregion
 
         #region MovimentacaoFinanceira
-        public static class MovimentacaoFinanceiraSql
+        public static class MovimentacaoFinanceira
         {
             public const string GetMovimentacoesPorPeriodo = @"
-                SELECT * FROM fn_MovimentacoesPorUsuarioPeriodo(@IdUsuario, @DataInicio, @DataFim);";
+                SELECT * FROM fn_MovimentacoesPorUsuarioPeriodo(@IdUsuario, @DataInicio, @DataFim);" ;
+
+            public const string InsertTransferenciaEntreContas = @"
+                INSERT INTO MovimentacaoFinanceira (TipoMovimentacao, Valor, DataMovimentacao, Descricao, IdContaOrigem, IdContaDestino, IdUsuario, IdReceita, IdDespesa) 
+                VALUES (@TipoMovimentacao, @Valor, @DataMovimentacao, @Descricao, @IdContaOrigem, @IdContaDestino, @IdUsuario, NULL, NULL);";
         }
         #endregion
 
@@ -206,7 +212,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         public static class Receita
         {
             public const string GetReceitasPorId = @"
-                SELECT IdReceita, Valor, Descricao, DataReceita AS Data, Recorrente, Frequencia, 
+                SELECT IdReceita, Valor, Descricao, DataReceita, Recorrente, Frequencia, 
                        IdUsuario, IdConta, IdCategoria
                 FROM Receita
                 WHERE IdReceita = @IdReceita
@@ -244,16 +250,16 @@ namespace gerenciador.financas.Infra.Vendors.Queries
             ORDER BY TotalReceita DESC;";
 
         public const string InsertReceita = @"
-                INSERT INTO Receita (Valor, Descricao, Data, Recorrente, Frequencia, 
+                INSERT INTO Receita (Valor, Descricao, DataReceita, Recorrente, Frequencia, 
                                      IdUsuario, IdConta, IdCategoria)
-                VALUES (@Valor, @Descricao, @Data, @Recorrente, @Frequencia, 
+                VALUES (@Valor, @Descricao, @DataReceita, @Recorrente, @Frequencia, 
                          @IdUsuario, @IdConta, @IdCategoria)";
 
             public const string UpdateReceita = @"
                 UPDATE Receita
                 SET Valor = COALESCE(@Valor, Valor),
                     Descricao = COALESCE(@Descricao, Descricao),
-                    Data = COALESCE(@Data, Data),
+                    DataReceita = COALESCE(@DataReceita, DataReceita),
                     Recorrente = COALESCE(@Recorrente, Recorrente),
                     Frequencia = COALESCE(@Frequencia, Frequencia),
                     IdConta = COALESCE(@IdConta, IdConta),

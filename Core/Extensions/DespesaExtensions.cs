@@ -13,7 +13,7 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Valor = infra.Valor,
                 Descricao = infra.Descricao,
-                DataDespesa = infra.Data,
+                DataDespesa = infra.DataDespesa,
                 Recorrente = infra.Recorrente,
                 Frequencia = infra.Frequencia,
             };

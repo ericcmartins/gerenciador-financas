@@ -33,7 +33,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             };
 
             var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(
-                MovimentacaoFinanceiraSql.GetMovimentacoesPorPeriodo, parametros);
+                MovimentacaoFinanceira.GetMovimentacoesPorPeriodo, parametros);
 
             var responseList = response.ToList();
 
@@ -42,6 +42,33 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             return responseList;
         }
+
+
+        public async Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacaoFinanceira.InsertTransferenciaEntreContas, new
+            {
+                movimentacaoFinanceiraRequest.TipoMovimentacao,
+                movimentacaoFinanceiraRequest.Valor,
+                movimentacaoFinanceiraRequest.DataMovimentacao,
+                movimentacaoFinanceiraRequest.Descricao,
+                idUsuario,
+                idContaOrigem,
+                idContaDestino
+            });
+
+            if (linhasAfetadas != 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao cadastrar despesa");
+                return false;
+            }
+
+            return true;
+        }
+
 
     }
 }
