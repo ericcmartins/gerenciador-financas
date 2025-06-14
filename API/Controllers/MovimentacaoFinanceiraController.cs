@@ -22,16 +22,16 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("movimentacoesFinanceiras/cliente")]
+        [HttpGet("movimentacoes/cliente")]
         [ProducesResponseType(typeof(List<MovimentacaoFinanceiraResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDespesasUsuario([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> ObterDespesasUsuario([Required] int idUsuario, int periodo, string tipoMovimentacao)
         {
             try
             {
-                var response = await _movimentacaoFinanceiraService.GetMovimentacoesFinanceiras(idUsuario, periodo);
+                var response = await _movimentacaoFinanceiraService.GetMovimentacoesFinanceiras(idUsuario, periodo, tipoMovimentacao);
                 if (_movimentacaoFinanceiraService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -55,3 +55,5 @@ namespace gerenciador.financas.API.Controllers
         }
     }
 }
+
+

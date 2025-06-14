@@ -19,7 +19,7 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<MovimentacaoFinanceira?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo)
+        public async Task<List<MovimentacaoFinanceira?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo, string? tipoMovimentacao)
         {
             var responseInfra = await _movimentacaoFinanceiraRepository.GetMovimentacoesFinanceiras(idUsuario, periodo);
             if (_movimentacaoFinanceiraRepository.HasNotifications)
@@ -27,6 +27,7 @@ namespace gerenciador.financas.Application.Services
 
             var movimentacoesFinanceiras = responseInfra
                 .Select(mf => mf.ToService())
+                .Where(mf => tipoMovimentacao == null || mf.TipoMovimentacao == tipoMovimentacao)
                 .ToList();
 
             return movimentacoesFinanceiras;

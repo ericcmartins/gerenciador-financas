@@ -20,20 +20,84 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<ReceitaResponseInfra?>> GetReceita(int idUsuario)
+        public async Task<List<ReceitaResponseInfra?>> GetReceitas(int idUsuario, int? periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
-            var response = await connection.QueryAsync<ReceitaResponseInfra>(SqlQueries.Receita.GetReceitas, new { IdUsuario = idUsuario });
+            var response = await connection.QueryAsync<ReceitaResponseInfra>(
+                SqlQueries.Receita.GetReceitasPorId, new
+                {
+                    IdUsuario = idUsuario,
+                    DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                    DataFim = DateTime.Today
+                }
+            );
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas receitas para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas no período informado para o usuário");
 
             return responseList;
         }
+
+        public async Task<List<ReceitaPorCategoriaResponseInfra?>> GetReceitasPorCategoria(int idUsuario, int? periodo)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receita.GetReceitasPorCategoria, new
+            {
+                IdUsuario = idUsuario,
+                DataInicio = DateTime.Today.AddDays(-periodo.Value),
+                DataFim = DateTime.Today
+            });
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas por categoria para o usuário no período informado");
+
+            return responseList;
+        }
+
+        public async Task<List<ReceitaPorContaResponseInfra?>> GetReceitasPorConta(int idUsuario, int? periodo)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.QueryAsync<ReceitaPorContaResponseInfra>(SqlQueries.Receita.GetReceitasPorConta, new
+            {
+                IdUsuario = idUsuario,
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today
+            });
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas por conta para o usuário no período informado");
+
+            return responseList;
+        }
+
+        public async Task<Decimal> GetReceitasTotalPorPeriodo(int idUsuario, int? periodo)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.ExecuteScalarAsync<Decimal>(SqlQueries.Receita.GetTotalReceitasPeriodo, new
+            {
+                IdUsuario = idUsuario,
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today
+            });
+
+            if (response <= 0)
+            {
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas no período informado para o usuário");
+            }
+
+            return response;
+        }
+
 
         public async Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idConta, int idCategoria)
         {
@@ -44,7 +108,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
-                receitaRequest.Data,
+                receitaRequest.DataReceita,
                 receitaRequest.Recorrente,
                 receitaRequest.Frequencia,
                 IdUsuario = idUsuario,
@@ -70,7 +134,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
-                receitaRequest.Data,
+                receitaRequest.DataReceita,
                 receitaRequest.Recorrente,
                 receitaRequest.Frequencia,
                 IdConta = idConta,

@@ -24,15 +24,95 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
-            var response = await connection.QueryAsync<DespesaResponseInfra>(SqlQueries.Despesa.GetDespesas, new { IdUsuario = idUsuario });
+            var response = await connection.QueryAsync<DespesaResponseInfra>(
+                SqlQueries.Despesa.GetDespesaPorId, new
+                {
+                    IdUsuario = idUsuario,
+                    DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                    DataFim = DateTime.Today
+                }
+            );
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas despesas para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas despesas no período informado para o usuário");
 
             return responseList;
+        }
+
+
+        public async Task<List<DespesaPorCategoriaResponseInfra?>> GetDespesasPorCategoria(int idUsuario, int? periodo)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.QueryAsync<DespesaPorCategoriaResponseInfra>(SqlQueries.Despesa.GetDespesasPorCategoria, new
+            {
+                IdUsuario = idUsuario,
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today
+            });
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Não foram encontradas despesas por categoria para o usuário no período informado");
+
+            return responseList;
+        }
+
+        public async Task<List<DespesaPorContaResponseInfra?>> GetDespesasPorConta(int idUsuario, int? periodo)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.QueryAsync<DespesaPorContaResponseInfra>(SqlQueries.Despesa.GetDespesasPorConta, new
+            {
+                IdUsuario = idUsuario,
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today
+            });
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Não foram encontradas despesas por conta para o usuário no período informado");
+
+            return responseList;
+        }
+
+        public async Task<List<DespesaPorMetodoPagamentoResponseInfra?>> GetDespesasPorMetodoPagamento(int idUsuario, int? periodo)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.QueryAsync<DespesaPorMetodoPagamentoResponseInfra>(SqlQueries.Despesa.GetDespesasPorMetodoPagamento, new {
+                IdUsuario = idUsuario,
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today
+            });
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Não foram encontradas despesas por método de pagamento para o usuário no período informado");
+
+            return responseList;
+        }
+
+        public async Task<decimal> GetTotalDespesasPeriodo(int idUsuario, int? periodo)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.ExecuteScalarAsync<decimal>(SqlQueries.Despesa.GetTotalDespesasNoPeriodo, new
+            {
+                IdUsuario = idUsuario,
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today
+            });
+
+            if (response <= 0)
+                _notificationPool.AddNotification(404, "Não foram encontradas despesas no período informado para o usuário");
+
+            return response;
         }
 
         public async Task<bool> InsertDespesa(DespesaRequestInfra despesaRequest, int idUsuario, int idConta, int idCategoria, int idMetodoPagamento)
@@ -44,7 +124,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 despesaRequest.Valor,
                 despesaRequest.Descricao,
-                despesaRequest.Data,
+                despesaRequest.DataDespesa,
                 despesaRequest.Recorrente,
                 despesaRequest.Frequencia,
                 IdUsuario = idUsuario,
@@ -71,7 +151,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 despesaRequest.Valor,
                 despesaRequest.Descricao,
-                despesaRequest.Data,
+                despesaRequest.DataDespesa,
                 despesaRequest.Recorrente,
                 despesaRequest.Frequencia,
                 IdConta = idConta,

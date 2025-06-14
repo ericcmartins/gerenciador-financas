@@ -10,8 +10,5 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     public interface IMovimentacaoFinanceiraRepository : INotifiable
     {
         public Task<List<MovimentacaoFinanceiraResponseInfra?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo);
-        //public Task<bool> InsertMovimentacaoFinanceira(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idConta);
-        //public Task<bool> UpdateMovimentacaoFinanceira(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idConta, int idMovimentacaoFinanceira);
-        //public Task<bool> DeleteMovimentacaoFinanceira(int idMovimentacao, int idUsuario);
     }
 }

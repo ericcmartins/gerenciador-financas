@@ -47,7 +47,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 metaFinanceiraRequest.ValorAtual,
                 metaFinanceiraRequest.DataInicio,
                 metaFinanceiraRequest.DataLimite,
-                metaFinanceiraRequest.Concluida,
                 IdUsuario = idUsuario
             });
 
@@ -72,7 +71,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 metaFinanceiraRequest.ValorAtual,
                 metaFinanceiraRequest.DataInicio,
                 metaFinanceiraRequest.DataLimite,
-                metaFinanceiraRequest.Concluida,
                 IdUsuario = idUsuario,
                 IdMetaFinanceira = idMetaFinanceira 
             });

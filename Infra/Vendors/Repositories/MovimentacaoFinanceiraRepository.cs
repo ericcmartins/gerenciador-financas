@@ -3,6 +3,7 @@ using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
+using static gerenciador.financas.Infra.Vendors.Queries.SqlQueries;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
@@ -20,26 +21,27 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<MovimentacaoFinanceiraResponseInfra>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo)
+        public async Task<List<MovimentacaoFinanceiraResponseInfra?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
-            var instrucaoSql = SqlQueries.MovimentacaoFinanceira.ApplyPeriodoFilter(
-                SqlQueries.MovimentacaoFinanceira.GetMovimentacoesFinanceiras, periodo);
+            var parametros = new
+            {
+                IdUsuario = idUsuario,
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today,
+            };
 
             var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(
-                instrucaoSql, new { IdUsuario = idUsuario, Periodo = periodo }
-            );
+                MovimentacaoFinanceiraSql.GetMovimentacoesPorPeriodo, parametros);
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas movimentações financeiras para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas despesas no período informado para o usuário");
 
             return responseList;
         }
-
 
     }
 }

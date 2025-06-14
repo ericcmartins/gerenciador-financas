@@ -13,9 +13,43 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Valor = infra.Valor,
                 Descricao = infra.Descricao,
-                Data = infra.Data,
+                DataReceita = infra.DataReceita,
                 Recorrente = infra.Recorrente,
                 Frequencia = infra.Frequencia,
+            };
+        }
+
+        public static ReceitaCategoria ToService(this ReceitaPorCategoriaResponseInfra infra)
+        {
+            return new ReceitaCategoria
+            {
+                Categoria = infra.Categoria,
+                TotalReceita = infra.TotalReceita,
+            };
+        }
+        public static ReceitaConta ToService(this ReceitaPorContaResponseInfra infra)
+        {
+            return new ReceitaConta
+            {
+                NumeroConta = infra.NumeroConta,
+                TotalReceita = infra.TotalReceita,
+            };
+        }
+
+        public static ReceitaPorCategoriaResponseViewModel ToViewModel(this ReceitaCategoria domain)
+        {
+            return new ReceitaPorCategoriaResponseViewModel
+            {
+                Categoria = domain.Categoria,
+                TotalReceita = domain.TotalReceita,
+            };
+        }
+        public static ReceitaPorContaResponseViewModel ToViewModel(this ReceitaConta domain)
+        {
+            return new ReceitaPorContaResponseViewModel
+            {
+                NumeroConta = domain.NumeroConta,
+                TotalReceita = domain.TotalReceita,
             };
         }
 
@@ -25,7 +59,7 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Valor = domain.Valor,
                 Descricao = domain.Descricao,
-                Data = domain.Data,
+                DataReceita = domain.DataReceita,
                 Recorrente = domain.Recorrente,
                 Frequencia = domain.Frequencia,
             };
@@ -36,7 +70,7 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Valor = viewModel.Valor,
                 Descricao = viewModel.Descricao,
-                Data = viewModel.Data,
+                DataReceita = viewModel.DataReceita,
                 Recorrente = viewModel.Recorrente,
                 Frequencia = viewModel.Frequencia,
 

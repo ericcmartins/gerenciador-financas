@@ -13,19 +13,66 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Valor = infra.Valor,
                 Descricao = infra.Descricao,
-                Data = infra.Data,
+                DataDespesa = infra.Data,
                 Recorrente = infra.Recorrente,
                 Frequencia = infra.Frequencia,
             };
         }
-
+        public static DespesaCategoria ToService(this DespesaPorCategoriaResponseInfra infra)
+        {
+            return new DespesaCategoria
+            {
+                Categoria = infra.Categoria,
+                TotalDespesa = infra.TotalDespesa,
+            };
+        }
+        public static DespesaConta ToService(this DespesaPorContaResponseInfra infra)
+        {
+            return new DespesaConta
+            {
+                NumeroConta = infra.NumeroConta,
+                TotalDespesa = infra.TotalDespesa,
+            };
+        }
+        public static DespesaMetodoPagamento ToService(this DespesaPorMetodoPagamentoResponseInfra infra)
+        {
+            return new DespesaMetodoPagamento
+            {
+                MetodoPagamento = infra.MetodoPagamento,
+                TotalDespesa = infra.TotalDespesa,
+            };
+        }
+        public static DespesaPorCategoriaResponseViewModel ToViewModel(this DespesaCategoria domain)
+        {
+            return new DespesaPorCategoriaResponseViewModel
+            {
+                Categoria = domain.Categoria,
+                TotalDespesa = domain.TotalDespesa,
+            };
+        }
+        public static DespesaPorContaResponseViewModel ToViewModel(this DespesaConta domain)
+        {
+            return new DespesaPorContaResponseViewModel
+            {
+                NumeroConta = domain.NumeroConta,
+                TotalDespesa = domain.TotalDespesa,
+            };
+        }
+        public static DespesaPorMetodoPagamentoResponseViewModel ToViewModel(this DespesaMetodoPagamento domain)
+        {
+            return new DespesaPorMetodoPagamentoResponseViewModel
+            {
+                MetodoPagamento = domain.MetodoPagamento,
+                TotalDespesa = domain.TotalDespesa,
+            };
+        }
         public static DespesaResponseViewModel ToViewModel(this Despesa domain)
         {
             return new DespesaResponseViewModel
             {
                 Valor = domain.Valor,
                 Descricao = domain.Descricao,
-                Data = domain.Data,
+                DataDespesa = domain.DataDespesa,
                 Recorrente = domain.Recorrente,
                 Frequencia = domain.Frequencia,
             };
@@ -36,7 +83,7 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Valor = viewModel.Valor,
                 Descricao = viewModel.Descricao,
-                Data = viewModel.Data,
+                DataDespesa = viewModel.DataDespesa,
                 Recorrente = viewModel.Recorrente,
                 Frequencia = viewModel.Frequencia,
 

@@ -27,9 +27,9 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                   AND IdUsuario = @IdUsuario";
 
             public const string DeleteCategoria = @"
-                DELETE FROM Categoria
-                WHERE IdCategoria = @IdCategoria
-                  AND IdUsuario = @IdUsuario";
+            EXEC sp_ExcluirCategoria 
+                @IdCategoria = @IdCategoria, 
+                @IdUsuario = @IdUsuario";
         }
         #endregion
 
@@ -53,29 +53,70 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 WHERE IdConta = @IdConta
                   AND IdUsuario = @IdUsuario";
 
-            public const string DeleteConta = @"
-                DELETE FROM Conta 
-                WHERE IdConta = @IdConta 
-                  AND IdUsuario = @IdUsuario";
+            public const string DeleteConta = @"EXEC sp_ExcluirConta @IdConta = @IdConta, @IdUsuario = @IdUsuario";
+
         }
         #endregion
 
         #region Despesa
         public static class Despesa
         {
-            public const string GetDespesas = @"
-                SELECT IdDespesa, Valor, Descricao, Data, Recorrente, Frequencia, 
+            public const string GetDespesaPorId = @"
+                SELECT IdDespesa, Valor, Descricao, DataDespesa AS Data, Recorrente, Frequencia, 
                        IdUsuario, IdConta, IdCategoria, IdMetodoPagamento
                 FROM Despesa
-                WHERE IdUsuario = @IdUsuario";
+                WHERE IdDespesa = @IdDespesa
+                  AND IdUsuario = @IdUsuario
+                  AND DataDespesa BETWEEN @DataInicio AND @DataFim;";
 
-            public const string InsertDespesa = @"
+
+            public const string GetDespesasPorCategoria = @"
+                SELECT 
+                    c.Nome AS Categoria,
+                    SUM(d.Valor) AS TotalDespesa
+                FROM Despesa d
+                INNER JOIN Categoria c ON d.IdCategoria = c.IdCategoria
+                WHERE d.IdUsuario = @IdUsuario
+                  AND d.DataDespesa BETWEEN @DataInicio AND @DataFim
+                GROUP BY c.Nome
+                ORDER BY TotalDespesa DESC;";
+
+            public const string GetDespesasPorConta = @"
+                SELECT 
+                    c.NumeroConta,
+                    SUM(d.Valor) AS TotalDespesa
+                FROM Despesa d
+                INNER JOIN Conta c ON d.IdConta = c.IdConta
+                WHERE d.IdUsuario = @IdUsuario
+                  AND d.DataDespesa BETWEEN @DataInicio AND @DataFim
+                GROUP BY c.NumeroConta
+                ORDER BY TotalDespesa DESC;";
+
+            public const string GetDespesasPorMetodoPagamento = @"
+                SELECT 
+                    m.Descricao AS MetodoPagamento,
+                    SUM(d.Valor) AS TotalDespesa
+                FROM Despesa d
+                INNER JOIN MetodoPagamento m ON d.IdMetodoPagamento = m.IdMetodo
+                WHERE d.IdUsuario = @IdUsuario
+                  AND d.DataDespesa BETWEEN @DataInicio AND @DataFim
+                GROUP BY m.Descricao
+                ORDER BY TotalDespesa DESC;";
+
+            public const string GetTotalDespesasNoPeriodo = @"
+                SELECT 
+                    SUM(Valor) AS TotalDespesa
+                FROM Despesa
+                WHERE IdUsuario = @IdUsuario
+                  AND DataDespesa BETWEEN @DataInicio AND @DataFim;";
+
+        public const string InsertDespesa = @"
                 INSERT INTO Despesa (Valor, Descricao, Data, Recorrente, Frequencia, 
                                     IdUsuario, IdConta, IdCategoria, IdMetodoPagamento)
                 VALUES (@Valor, @Descricao, @Data, @Recorrente, @Frequencia, 
                         @IdUsuario, @IdConta, @IdCategoria, @IdMetodoPagamento)";
 
-            public const string UpdateDespesa = @"
+        public const string UpdateDespesa = @"
                 UPDATE Despesa
                 SET Valor = COALESCE(@Valor, Valor),
                     Descricao = COALESCE(@Descricao, Descricao),
@@ -88,7 +129,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 WHERE IdUsuario = @IdUsuario
                   AND IdDespesa = @IdDespesa";
 
-            public const string DeleteDespesa = @"
+        public const string DeleteDespesa = @"
                 DELETE FROM Despesa
                 WHERE IdUsuario = @IdUsuario
                   AND IdDespesa = @IdDespesa";
@@ -104,8 +145,8 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 WHERE IdUsuario = @IdUsuario";
 
             public const string InsertMetaFinanceira = @"
-                INSERT INTO MetaFinanceira (Descricao, ValorAlvo, ValorAtual, DataInicio, DataLimite, Concluida, IdUsuario)
-                VALUES (@Descricao, @ValorAlvo, @ValorAtual, @DataInicio, @DataLimite, @Concluida, @IdUsuario)";
+                INSERT INTO MetaFinanceira (Descricao, ValorAlvo, ValorAtual, DataInicio, DataLimite, IdUsuario)
+                VALUES (@Descricao, @ValorAlvo, @ValorAtual, @DataInicio, @DataLimite, @IdUsuario)";
 
             public const string UpdateMetaFinanceira = @"
                 UPDATE MetaFinanceira
@@ -113,8 +154,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                     ValorAlvo = COALESCE(@ValorAlvo, ValorAlvo),
                     ValorAtual = COALESCE(@ValorAtual, ValorAtual),
                     DataInicio = COALESCE(@DataInicio, DataInicio),
-                    DataLimite = COALESCE(@DataLimite, DataLimite),
-                    Concluida = COALESCE(@Concluida, Concluida)
+                    DataLimite = COALESCE(@DataLimite, DataLimite)                    
                 WHERE IdUsuario = @IdUsuario
                   AND IdMetaFinanceira = @idMetaFinanceira";
 
@@ -148,48 +188,62 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                   AND IdUsuario = @IdUsuario";
 
             public const string DeleteMetodoPagamento = @"
-                DELETE FROM MetodoPagamento
-                WHERE IdUsuario = @IdUsuario
-                  AND IdMetodo = @IdMetodo";
+            EXEC sp_ExcluirMetodoPagamento 
+                @IdMetodoPagamento = @IdMetodoPagamento, 
+                @IdUsuario = @IdUsuario";
         }
         #endregion
 
         #region MovimentacaoFinanceira
-        public static class MovimentacaoFinanceira
+        public static class MovimentacaoFinanceiraSql
         {
-            public const string GetMovimentacoesFinanceiras = @"
-                SELECT 
-                    IdMovimentacao,
-                    TipoMovimentacao,
-                    Valor,
-                    Data,
-                    Descricao,
-                    IdConta,
-                    IdUsuario
-                FROM MovimentacaoFinanceira
-                WHERE IdUsuario = @IdUsuario
-                /**wherePeriodo**/
-                ORDER BY Data DESC";
-
-            public static string ApplyPeriodoFilter(string query, int? periodo)
-            {
-                return periodo.HasValue
-                    ? query.Replace("/**wherePeriodo**/", "AND Data >= DATEADD(MONTH, -@Periodo, GETDATE())")
-                    : query.Replace("/**wherePeriodo**/", "");
-            }
+            public const string GetMovimentacoesPorPeriodo = @"
+                SELECT * FROM fn_MovimentacoesPorUsuarioPeriodo(@IdUsuario, @DataInicio, @DataFim);";
         }
         #endregion
 
         #region Receita
         public static class Receita
         {
-            public const string GetReceitas = @"
-                SELECT IdReceita, Valor, Descricao, Data, Recorrente, Frequencia, 
+            public const string GetReceitasPorId = @"
+                SELECT IdReceita, Valor, Descricao, DataReceita AS Data, Recorrente, Frequencia, 
                        IdUsuario, IdConta, IdCategoria
                 FROM Receita
-                WHERE IdUsuario = @IdUsuario";
+                WHERE IdReceita = @IdReceita
+                  AND IdUsuario = @IdUsuario
+                  AND DataReceita BETWEEN @DataInicio AND @DataFim;";
 
-            public const string InsertReceita = @"
+
+        public const string GetTotalReceitasPeriodo = @"
+            SELECT 
+                SUM(Valor) AS TotalReceita
+            FROM Receita
+            WHERE IdUsuario = @IdUsuario
+              AND DataReceita BETWEEN @DataInicio AND @DataFim;";
+
+        public const string GetReceitasPorCategoria = @"
+            SELECT 
+                c.Nome AS Categoria,
+                SUM(r.Valor) AS TotalReceita
+            FROM Receita r
+            INNER JOIN Categoria c ON r.IdCategoria = c.IdCategoria
+            WHERE r.IdUsuario = @IdUsuario
+              AND r.DataReceita BETWEEN @DataInicio AND @DataFim
+            GROUP BY c.Nome
+            ORDER BY TotalReceita DESC;";
+
+        public const string GetReceitasPorConta = @"
+            SELECT 
+                c.NumeroConta,
+                SUM(r.Valor) AS TotalReceita
+            FROM Receita r
+            INNER JOIN Conta c ON r.IdConta = c.IdConta
+            WHERE r.IdUsuario = @IdUsuario
+              AND r.DataReceita BETWEEN @DataInicio AND @DataFim
+            GROUP BY c.NumeroConta
+            ORDER BY TotalReceita DESC;";
+
+        public const string InsertReceita = @"
                 INSERT INTO Receita (Valor, Descricao, Data, Recorrente, Frequencia, 
                                      IdUsuario, IdConta, IdCategoria)
                 VALUES (@Valor, @Descricao, @Data, @Recorrente, @Frequencia, 
@@ -235,8 +289,8 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                     Telefone = COALESCE(@Telefone, Telefone)
                 WHERE IdUsuario = @idUsuario";
 
-            public const string DeleteConta = @"
-                DELETE FROM Usuario WHERE IdUsuario = @idUsuario";
+            public const string DeleteConta = 
+                @"EXEC sp_ExcluirUsuario @IdUsuario = @idUsuario";
         }
         #endregion
     }

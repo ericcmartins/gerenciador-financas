@@ -41,9 +41,7 @@ namespace gerenciador.financas.Application.Extensions
                 ValorAlvo = viewModel.ValorAlvo,
                 ValorAtual = viewModel.ValorAtual,
                 DataInicio = viewModel.DataInicio,
-                DataLimite = viewModel.DataLimite,
-                Concluida = viewModel.Concluida
-
+                DataLimite = viewModel.DataLimite
             };
         }
     }

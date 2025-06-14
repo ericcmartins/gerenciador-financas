@@ -31,6 +31,50 @@ namespace gerenciador.financas.Application.Services
 
             return despesas;
         }
+        public async Task<List<DespesaCategoria?>> GetDespesasPorCategoria(int idUsuario, int? periodo)
+        {
+            var responseInfra = await _despesaRepository.GetDespesasPorCategoria(idUsuario, periodo);
+            if (_despesaRepository.HasNotifications)
+                return null;
+
+            var despesas = responseInfra
+                .Select(d => d.ToService())
+                .ToList();
+
+            return despesas;
+        }
+        public async Task<List<DespesaConta?>> GetDespesasPorConta(int idUsuario, int? periodo)
+        {
+            var responseInfra = await _despesaRepository.GetDespesasPorConta(idUsuario, periodo);
+            if (_despesaRepository.HasNotifications)
+                return null;
+
+            var despesas = responseInfra
+                .Select(d => d.ToService())
+                .ToList();
+
+            return despesas;
+        }
+        public async Task<List<DespesaMetodoPagamento?>> GetDespesasPorMetodoPagamento(int idUsuario, int? periodo)
+        {
+            var responseInfra = await _despesaRepository.GetDespesasPorMetodoPagamento(idUsuario, periodo);
+            if (_despesaRepository.HasNotifications)
+                return null;
+
+            var despesas = responseInfra
+                .Select(d => d.ToService())
+                .ToList();
+
+            return despesas;
+        }
+        public async Task<Decimal?> GetTotalDespesasPeriodo(int idUsuario, int? periodo)
+        {
+            var responseInfra = await _despesaRepository.GetTotalDespesasPeriodo(idUsuario, periodo);
+            if (_despesaRepository.HasNotifications)
+                return null;
+
+            return responseInfra;
+        }
 
         public async Task<bool> InsertDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idConta, int idCategoria, int idMetodoPagamento)
         {

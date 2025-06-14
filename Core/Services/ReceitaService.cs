@@ -19,9 +19,9 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<Receita?>> GetReceitas(int idUsuario)
+        public async Task<List<Receita?>> GetReceitas(int idUsuario, int? periodo)
         {
-            var responseInfra = await _receitaRepository.GetReceita(idUsuario);
+            var responseInfra = await _receitaRepository.GetReceitas(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)
                 return null;
 
@@ -30,6 +30,39 @@ namespace gerenciador.financas.Application.Services
                 .ToList();
 
             return receitas;
+        }
+        public async Task<List<ReceitaCategoria?>> GetReceitasPorCategoria(int idUsuario, int? periodo)
+        {
+            var responseInfra = await _receitaRepository.GetReceitasPorCategoria(idUsuario, periodo);
+            if (_receitaRepository.HasNotifications)
+                return null;
+
+            var receitas = responseInfra
+                .Select(r => r.ToService())
+                .ToList();
+
+            return receitas;
+        }
+
+        public async Task<List<ReceitaConta?>> GetReceitasPorConta(int idUsuario, int? periodo)
+        {
+            var responseInfra = await _receitaRepository.GetReceitasPorConta(idUsuario, periodo);
+            if (_receitaRepository.HasNotifications)
+                return null;
+
+            var receitas = responseInfra
+                .Select(r => r.ToService())
+                .ToList();
+
+            return receitas;
+        }
+        public async Task<Decimal?> GetReceitasTotalPorPeriodo(int idUsuario, int? periodo)
+        {
+            var responseInfra = await _receitaRepository.GetReceitasTotalPorPeriodo(idUsuario, periodo);
+            if (_receitaRepository.HasNotifications)
+                return null;
+
+            return responseInfra;
         }
 
         public async Task<bool> InsertReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idConta, int idCategoria)

@@ -13,8 +13,10 @@ namespace gerenciador.financas.Application.Extensions
             {
                 TipoMovimentacao = infra.TipoMovimentacao,
                 Valor = infra.Valor,
+                DataMovimentacao = infra.DataMovimentacao,
                 Descricao = infra.Descricao,
-                Data = infra.Data
+                NumeroContaDestino = infra.NumeroContaDestino,
+                NumeroContaOrigem = infra.NumeroContaOrigem,
             };
         }
 
@@ -24,18 +26,11 @@ namespace gerenciador.financas.Application.Extensions
             {
                 TipoMovimentacao = domain.TipoMovimentacao,
                 Valor = domain.Valor,
+                DataMovimentacao = domain.DataMovimentacao,
                 Descricao = domain.Descricao,
-                Data = domain.Data
-            };
-        }
-        public static MovimentacaoFinanceiraRequestInfra ToInfra(this MovimentacaoFinanceiraRequestViewModel viewModel)
-        {
-            return new MovimentacaoFinanceiraRequestInfra
-            {
-                TipoMovimentacao = viewModel.TipoMovimentacao,
-                Valor = viewModel.Valor,
-                Descricao = viewModel.Descricao,
-                Data = viewModel.Data
+                NumeroContaDestino = domain.NumeroContaDestino,
+                NumeroContaOrigem = domain.NumeroContaOrigem,
+
             };
         }
     }

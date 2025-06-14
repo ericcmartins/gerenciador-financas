@@ -27,11 +27,42 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterReceitasUsuario([Required] int idUsuario)
+        public async Task<IActionResult> ObterReceitasUsuario([Required] int idUsuario, int periodo)
         {
             try
             {
-                var response = await _receitaService.GetReceitas(idUsuario);
+                var response = await _receitaService.GetReceitas(idUsuario, periodo);
+                if (_receitaService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                var viewModel = response
+                    .Select(r => r.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+        [HttpGet("receitas/categoria/cliente")]
+        [ProducesResponseType(typeof(List<ReceitaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ObterReceitasUsuarioPorCategoria([Required] int idUsuario, int periodo)
+        {
+            try
+            {
+                var response = await _receitaService.GetReceitasPorCategoria(idUsuario, periodo);
                 if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -54,6 +85,65 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
+        [HttpGet("receitas/conta/cliente")]
+        [ProducesResponseType(typeof(List<ReceitaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ObterReceitasUsuarioPorConta([Required] int idUsuario, int periodo)
+        {
+            try
+            {
+                var response = await _receitaService.GetReceitasPorConta(idUsuario, periodo);
+                if (_receitaService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                var viewModel = response
+                    .Select(r => r.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+        [HttpGet("receitas/total/cliente")]
+        [ProducesResponseType(typeof(List<ReceitaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ObterTotalReceitasUsuario([Required] int idUsuario, int periodo)
+        {
+            try
+            {
+                var response = await _receitaService.GetReceitasTotalPorPeriodo(idUsuario, periodo);
+                if (_receitaService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                return Ok(response);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+
         [HttpPost("receita/cliente")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +156,7 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _receitaService.InsertReceita(receitaRequest, idUsuario , idCategoria, idConta); 
+                var response = await _receitaService.InsertReceita(receitaRequest, idUsuario , idCategoria, idConta); 
                 if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -97,7 +187,7 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                 var response = await _receitaService.UpdateReceita(receitaRequest, idUsuario, idReceita, idCategoria, idConta);
+                var response = await _receitaService.UpdateReceita(receitaRequest, idUsuario, idReceita, idCategoria, idConta);
                 if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -120,12 +210,11 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
         public async Task<IActionResult> ExcluirReceita([Required] int idUsuario, [Required] int idReceita)
         {
             try
             {
-                 var response = await _receitaService.DeleteReceita(idUsuario, idReceita);  
+                var response = await _receitaService.DeleteReceita(idUsuario, idReceita);  
                 if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
