@@ -205,6 +205,22 @@ namespace gerenciador.financas.Infra.Vendors.Queries
             public const string InsertTransferenciaEntreContas = @"
                 INSERT INTO MovimentacaoFinanceira (TipoMovimentacao, Valor, DataMovimentacao, Descricao, IdContaOrigem, IdContaDestino, IdUsuario, IdReceita, IdDespesa) 
                 VALUES (@TipoMovimentacao, @Valor, @DataMovimentacao, @Descricao, @IdContaOrigem, @IdContaDestino, @IdUsuario, NULL, NULL);";
+
+            public const string UpdateMovimentacaoFinanceira = @"
+                UPDATE MovimentacaoFinanceira
+                SET
+                    TipoMovimentacao = COALESCE(@TipoMovimentacao, TipoMovimentacao),
+                    Valor = COALESCE(@Valor, Valor),
+                    DataMovimentacao = COALESCE(@DataMovimentacao, DataMovimentacao),
+                    Descricao = COALESCE(@Descricao, Descricao),
+                    IdContaOrigem = COALESCE(@IdContaOrigem, IdContaOrigem),
+                    IdContaDestino = COALESCE(@IdContaDestino, IdContaDestino)
+                WHERE IdMovimentacao = @IdMovimentacao;";
+
+            public const string DeleteMovimentacaoFinanceira = @"
+                DELETE FROM MovimentacaoFinanceira
+                WHERE IdMovimentacao = @IdMovimentacao;";
+
         }
         #endregion
 

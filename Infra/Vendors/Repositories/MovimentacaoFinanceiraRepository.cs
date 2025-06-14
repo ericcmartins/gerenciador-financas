@@ -38,7 +38,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas despesas no período informado para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas transferências no período informado para o usuário");
 
             return responseList;
         }
@@ -55,20 +55,64 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 movimentacaoFinanceiraRequest.Valor,
                 movimentacaoFinanceiraRequest.DataMovimentacao,
                 movimentacaoFinanceiraRequest.Descricao,
-                idUsuario,
-                idContaOrigem,
-                idContaDestino
+                IdUsuario = idUsuario,
+                IdContaOrigem = idContaOrigem,
+                IdContaDestino = idContaDestino
             });
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar despesa");
+                _notificationPool.AddNotification(500, "Erro ao registrar transferência");
                 return false;
             }
 
             return true;
         }
 
+        public async Task<bool> UpdateMovimentacaoFinanceira(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
+
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacaoFinanceira.UpdateMovimentacaoFinanceira, new
+            {
+                movimentacaoFinanceiraRequest.TipoMovimentacao,
+                movimentacaoFinanceiraRequest.Valor,
+                movimentacaoFinanceiraRequest.DataMovimentacao,
+                movimentacaoFinanceiraRequest.Descricao,
+                IdUsuario = idUsuario,
+                IdContaOrigem = idContaOrigem,
+                IdContaDestino = idContaDestino,
+                IdMovimentacao = idMovimentacaoFinanceira
+            });
+
+            if (linhasAfetadas != 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao atualizar transferência");
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> DeleteMovimentacaoFinanceira(int idUsuario, int idMovimentacaoFinanceira)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacaoFinanceira.DeleteMovimentacaoFinanceira, new
+            {
+                IdMovimentacao = idMovimentacaoFinanceira
+            });
+
+            if (linhasAfetadas != 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao deletar transferência");
+                return false;
+            }
+
+            return true;
+        }
     }
+
 }

@@ -27,7 +27,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDespesasUsuario([Required] int idUsuario, int periodo, string tipoMovimentacao)
+        public async Task<IActionResult> ObterMovimentacoeFinanceirasUsuario([Required] int idUsuario, int periodo, string tipoMovimentacao)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDespesa([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
+        public async Task<IActionResult> InserirMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
                                                  [Required] int idUsuario,
                                                  [Required] int idContaOrigem,
                                                  [Required] int idContaDestino)
@@ -77,6 +77,67 @@ namespace gerenciador.financas.API.Controllers
                 }
 
                 return Created(string.Empty, "movimentação entre contas inserida com sucesso");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+
+        [HttpPut("movimentacao/cliente")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AtualizarMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
+                                                          [Required] int idUsuario,
+                                                          [Required] int idMovimentacaoFinanceira,
+                                                          int idContaOrigem,
+                                                          int idContaDestino
+                                                          )
+        {
+            try
+            {
+                var response = await _movimentacaoFinanceiraService.UpdateMovimentacaoFinanceira(movimentacaoFinanceiraRequestViewModel, idUsuario, idContaOrigem, idContaDestino, idMovimentacaoFinanceira);
+                if (_movimentacaoFinanceiraService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                return NoContent();
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("movimentacao/cliente")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> ExcluirMovimentacaoFinanceira([Required] int idUsuario,
+                                                                       [Required] int idMovimentacaoFinanceira)
+        {
+            try
+            {
+                var response = await _movimentacaoFinanceiraService.DeleteMovimentacaoFinanceira(idUsuario, idMovimentacaoFinanceira);
+                if (_movimentacaoFinanceiraService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                return NoContent();
             }
 
             catch (Exception ex)

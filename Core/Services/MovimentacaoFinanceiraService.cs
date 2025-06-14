@@ -43,5 +43,22 @@ namespace gerenciador.financas.Application.Services
 
             return resultado;
         }
+        public async Task<bool> UpdateMovimentacaoFinanceira(MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira)
+        {
+            var resultado = await _movimentacaoFinanceiraRepository.UpdateMovimentacaoFinanceira(movimentacaoFinanceiraRequest.ToInfra(), idUsuario, idContaOrigem, idContaDestino, idMovimentacaoFinanceira);
+            if (_movimentacaoFinanceiraRepository.HasNotifications)
+                return false;
+
+            return resultado;
+        }
+
+        public async Task<bool> DeleteMovimentacaoFinanceira(int idUsuario, int idMovimentacaoFinanceira)
+        {
+            var resultado = await _movimentacaoFinanceiraRepository.DeleteMovimentacaoFinanceira(idUsuario, idMovimentacaoFinanceira);
+            if (_movimentacaoFinanceiraRepository.HasNotifications)
+                return false;
+
+            return resultado;
+        }
     }
 }
