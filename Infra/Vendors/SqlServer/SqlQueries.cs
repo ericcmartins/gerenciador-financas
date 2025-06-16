@@ -112,7 +112,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 INNER JOIN MetodoPagamento m ON d.IdMetodoPagamento = m.IdMetodo
                 WHERE d.IdUsuario = @IdUsuario
                   AND d.DataDespesa BETWEEN @DataInicio AND @DataFim
-                GROUP BY m.Descricao
+                GROUP BY m.Nome
                 ORDER BY TotalDespesa DESC;";
 
             public const string GetTotalDespesasNoPeriodo = @"
