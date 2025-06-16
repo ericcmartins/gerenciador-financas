@@ -63,14 +63,24 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #region Despesa
         public static class Despesa
         {
-            public const string GetDespesaPorId = @"
-                SELECT IdDespesa, Valor, Descricao, DataDespesa, Recorrente, Frequencia, 
-                       IdUsuario, IdConta, IdCategoria, IdMetodoPagamento
-                FROM Despesa
-                WHERE IdDespesa = @IdDespesa
-                  AND IdUsuario = @IdUsuario
-                  AND DataDespesa BETWEEN @DataInicio AND @DataFim;";
-
+            public const string GetDespesasPorUsuario = @"
+                SELECT 
+                    d.IdDespesa, 
+                    d.Valor, 
+                    d.Descricao, 
+                    d.DataDespesa, 
+                    d.Recorrente, 
+                    d.Frequencia, 
+                    d.IdUsuario, 
+                    c.Nome AS Categoria, 
+                    ct.NumeroConta AS Conta, 
+                    mp.Nome AS MetodoPagamento
+                FROM Despesa d
+                LEFT JOIN Categoria c ON c.IdCategoria = d.IdCategoria
+                INNER JOIN Conta ct ON ct.IdConta = d.IdConta
+                LEFT JOIN MetodoPagamento mp ON mp.IdMetodo = d.IdMetodoPagamento
+                WHERE d.IdUsuario = @IdUsuario
+                  AND d.DataDespesa BETWEEN @DataInicio AND @DataFim;";
 
             public const string GetDespesasPorCategoria = @"
                 SELECT 
@@ -227,14 +237,23 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #region Receita
         public static class Receita
         {
-            public const string GetReceitasPorId = @"
-                SELECT IdReceita, Valor, Descricao, DataReceita, Recorrente, Frequencia, 
-                       IdUsuario, IdConta, IdCategoria
-                FROM Receita
-                WHERE IdReceita = @IdReceita
-                  AND IdUsuario = @IdUsuario
-                  AND DataReceita BETWEEN @DataInicio AND @DataFim;";
-
+        public const string GetReceitasPorId = @"
+            SELECT 
+                r.IdReceita, 
+                r.Valor, 
+                r.Descricao, 
+                r.DataReceita, 
+                r.Recorrente, 
+                r.Frequencia, 
+                r.IdUsuario, 
+                c.Nome AS Categoria, 
+                ct.NumeroConta AS Conta
+            FROM Receita r
+            LEFT JOIN Categoria c ON c.IdCategoria = r.IdCategoria
+            INNER JOIN Conta ct ON ct.IdConta = r.IdConta
+            WHERE r.IdReceita = @IdReceita
+                AND r.IdUsuario = @IdUsuario
+                AND r.DataReceita BETWEEN @DataInicio AND @DataFim;";
 
         public const string GetTotalReceitasPeriodo = @"
             SELECT 

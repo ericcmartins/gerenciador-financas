@@ -25,7 +25,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var response = await connection.QueryAsync<DespesaResponseInfra>(
-                SqlQueries.Despesa.GetDespesaPorId, new
+                SqlQueries.Despesa.GetDespesasPorUsuario, new
                 {
                     IdUsuario = idUsuario,
                     DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,

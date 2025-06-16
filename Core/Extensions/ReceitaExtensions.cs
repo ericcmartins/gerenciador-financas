@@ -16,6 +16,8 @@ namespace gerenciador.financas.Application.Extensions
                 DataReceita = infra.DataReceita,
                 Recorrente = infra.Recorrente,
                 Frequencia = infra.Frequencia,
+                Conta = infra.Conta,
+                Categoria = infra.Categoria                
             };
         }
 
@@ -24,7 +26,7 @@ namespace gerenciador.financas.Application.Extensions
             return new ReceitaCategoria
             {
                 Categoria = infra.Categoria,
-                TotalReceita = infra.TotalReceita,
+                TotalReceita = infra.TotalReceita
             };
         }
         public static ReceitaConta ToService(this ReceitaPorContaResponseInfra infra)
@@ -32,7 +34,7 @@ namespace gerenciador.financas.Application.Extensions
             return new ReceitaConta
             {
                 NumeroConta = infra.NumeroConta,
-                TotalReceita = infra.TotalReceita,
+                TotalReceita = infra.TotalReceita
             };
         }
 
@@ -62,6 +64,8 @@ namespace gerenciador.financas.Application.Extensions
                 DataReceita = domain.DataReceita,
                 Recorrente = domain.Recorrente,
                 Frequencia = domain.Frequencia,
+                Conta = domain.Conta,
+                Categoria = domain.Categoria
             };
         }
         public static ReceitaRequestInfra ToInfra(this ReceitaRequestViewModel viewModel)

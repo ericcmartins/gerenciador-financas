@@ -15,7 +15,7 @@ namespace gerenciador.financas.Application.Extensions
                 Descricao = infra.Descricao,
                 Limite = infra.Limite,
                 Tipo = infra.Tipo,
-
+                NumeroConta = infra.NumeroConta
             };
         }
 
