@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOn - Métodos de Pagamento</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-chart-line"></i> FinOn</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="index.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="receitas.html">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Receitas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="despesas.html">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Despesas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="categorias.html">
+                        <i class="fas fa-tags"></i>
+                        <span>Categorias</span>
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a href="metodos-pagamento.html">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Métodos de Pagamento</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Métodos de Pagamento</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <span class="user-name">João Silva</span>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="content">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h2>Gerenciar Métodos de Pagamento</h2>
+                        <p>Configure seus cartões, contas e formas de pagamento</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openMetodoModal()">
+                        <i class="fas fa-plus"></i>
+                        Novo Método
+                    </button>
+                </div>
+
+                <!-- Payment Methods Grid -->
+                <div class="payment-methods-grid" id="paymentMethodsGrid">
+                    <!-- Payment methods will be loaded here -->
+                </div>
+
+                <!-- Payment Methods Table -->
+                <div class="card table-card">
+                    <div class="card-header">
+                        <h3>Lista de Métodos de Pagamento</h3>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Buscar método...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Conta Vinculada</th>
+                                    <th>Limite</th>
+                                    <th>Descrição</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="metodosTableBody">
+                                <!-- Payment methods will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal" id="metodoModal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Novo Método de Pagamento</h3>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="metodoForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome do Método *</label>
+                            <input type="text" id="nome" required placeholder="Ex: Cartão Nubank, PIX, Dinheiro...">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Tipo *</label>
+                            <select id="tipo" required>
+                                <option value="">Selecione o tipo</option>
+                                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                <option value="Cartão de Débito">Cartão de Débito</option>
+                                <option value="PIX">PIX</option>
+                                <option value="Dinheiro">Dinheiro</option>
+                                <option value="Transferência">Transferência</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="conta">Conta Vinculada *</label>
+                        <select id="conta" required>
+                            <option value="">Selecione uma conta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="limite">Limite (opcional)</label>
+                        <input type="number" id="limite" step="0.01" placeholder="Deixe em branco se não houver limite">
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <textarea id="descricao" rows="3" placeholder="Informações adicionais sobre este método..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" form="metodoForm" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModalOverlay" class="modal-overlay">
+        <div class="modal delete-modal">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button class="close-btn" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Tem certeza que deseja excluir este método de pagamento?</p>
+                    <p class="warning-text">Esta ação não pode ser desfeita e pode afetar transações existentes.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/metodos-pagamento.js"></script>
+</body>
+</html>
