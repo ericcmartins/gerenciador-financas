@@ -190,8 +190,6 @@ function updateReceitasSummary() {
 function setupReceitasEventListeners() {
     // Filter change events
     const filtroData = document.getElementById('filtroData');
-    const filtroCategoria = document.getElementById('filtroCategoria');
-    const filtroConta = document.getElementById('filtroConta');
     
     if (filtroData) {
         filtroData.addEventListener('change', loadReceitas);

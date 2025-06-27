@@ -15,13 +15,16 @@ document.addEventListener('DOMContentLoaded', function() {
 async function initializeApp() {
     try {
         // Check authentication for protected pages
-        checkAuthentication();
+        if (!isAuthPage() && !isLoggedIn()) {
+            window.location.href = 'login.html';
+            return;
+        }
         
         // Setup event listeners
         setupEventListeners();
         
         // Load initial data for authenticated pages
-        if (isAuthenticatedPage()) {
+        if (!isAuthPage()) {
             await loadInitialData();
         }
         
@@ -31,47 +34,22 @@ async function initializeApp() {
         console.log('Application initialized successfully');
     } catch (error) {
         console.error('Error initializing application:', error);
-        if (isAuthenticatedPage()) {
-            showErrorMessage('Erro ao inicializar a aplicação. Verifique sua conexão.');
-        }
+        showErrorMessage('Erro ao inicializar a aplicação. Verifique sua conexão.');
     }
 }
 
-// Check if user is authenticated for protected pages
-function checkAuthentication() {
-    const protectedPages = ['index.html', 'receitas.html', 'despesas.html', 'categorias.html', 'metodos-pagamento.html', 'perfil.html'];
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    
-    
-    // Update user info in header if logged in
-    if (isLoggedIn()) {
-        updateUserInfoInHeader();
-    }
+// Check if current page is an auth page
+function isAuthPage() {
+    const authPages = ['login.html', 'cadastro.html', 'esqueci-senha.html', 'recuperar-senha.html'];
+    const currentPage = window.location.pathname.split('/').pop();
+    return authPages.includes(currentPage);
 }
 
-function isAuthenticatedPage() {
-    const protectedPages = ['index.html', 'receitas.html', 'despesas.html', 'categorias.html', 'metodos-pagamento.html', 'perfil.html'];
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    return protectedPages.includes(currentPage);
-}
-
-function updateUserInfoInHeader() {
-    const user = getCurrentUser();
-    if (user) {
-        const userNameElements = document.querySelectorAll('.user-name');
-        userNameElements.forEach(element => {
-            element.textContent = user.email.split('@')[0] || 'Usuário';
-        });
-        
-        // Make user info clickable to go to profile
-        const userInfoElements = document.querySelectorAll('.user-info');
-        userInfoElements.forEach(element => {
-            element.style.cursor = 'pointer';
-            element.addEventListener('click', function() {
-                window.location.href = 'perfil.html';
-            });
-        });
-    }
+// Check if user is logged in
+function isLoggedIn() {
+    const sessionUser = sessionStorage.getItem('finon_user');
+    const localUser = localStorage.getItem('finon_user');
+    return !!(sessionUser || localUser);
 }
 
 // Setup common event listeners
@@ -104,6 +82,14 @@ function setupEventListeners() {
             if (!validateForm(form)) {
                 event.preventDefault();
             }
+        }
+    });
+
+    // User menu toggle
+    document.addEventListener('click', function(event) {
+        const userMenu = document.getElementById('userMenu');
+        if (userMenu && !event.target.closest('.user-info')) {
+            userMenu.classList.remove('active');
         }
     });
 }
@@ -163,6 +149,23 @@ function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
         sidebar.classList.toggle('active');
+    }
+}
+
+// Toggle user menu
+function toggleUserMenu() {
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu) {
+        userMenu.classList.toggle('active');
+    }
+}
+
+// Logout function
+function logout() {
+    if (confirm('Tem certeza que deseja sair?')) {
+        sessionStorage.removeItem('finon_user');
+        localStorage.removeItem('finon_user');
+        window.location.href = 'login.html';
     }
 }
 
@@ -388,22 +391,6 @@ function populatePaymentMethods(selectElement, placeholder = 'Selecione um méto
     populateSelect(selectElement, paymentMethods, 'id', 'nome', placeholder);
 }
 
-// Authentication helper functions
-function isLoggedIn() {
-    const sessionUser = sessionStorage.getItem('finon_user');
-    const localUser = localStorage.getItem('finon_user');
-    
-    return !!(sessionUser || localUser);
-}
-
-function getCurrentUser() {
-    const sessionUser = sessionStorage.getItem('finon_user');
-    const localUser = localStorage.getItem('finon_user');
-    
-    const userStr = sessionUser || localUser;
-    return userStr ? JSON.parse(userStr) : null;
-}
-
 // Export functions for use in other files
 window.FinOnApp = {
     openModal,
@@ -421,12 +408,16 @@ window.FinOnApp = {
     populateAccounts,
     populatePaymentMethods,
     validateForm,
-    isLoggedIn,
-    getCurrentUser
+    toggleUserMenu,
+    logout
 };
 
-// Add CSS for notifications
-const notificationStyles = `
+// Make functions globally available
+window.toggleUserMenu = toggleUserMenu;
+window.logout = logout;
+
+// Add CSS for notifications and user menu
+const additionalStyles = `
     @keyframes slideInRight {
         from {
             transform: translateX(100%);
@@ -487,30 +478,60 @@ const notificationStyles = `
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
     }
     
-    .auth-error, .auth-success {
-        margin-bottom: 1.5rem;
-        padding: 1rem;
+    .user-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
         border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        min-width: 180px;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+    
+    .user-menu.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    
+    .user-menu a {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 0.9rem;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: #374151;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
     }
     
-    .auth-error {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fca5a5;
+    .user-menu a:hover {
+        background-color: #f3f4f6;
     }
     
-    .auth-success {
-        background: #d1fae5;
-        color: #065f46;
-        border: 1px solid #a7f3d0;
+    .user-menu a:first-child {
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .user-menu a:last-child {
+        border-radius: 0 0 8px 8px;
+    }
+    
+    .user-info {
+        position: relative;
+    }
+    
+    .user-avatar {
+        cursor: pointer;
     }
 `;
 
 // Add styles to document
 const styleSheet = document.createElement('style');
-styleSheet.textContent = notificationStyles;
+styleSheet.textContent = additionalStyles;
 document.head.appendChild(styleSheet);

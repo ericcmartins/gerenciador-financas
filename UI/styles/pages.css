@@ -492,6 +492,30 @@
     .data-table td {
         padding: 0.75rem 0.5rem;
     }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .security-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .account-actions {
+        flex-direction: column;
+    }
+    
+    .account-actions .btn {
+        min-width: auto;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 480px) {
@@ -538,6 +562,26 @@
     
     .page-empty-state h3 {
         font-size: 1.2rem;
+    }
+    
+    .profile-card {
+        padding: 1.5rem;
+    }
+    
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+    
+    .change-avatar-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+    
+    .profile-info h3 {
+        font-size: 1.25rem;
     }
 }
 

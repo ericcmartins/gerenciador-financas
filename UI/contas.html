@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOn - Contas</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-chart-line"></i> FinOn</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="index.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="receitas.html">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Receitas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="despesas.html">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Despesas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="categorias.html">
+                        <i class="fas fa-tags"></i>
+                        <span>Categorias</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="metodos-pagamento.html">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Métodos de Pagamento</span>
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a href="contas.html">
+                        <i class="fas fa-university"></i>
+                        <span>Contas</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Contas</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <span class="user-name">João Silva</span>
+                        <div class="user-avatar" onclick="toggleUserMenu()">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-menu" id="userMenu">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="content">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h2>Gerenciar Contas</h2>
+                        <p>Configure suas contas bancárias e carteiras</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openContaModal()">
+                        <i class="fas fa-plus"></i>
+                        Nova Conta
+                    </button>
+                </div>
+
+                <!-- Accounts Grid -->
+                <div class="accounts-grid" id="accountsGrid">
+                    <!-- Accounts will be loaded here -->
+                </div>
+
+                <!-- Accounts Table -->
+                <div class="card table-card">
+                    <div class="card-header">
+                        <h3>Lista de Contas</h3>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Buscar conta...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Número da Conta</th>
+                                    <th>Tipo</th>
+                                    <th>Instituição</th>
+                                    <th>Saldo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contasTableBody">
+                                <!-- Accounts will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal" id="contaModal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nova Conta</h3>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="contaForm">
+                    <div class="form-group">
+                        <label for="numeroConta">Número da Conta *</label>
+                        <input type="text" id="numeroConta" name="numeroConta" required placeholder="Ex: 12345-6">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo *</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="Conta Corrente">Conta Corrente</option>
+                            <option value="Conta Poupança">Conta Poupança</option>
+                            <option value="Conta Salário">Conta Salário</option>
+                            <option value="Carteira Digital">Carteira Digital</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="instituicao">Instituição *</label>
+                        <input type="text" id="instituicao" name="instituicao" required placeholder="Ex: Banco do Brasil, Nubank, PicPay...">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" form="contaForm" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModalOverlay" class="modal-overlay">
+        <div class="modal delete-modal">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button class="close-btn" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Tem certeza que deseja excluir esta conta?</p>
+                    <p class="warning-text">Esta ação não pode ser desfeita e pode afetar transações existentes.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/contas.js"></script>
+</body>
+</html>

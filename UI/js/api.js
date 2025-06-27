@@ -144,6 +144,15 @@ class ApiService {
         });
     }
 
+    // Balance API methods
+    async getBalanceByAccount() {
+        return this.get(CONFIG.API.ENDPOINTS.BALANCE_BY_ACCOUNT, { idUsuario: this.userId });
+    }
+
+    async getTotalBalance() {
+        return this.get(CONFIG.API.ENDPOINTS.BALANCE_TOTAL, { idUsuario: this.userId });
+    }
+
     // Expense API methods
     async getExpenses(period = null) {
         const params = { idUsuario: this.userId };

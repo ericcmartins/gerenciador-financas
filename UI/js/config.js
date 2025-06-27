@@ -41,7 +41,11 @@ const CONFIG = {
             
             // Financial movement endpoints
             MOVEMENTS: '/movimentacoes/cliente',
-            MOVEMENT: '/movimentacao/cliente'
+            MOVEMENT: '/movimentacao/cliente',
+            
+            // Balance endpoints
+            BALANCE_BY_ACCOUNT: '/saldo/contas/cliente',
+            BALANCE_TOTAL: '/saldo/total/cliente'
         }
     },
     

@@ -200,6 +200,14 @@
     margin-bottom: 0.25rem;
 }
 
+.transaction-amount .amount.income {
+    color: #10b981;
+}
+
+.transaction-amount .amount.expense {
+    color: #ef4444;
+}
+
 .transaction-amount .date {
     font-size: 0.8rem;
     color: #6b7280;

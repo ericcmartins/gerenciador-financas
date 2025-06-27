@@ -57,7 +57,7 @@ async function loadDashboardData() {
             despesas.reduce((sum, item) => sum + (item.totalDespesa || 0), 0) : 0;
         
         dashboardData.saldo = dashboardData.receitas - dashboardData.despesas;
-        dashboardData.metas = Array.isArray(metas) ? metas.filter(meta => !meta.concluida).length : 0;
+        dashboardData.metas = Array.isArray(metas) ? metas.filter(meta => !meta.conclu ida).length : 0;
         
     } catch (error) {
         console.error('Error loading dashboard data:', error);

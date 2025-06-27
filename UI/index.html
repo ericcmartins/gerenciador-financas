@@ -46,6 +46,12 @@
                         <span>Métodos de Pagamento</span>
                     </a>
                 </li>
+                <li class="menu-item">
+                    <a href="contas.html">
+                        <i class="fas fa-university"></i>
+                        <span>Contas</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 
@@ -62,8 +68,12 @@
                 <div class="top-bar-right">
                     <div class="user-info">
                         <span class="user-name">João Silva</span>
-                        <div class="user-avatar">
+                        <div class="user-avatar" onclick="toggleUserMenu()">
                             <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-menu" id="userMenu">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
                         </div>
                     </div>
                 </div>
@@ -101,8 +111,8 @@
                                 <i class="fas fa-wallet"></i>
                             </div>
                             <div class="card-content">
-                                <h3>Saldo Atual</h3>
-                                <p class="amount" id="saldoAtual">R$ 0,00</p>
+                                <h3>Saldo Total</h3>
+                                <p class="amount" id="saldoTotal">R$ 0,00</p>
                                 <span class="change positive">+8% vs mês anterior</span>
                             </div>
                         </div>
@@ -199,44 +209,33 @@
                 <form id="transactionForm">
                     <div class="form-group">
                         <label for="valor">Valor</label>
-                        <input type="number" id="valor" step="0.01" required>
+                        <input type="number" id="valor" name="valor" step="0.01" required>
                     </div>
                     <div class="form-group">
                         <label for="descricao">Descrição</label>
-                        <input type="text" id="descricao" required>
+                        <input type="text" id="descricao" name="descricao" required>
                     </div>
                     <div class="form-group">
                         <label for="data">Data</label>
-                        <input type="date" id="data" required>
+                        <input type="date" id="data" name="data" required>
                     </div>
                     <div class="form-group">
                         <label for="categoria">Categoria</label>
-                        <select id="categoria" required>
+                        <select id="categoria" name="categoria" required>
                             <option value="">Selecione uma categoria</option>
                         </select>
                     </div>
                     <div class="form-group" id="contaGroup">
                         <label for="conta">Conta</label>
-                        <select id="conta" required>
+                        <select id="conta" name="conta" required>
                             <option value="">Selecione uma conta</option>
                         </select>
                     </div>
                     <div class="form-group" id="metodoPagamentoGroup" style="display: none;">
                         <label for="metodoPagamento">Método de Pagamento</label>
-                        <select id="metodoPagamento">
+                        <select id="metodoPagamento" name="metodoPagamento">
                             <option value="">Selecione um método</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="recorrente">
-                            <span class="checkmark"></span>
-                            Transação recorrente
-                        </label>
-                    </div>
-                    <div class="form-group" id="frequenciaGroup" style="display: none;">
-                        <label for="frequencia">Frequência (dias)</label>
-                        <input type="number" id="frequencia" min="1">
                     </div>
                 </form>
             </div>
