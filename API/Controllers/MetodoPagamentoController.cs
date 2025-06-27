@@ -27,7 +27,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterMetodosPagamentoUsuario([Required] int idUsuario)
+        public async Task<IActionResult> GetMetodosPagamentoUsuario([Required] int idUsuario)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirMetodoPagamento([Required][FromBody] MetodoPagamentoRequestViewModel metodoPagamentoRequest, [Required]int idUsuario, [Required] int idConta)
+        public async Task<IActionResult> InsertMetodoPagamento([Required][FromBody] MetodoPagamentoRequestViewModel metodoPagamentoRequest, [Required]int idUsuario, [Required] int idConta)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarMetodoPagamento([Required][FromBody] MetodoPagamentoRequestViewModel metodoPagamentoRequest, 
+        public async Task<IActionResult> UpdateMetodoPagamento([Required][FromBody] MetodoPagamentoRequestViewModel metodoPagamentoRequest, 
                                                                   [Required] int idUsuario, 
                                                                   [Required] int idConta,
                                                                   [Required] int idMetodoPagamento)
@@ -116,7 +116,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> DeletarMetodoPagamento([Required][FromQuery]int idUsuario, [Required]int idMetodoPagamento)
+        public async Task<IActionResult> DeleteMetodoPagamento([Required][FromQuery]int idUsuario, [Required]int idMetodoPagamento)
         {
             try
             {

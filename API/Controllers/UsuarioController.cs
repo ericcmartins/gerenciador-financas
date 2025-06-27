@@ -28,7 +28,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDadosCadastrais([Required] int idUsuario)
+        public async Task<IActionResult> GetDadosCadastrais([Required] int idUsuario)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<IActionResult> InsertDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
+        public async Task<IActionResult> UpdateDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required]int idUsuario)
+        public async Task<IActionResult> DeleteDadosCadastrais([Required]int idUsuario)
         {
             try
             {

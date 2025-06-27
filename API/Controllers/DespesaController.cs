@@ -27,7 +27,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDespesasUsuario([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetDespesasUsuario([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDespesasUsuarioPorCategoria([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetDespesasUsuarioPorCategoria([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDespesasUsuarioPorConta([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetDespesasUsuarioPorConta([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterDespesasUsuarioPorMetodoPagamento([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetDespesasUsuarioPorMetodoPagamento([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterTotalDespesasUsuarioPorPeriodo([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetTotalDespesasUsuarioPorPeriodo([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -180,7 +180,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest,
+        public async Task<IActionResult> InsertDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest,
                                                          [Required] int idUsuario,
                                                          [Required] int idCategoria,
                                                          [Required] int idConta,
@@ -212,7 +212,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest,
+        public async Task<IActionResult> UpdateDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest,
                                                           [Required] int idUsuario,
                                                           [Required] int idDespesa,
                                                           [Required] int idCategoria,
@@ -245,7 +245,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirDespesa([Required] int idUsuario, [Required] int idDespesa)
+        public async Task<IActionResult> DeleteDespesa([Required] int idUsuario, [Required] int idDespesa)
         {
             try
             {

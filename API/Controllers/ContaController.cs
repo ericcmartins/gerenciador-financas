@@ -27,7 +27,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterContasUsuario([Required] int idUsuario)
+        public async Task<IActionResult> GetContasUsuario([Required] int idUsuario)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirConta([Required][FromBody] ContaRequestViewModel conta, [Required] int idUsuario)
+        public async Task<IActionResult> InsertConta([Required][FromBody] ContaRequestViewModel conta, [Required] int idUsuario)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarConta([Required][FromBody] ContaRequestViewModel conta, [Required]int idUsuario, [Required] int idConta)
+        public async Task<IActionResult> UpdateConta([Required][FromBody] ContaRequestViewModel conta, [Required]int idUsuario, [Required] int idConta)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirConta([Required]int idUsuario, [Required]int idConta)
+        public async Task<IActionResult> DeleteConta([Required]int idUsuario, [Required]int idConta)
         {
             try
             {

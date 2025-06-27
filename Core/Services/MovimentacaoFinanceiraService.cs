@@ -23,7 +23,7 @@ namespace gerenciador.financas.Application.Services
 
         public async Task<List<MovimentacaoFinanceira?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo, string? tipoMovimentacao)
         {
-            var responseInfra = await _movimentacaoFinanceiraRepository.GetMovimentacoesFinanceiras(idUsuario, periodo);
+            var responseInfra = await _movimentacaoFinanceiraRepository.GetMovimentacoesFinanceiras(idUsuario, periodo, tipoMovimentacao);
             if (_movimentacaoFinanceiraRepository.HasNotifications)
                 return null;
 
@@ -33,6 +33,32 @@ namespace gerenciador.financas.Application.Services
                 .ToList();
 
             return movimentacoesFinanceiras;
+        }
+
+        public async Task<List<SaldoContas?>> GetSaldoPorConta(int idUsuario)
+        {
+            var responseInfra = await _movimentacaoFinanceiraRepository.GetSaldoPorConta(idUsuario);
+            if (_movimentacaoFinanceiraRepository.HasNotifications)
+                return null;
+
+            var responseService = responseInfra
+                .Select(sc => sc.ToService())
+                .ToList();
+
+            return responseService;
+        }
+
+        public async Task<List<SaldoTotalContas?>> GetSaldoTotalContas(int idUsuario)
+        {
+            var responseInfra = await _movimentacaoFinanceiraRepository.GetSaldoTotalContas(idUsuario);
+            if (_movimentacaoFinanceiraRepository.HasNotifications)
+                return null;
+
+            var responseService = responseInfra
+                .Select(sc => sc.ToService())
+                .ToList();
+
+            return responseService;
         }
 
         public async Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino)

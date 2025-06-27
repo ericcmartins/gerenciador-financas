@@ -14,8 +14,6 @@ namespace gerenciador.financas.Application.Extensions
                 Valor = infra.Valor,
                 Descricao = infra.Descricao,
                 DataReceita = infra.DataReceita,
-                Recorrente = infra.Recorrente,
-                Frequencia = infra.Frequencia,
                 Conta = infra.Conta,
                 Categoria = infra.Categoria                
             };
@@ -62,8 +60,6 @@ namespace gerenciador.financas.Application.Extensions
                 Valor = domain.Valor,
                 Descricao = domain.Descricao,
                 DataReceita = domain.DataReceita,
-                Recorrente = domain.Recorrente,
-                Frequencia = domain.Frequencia,
                 Conta = domain.Conta,
                 Categoria = domain.Categoria
             };
@@ -75,8 +71,6 @@ namespace gerenciador.financas.Application.Extensions
                 Valor = viewModel.Valor,
                 Descricao = viewModel.Descricao,
                 DataReceita = viewModel.DataReceita,
-                Recorrente = viewModel.Recorrente,
-                Frequencia = viewModel.Frequencia,
 
             };
         }

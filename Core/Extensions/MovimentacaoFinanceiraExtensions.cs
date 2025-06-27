@@ -20,6 +20,44 @@ namespace gerenciador.financas.Application.Extensions
             };
         }
 
+        public static SaldoContas ToService (this SaldoPorContaResponseInfra infra)
+        {
+            return new SaldoContas
+            {
+                NumeroConta = infra.NumeroConta,
+                Instituicao = infra.Instituicao,
+                Tipo = infra.Tipo,
+                SaldoConta = infra.SaldoConta
+            };
+        }
+
+        public static SaldoPorContaResponseViewModel ToViewModel(this SaldoContas infra)
+        {
+            return new SaldoPorContaResponseViewModel
+            {
+                NumeroConta = infra.NumeroConta,
+                Instituicao = infra.Instituicao,
+                Tipo = infra.Tipo,
+                SaldoConta = infra.SaldoConta
+            };
+        }
+
+        public static SaldoTotalContas ToService(this SaldoTotalUsuarioResponseInfra infra)
+        {
+            return new SaldoTotalContas
+            {
+                SaldoTotal = infra.SaldoTotal
+            };
+        }
+
+        public static SaldoTotalUsuarioResponseViewModel ToViewModel(this SaldoTotalContas domain)
+        {
+            return new SaldoTotalUsuarioResponseViewModel
+            {
+                SaldoTotal = domain.SaldoTotal
+            };
+        }
+
         public static MovimentacaoFinanceiraResponseViewModel ToViewModel(this MovimentacaoFinanceira domain)
         {
             return new MovimentacaoFinanceiraResponseViewModel

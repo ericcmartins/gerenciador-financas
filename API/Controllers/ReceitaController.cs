@@ -27,7 +27,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterReceitasUsuario([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetReceitasUsuario([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -53,12 +53,13 @@ namespace gerenciador.financas.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
+
         [HttpGet("receitas/categoria/cliente")]
         [ProducesResponseType(typeof(List<ReceitaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterReceitasUsuarioPorCategoria([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetReceitasUsuarioPorCategoria([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -90,7 +91,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterReceitasUsuarioPorConta([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetReceitasUsuarioPorConta([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -121,7 +122,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterTotalReceitasUsuario([Required] int idUsuario, int periodo)
+        public async Task<IActionResult> GetTotalReceitasUsuario([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -148,7 +149,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirReceitas([Required][FromBody] ReceitaRequestViewModel receitaRequest,
+        public async Task<IActionResult> InsertReceitas([Required][FromBody] ReceitaRequestViewModel receitaRequest,
                                                          [Required]int idUsuario,
                                                          [Required]int idCategoria,
                                                          [Required] int idConta)
@@ -179,7 +180,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarReceita([Required][FromBody] ReceitaRequestViewModel receitaRequest, 
+        public async Task<IActionResult> UpdateReceita([Required][FromBody] ReceitaRequestViewModel receitaRequest, 
                                                           [Required]int idUsuario,
                                                           [Required]int idReceita,
                                                           [Required]int idCategoria,
@@ -210,7 +211,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ExcluirReceita([Required] int idUsuario, [Required] int idReceita)
+        public async Task<IActionResult> DeleteReceita([Required] int idUsuario, [Required] int idReceita)
         {
             try
             {

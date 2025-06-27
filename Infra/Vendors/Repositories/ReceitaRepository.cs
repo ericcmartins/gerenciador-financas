@@ -109,8 +109,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
                 receitaRequest.DataReceita,
-                receitaRequest.Recorrente,
-                receitaRequest.Frequencia,
                 IdUsuario = idUsuario,
                 IdConta = idConta,
                 IdCategoria = idCategoria
@@ -135,8 +133,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
                 receitaRequest.DataReceita,
-                receitaRequest.Recorrente,
-                receitaRequest.Frequencia,
                 IdConta = idConta,
                 IdCategoria = idCategoria,
                 IdUsuario = idUsuario,

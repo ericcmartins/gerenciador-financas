@@ -14,8 +14,6 @@ namespace gerenciador.financas.Application.Extensions
                 Valor = infra.Valor,
                 Descricao = infra.Descricao,
                 DataDespesa = infra.DataDespesa,
-                Recorrente = infra.Recorrente,
-                Frequencia = infra.Frequencia,
                 Conta = infra.Conta,
                 Categoria = infra.Categoria,
                 MetodoPagamento = infra.MetodoPagamento
@@ -76,8 +74,6 @@ namespace gerenciador.financas.Application.Extensions
                 Valor = domain.Valor,
                 Descricao = domain.Descricao,
                 DataDespesa = domain.DataDespesa,
-                Recorrente = domain.Recorrente,
-                Frequencia = domain.Frequencia,
                 Conta = domain.Conta,
                 Categoria = domain.Categoria,
                 MetodoPagamento = domain.MetodoPagamento
@@ -89,10 +85,7 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Valor = viewModel.Valor,
                 Descricao = viewModel.Descricao,
-                DataDespesa = viewModel.DataDespesa,
-                Recorrente = viewModel.Recorrente,
-                Frequencia = viewModel.Frequencia,
-
+                DataDespesa = viewModel.DataDespesa
             };
         }
     }

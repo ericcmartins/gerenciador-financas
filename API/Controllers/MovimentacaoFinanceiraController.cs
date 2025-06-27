@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using gerenciador.financas.Infra.Vendors;
 using Core.ViewModel.gerenciador.financas.API.ViewModels;
+using gerenciador.financas.Infra.Vendors.Entities;
 
 namespace gerenciador.financas.API.Controllers
 {
@@ -27,7 +28,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterMovimentacoeFinanceirasUsuario([Required] int idUsuario, int periodo, string tipoMovimentacao)
+        public async Task<IActionResult> GetMovimentacoeFinanceirasUsuario([Required] int idUsuario, int periodo, string tipoMovimentacao)
         {
             try
             {
@@ -54,11 +55,76 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
+
+        [HttpGet("saldo/contas/cliente")]
+        [ProducesResponseType(typeof(List<SaldoPorContaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetSaldosPorConta([Required] int idUsuario)
+        {
+            try
+            {
+                var response = await _movimentacaoFinanceiraService.GetSaldoPorConta(idUsuario);
+                if (_movimentacaoFinanceiraService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                var viewModel = response
+                    .Select(sc => sc.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+
+        [HttpGet("saldo/total/cliente")]
+        [ProducesResponseType(typeof(List<SaldoPorContaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetSaldoTotalUsuario([Required] int idUsuario)
+        {
+            try
+            {
+                var response = await _movimentacaoFinanceiraService.GetSaldoTotalContas(idUsuario);
+                if (_movimentacaoFinanceiraService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                var viewModel = response
+                    .Select(sc => sc.ToViewModel())
+                    .ToList();
+
+                return Ok(viewModel);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+
         [HttpPost("movimentacao/cliente")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
+        public async Task<IActionResult> InsertMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
                                                  [Required] int idUsuario,
                                                  [Required] int idContaOrigem,
                                                  [Required] int idContaDestino)
@@ -89,7 +155,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
+        public async Task<IActionResult> UpdateMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
                                                           [Required] int idUsuario,
                                                           [Required] int idMovimentacaoFinanceira,
                                                           int idContaOrigem,
@@ -122,7 +188,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirMovimentacaoFinanceira([Required] int idUsuario,
+        public async Task<IActionResult> DeleteMovimentacaoFinanceira([Required] int idUsuario,
                                                                        [Required] int idMovimentacaoFinanceira)
         {
             try

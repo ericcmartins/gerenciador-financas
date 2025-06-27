@@ -27,7 +27,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ObterCategoriasUsuario([Required] int idUsuario)
+        public async Task<IActionResult> GetCategoriasUsuario([Required] int idUsuario)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InserirCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idUsuario)
+        public async Task<IActionResult> InsertCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idUsuario)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AtualizarCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idCategoria, int idUsuario)
+        public async Task<IActionResult> UpdateCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idCategoria, int idUsuario)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> ExcluirDadosCadastrais([Required]int idCategoria, [Required] int idUsuario)
+        public async Task<IActionResult> DeleteDadosCadastrais([Required]int idCategoria, [Required] int idUsuario)
         {
             try
             {

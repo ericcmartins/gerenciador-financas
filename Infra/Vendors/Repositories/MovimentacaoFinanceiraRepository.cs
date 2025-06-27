@@ -21,7 +21,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<MovimentacaoFinanceiraResponseInfra?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo)
+        public async Task<List<MovimentacaoFinanceiraResponseInfra?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo, string? tipoMovimentacao)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
@@ -30,6 +30,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 IdUsuario = idUsuario,
                 DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
                 DataFim = DateTime.Today,
+                TipoMovimentacao = tipoMovimentacao
             };
 
             var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(
@@ -43,6 +44,35 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
+        public async Task<List<SaldoPorContaResponseInfra?>> GetSaldoPorConta(int idUsuario)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.QueryAsync<SaldoPorContaResponseInfra>(
+                MovimentacaoFinanceira.GetSaldoPorConta, new {idUsuario});
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Erro ao obter saldo por conta");
+
+            return responseList;
+        }
+
+        public async Task<List<SaldoTotalUsuarioResponseInfra?>> GetSaldoTotalContas(int idUsuario)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var response = await connection.QueryAsync<SaldoTotalUsuarioResponseInfra>(
+                MovimentacaoFinanceira.GetSaldoTotalContas, new { idUsuario });
+
+            var responseList = response.ToList();
+
+            if (!responseList.Any())
+                _notificationPool.AddNotification(404, "Erro ao obter saldo total em contas");
+
+            return responseList;
+        }
 
         public async Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino)
         {
