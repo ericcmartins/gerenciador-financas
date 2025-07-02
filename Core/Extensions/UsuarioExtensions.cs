@@ -14,6 +14,7 @@ namespace gerenciador.financas.Application.Extensions
                 Nome = infra.Nome,
                 Email = infra.Email,
                 Senha = infra.Senha,
+                Role = infra.Role,
                 DataNascimento = infra.DataNascimento,
                 Telefone = infra.Telefone
             };
@@ -26,6 +27,7 @@ namespace gerenciador.financas.Application.Extensions
                 Nome = domain.Nome,
                 Email = domain.Email,
                 Senha = domain.Senha,
+                Role = domain.Role,
                 DataNascimento = domain.DataNascimento,
                 Telefone = domain.Telefone
             };

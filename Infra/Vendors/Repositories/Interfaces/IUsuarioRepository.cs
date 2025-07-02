@@ -9,5 +9,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public Task<bool> InsertDadosPessoais(DadosPessoaisRequestInfra dadosPessoais);
         public Task<bool> UpdateDadosPessoais(DadosPessoaisRequestInfra dadosPessoais, int idUsuario);
         public Task<bool> DeleteConta(int idUsuario);
+        public Task<LoginResponseInfra?> GetUsuarioPorEmail(string email);
     }
 }

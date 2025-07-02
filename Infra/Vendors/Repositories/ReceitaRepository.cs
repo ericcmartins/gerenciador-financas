@@ -29,7 +29,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 {
                     IdUsuario = idUsuario,
                     DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                    DataFim = DateTime.Today
+                    DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
                 }
             );
 
@@ -48,8 +48,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receita.GetReceitasPorCategoria, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = DateTime.Today.AddDays(-periodo.Value),
-                DataFim = DateTime.Today
+                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
+                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
             });
 
             var responseList = response.ToList();
@@ -68,7 +68,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 IdUsuario = idUsuario,
                 DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today
+                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
             });
 
             var responseList = response.ToList();
@@ -87,7 +87,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 IdUsuario = idUsuario,
                 DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today
+                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
             });
 
             if (response <= 0)

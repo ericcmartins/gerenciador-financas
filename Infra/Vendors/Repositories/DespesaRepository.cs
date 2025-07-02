@@ -19,18 +19,29 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
         }
-
         public async Task<List<DespesaResponseInfra?>> GetDespesas(int idUsuario, int? periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1); 
+
+            }
+
             var response = await connection.QueryAsync<DespesaResponseInfra>(
-                SqlQueries.Despesa.GetDespesasPorUsuario, new
+                SqlQueries.Despesa.GetDespesasPorUsuario,
+                new
                 {
                     IdUsuario = idUsuario,
-                    DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                    DataFim = DateTime.Today
-                }
+                    DataInicio = dataInicio,
+                    DataFim = dataFim
+                },
+                commandTimeout: 120
             );
 
             var responseList = response.ToList();
@@ -50,7 +61,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 IdUsuario = idUsuario,
                 DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today
+                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
             });
 
             var responseList = response.ToList();
@@ -69,7 +80,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 IdUsuario = idUsuario,
                 DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today
+                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
             });
 
             var responseList = response.ToList();
@@ -87,7 +98,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var response = await connection.QueryAsync<DespesaPorMetodoPagamentoResponseInfra>(SqlQueries.Despesa.GetDespesasPorMetodoPagamento, new {
                 IdUsuario = idUsuario,
                 DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today
+                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
             });
 
             var responseList = response.ToList();
@@ -106,7 +117,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 IdUsuario = idUsuario,
                 DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today
+                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
             });
 
             if (response <= 0)

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOn - Dashboard</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-chart-line"></i> FinOn</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a href="index.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="receitas.html">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Receitas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="despesas.html">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Despesas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="categorias.html">
+                        <i class="fas fa-tags"></i>
+                        <span>Categorias</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="metodos-pagamento.html">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Métodos de Pagamento</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="contas.html">
+                        <i class="fas fa-university"></i>
+                        <span>Contas</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <span class="user-name">João Silva</span>
+                        <div class="user-avatar" onclick="toggleUserMenu()">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-menu" id="userMenu">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="content">
+                <div class="dashboard-grid">
+                    <!-- Summary Cards -->
+                    <div class="summary-cards">
+                        <div class="card summary-card income">
+                            <div class="card-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Receitas do Mês</h3>
+                                <p class="amount" id="totalReceitas">R$ 0,00</p>
+                                <span class="change positive">+12% vs mês anterior</span>
+                            </div>
+                        </div>
+
+                        <div class="card summary-card expense">
+                            <div class="card-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Despesas do Mês</h3>
+                                <p class="amount" id="totalDespesas">R$ 0,00</p>
+                                <span class="change negative">+5% vs mês anterior</span>
+                            </div>
+                        </div>
+
+                        <div class="card summary-card balance">
+                            <div class="card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Saldo Total</h3>
+                                <p class="amount" id="saldoTotal">R$ 0,00</p>
+                                <span class="change positive">+8% vs mês anterior</span>
+                            </div>
+                        </div>
+
+                        <div class="card summary-card goals">
+                            <div class="card-icon">
+                                <i class="fas fa-target"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Metas Ativas</h3>
+                                <p class="amount" id="metasAtivas">0</p>
+                                <span class="change neutral">2 concluídas este mês</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3>Despesas por Categoria</h3>
+                                <select id="periodoSelect">
+                                    <option value="1">Este Mês</option>
+                                    <option value="3">Últimos 3 Meses</option>
+                                    <option value="6">Últimos 6 Meses</option>
+                                    <option value="12">Este Ano</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="despesasChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3>Evolução Mensal</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="evolucaoChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="card transactions-card">
+                        <div class="card-header">
+                            <h3>Transações Recentes</h3>
+                            <a href="despesas.html" class="view-all">Ver todas</a>
+                        </div>
+                        <div class="transactions-list" id="transacoesList">
+                            <!-- Transactions will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card quick-actions-card">
+                        <div class="card-header">
+                            <h3>Ações Rápidas</h3>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-btn income-btn" onclick="openModal('receita')">
+                                <i class="fas fa-plus"></i>
+                                Nova Receita
+                            </button>
+                            <button class="action-btn expense-btn" onclick="openModal('despesa')">
+                                <i class="fas fa-minus"></i>
+                                Nova Despesa
+                            </button>
+                            <button class="action-btn category-btn" onclick="window.location.href='categorias.html'">
+                                <i class="fas fa-tag"></i>
+                                Nova Categoria
+                            </button>
+                            <button class="action-btn goal-btn" onclick="openModal('meta')">
+                                <i class="fas fa-bullseye"></i>
+                                Nova Meta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal" id="transactionModal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nova Transação</h3>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="transactionForm">
+                    <div class="form-group">
+                        <label for="valor">Valor</label>
+                        <input type="number" id="valor" name="valor" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" id="descricao" name="descricao" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data</label>
+                        <input type="date" id="data" name="data" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" name="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="contaGroup">
+                        <label for="conta">Conta</label>
+                        <select id="conta" name="conta" required>
+                            <option value="">Selecione uma conta</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="metodoPagamentoGroup" style="display: none;">
+                        <label for="metodoPagamento">Método de Pagamento</label>
+                        <select id="metodoPagamento" name="metodoPagamento">
+                            <option value="">Selecione um método</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" form="transactionForm" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

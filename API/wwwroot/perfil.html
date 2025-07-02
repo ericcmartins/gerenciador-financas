@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOn - Meu Perfil</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-chart-line"></i> FinOn</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="index.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="receitas.html">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Receitas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="despesas.html">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Despesas</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="categorias.html">
+                        <i class="fas fa-tags"></i>
+                        <span>Categorias</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="metodos-pagamento.html">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Métodos de Pagamento</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="contas.html">
+                        <i class="fas fa-university"></i>
+                        <span>Contas</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Meu Perfil</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <span class="user-name">João Silva</span>
+                        <div class="user-avatar" onclick="toggleUserMenu()">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-menu" id="userMenu">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="content">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h2>Informações Pessoais</h2>
+                        <p>Gerencie suas informações de conta e preferências</p>
+                    </div>
+                </div>
+
+                <div class="profile-container">
+                    <!-- Profile Card -->
+                    <div class="card profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <div class="avatar-circle">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <button class="change-avatar-btn" onclick="changeAvatar()">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                            <div class="profile-info">
+                                <h3 id="profileName">João Silva</h3>
+                                <p id="profileEmail">joao@email.com</p>
+                                <span class="profile-status active">Conta Ativa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Informações Pessoais</h3>
+                            <button class="btn btn-outline" onclick="toggleEditMode()">
+                                <i class="fas fa-edit"></i>
+                                <span id="editButtonText">Editar</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="nome">Nome completo</label>
+                                        <input type="text" id="nome" name="nome" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" name="email" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="telefone">Telefone</label>
+                                        <input type="tel" id="telefone" name="telefone" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dataNascimento">Data de nascimento</label>
+                                        <input type="date" id="dataNascimento" name="dataNascimento" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-actions" id="formActions" style="display: none;">
+                                    <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        Salvar alterações
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Segurança</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <h4>Senha</h4>
+                                    <p>Última alteração há 30 dias</p>
+                                </div>
+                                <button class="btn btn-outline" onclick="openChangePasswordModal()">
+                                    Alterar senha
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Ações da Conta</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="account-actions">
+                                <button class="btn btn-outline" onclick="exportData()">
+                                    <i class="fas fa-download"></i>
+                                    Exportar dados
+                                </button>
+                                <button class="btn btn-secondary" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Sair da conta
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteAccount()">
+                                    <i class="fas fa-trash"></i>
+                                    Excluir conta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Alterar Senha</h3>
+                <button class="close-btn" onclick="closeChangePasswordModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="senhaAtual">Senha atual</label>
+                        <div class="input-group">
+                            <input type="password" id="senhaAtual" name="senhaAtual" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('senhaAtual')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="novaSenha">Nova senha</label>
+                        <div class="input-group">
+                            <input type="password" id="novaSenha" name="novaSenha" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('novaSenha')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill"></div>
+                            </div>
+                            <span class="strength-text">Digite uma senha</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmarNovaSenha">Confirmar nova senha</label>
+                        <div class="input-group">
+                            <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('confirmarNovaSenha')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()">
+                    Cancelar
+                </button>
+                <button type="submit" form="changePasswordForm" class="btn btn-primary">
+                    Alterar senha
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div id="deleteAccountModal" class="modal-overlay">
+        <div class="modal delete-modal">
+            <div class="modal-header">
+                <h3>Excluir Conta</h3>
+                <button class="close-btn" onclick="closeDeleteAccountModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Esta ação não pode ser desfeita!</h4>
+                    <p>Todos os seus dados serão permanentemente excluídos, incluindo:</p>
+                    <ul>
+                        <li>Todas as receitas e despesas</li>
+                        <li>Categorias personalizadas</li>
+                        <li>Métodos de pagamento</li>
+                        <li>Histórico de transações</li>
+                    </ul>
+                    <div class="form-group">
+                        <label for="confirmDelete">Digite "EXCLUIR" para confirmar:</label>
+                        <input type="text" id="confirmDelete" placeholder="EXCLUIR">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteAccountModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteAccount()" disabled id="confirmDeleteBtn">
+                    Excluir conta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/perfil.js"></script>
+</body>
+</html>

@@ -15,12 +15,15 @@ namespace gerenciador.financas.API.Controllers
     {
         private readonly IUsuarioService _usuarioService;
         private readonly NotificationPool _notificationPool;
+        private readonly IAuthService _authService;
 
         public UsuarioController(IUsuarioService usuarioService, 
-                                 NotificationPool notificationPool)
+                                 NotificationPool notificationPool,
+                                 IAuthService authService)
         {
             _usuarioService = usuarioService;
             _notificationPool = notificationPool;
+            _authService = authService;
         }
 
         [HttpGet("cliente/dados")]
@@ -69,7 +72,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created(string.Empty, "despesa inserido com sucesso");
+                return Created(string.Empty, "usuario inserido com sucesso");
             }
 
             catch (Exception ex)
@@ -129,6 +132,27 @@ namespace gerenciador.financas.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+
+        [HttpPost("usuario/login")]
+        [ProducesResponseType(typeof(LoginResponseViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Login([Required][FromBody] LoginRequestViewModel request)
+        {
+            try
+            {
+                var response = await _authService.Login(request.Email, request.Senha);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new ErrorViewModel(401, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorViewModel(500, $"Erro interno: {ex.Message}"));
             }
         }
     }

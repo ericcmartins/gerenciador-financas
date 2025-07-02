@@ -3,7 +3,7 @@ using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
 
 namespace gerenciador.financas.Application.Services
-{
+{ 
     public interface ICategoriaService : INotifiable
     {
         public Task<List<Categoria>?> GetCategorias(int idUsuario);

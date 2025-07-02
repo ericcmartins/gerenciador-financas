@@ -83,5 +83,17 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             return true;
         }
+
+        public async Task<LoginResponseInfra?> GetUsuarioPorEmail(string email)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
+
+            var usuario = await connection.QueryFirstOrDefaultAsync<LoginResponseInfra>(SqlQueries.Usuario.Login, new { Email = email });
+
+            if (usuario == null)
+                _notificationPool.AddNotification(404, "Usuário não encontrado");
+
+            return usuario;
+        }
     }
 }

@@ -42,6 +42,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.InsertMetaFinanceira, new
             {
+                metaFinanceiraRequest.Nome,
                 metaFinanceiraRequest.Descricao,
                 metaFinanceiraRequest.ValorAlvo,
                 metaFinanceiraRequest.ValorAtual,

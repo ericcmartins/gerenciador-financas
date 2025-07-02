@@ -3,7 +3,6 @@ using gerenciador.financas.Application.ViewModel.Cliente;
 using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Entities;
-
 namespace gerenciador.financas.Application.Services
 {
     public interface IMovimentacaoFinanceiraService : INotifiable

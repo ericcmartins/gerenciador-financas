@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gerenciador.financas.Infra"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gerenciador.financas.Tests", "Tests\gerenciador.financas.Tests.csproj", "{D28DD7EB-578B-49AD-BE55-C0731F78D5F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gerenciador.financas.Domain", "gerenciador.financas.Domain\gerenciador.financas.Domain.csproj", "{9DD42133-853E-4689-9E02-F3523D57520A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gerenciador.financas.Domain", "Domain\gerenciador.financas.Domain.csproj", "{9DD42133-853E-4689-9E02-F3523D57520A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
