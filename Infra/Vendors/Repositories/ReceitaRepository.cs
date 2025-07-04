@@ -14,7 +14,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public ReceitaRepository(ISqlServerConnectionHandler connectionHandler,
-                                         NotificationPool notificationPool)
+                                     NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
@@ -24,12 +24,21 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
             var response = await connection.QueryAsync<ReceitaResponseInfra>(
                 SqlQueries.Receita.GetReceitasPorId, new
                 {
                     IdUsuario = idUsuario,
-                    DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                    DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                    DataInicio = dataInicio,
+                    DataFim = dataFim
                 }
             );
 
@@ -45,11 +54,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
             var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receita.GetReceitasPorCategoria, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                DataInicio = dataInicio,
+                DataFim = dataFim
             });
 
             var responseList = response.ToList();
@@ -64,11 +82,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
             var response = await connection.QueryAsync<ReceitaPorContaResponseInfra>(SqlQueries.Receita.GetReceitasPorConta, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                DataInicio = dataInicio,
+                DataFim = dataFim
             });
 
             var responseList = response.ToList();
@@ -83,11 +110,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
             var response = await connection.ExecuteScalarAsync<Decimal>(SqlQueries.Receita.GetTotalReceitasPeriodo, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                DataInicio = dataInicio,
+                DataFim = dataFim
             });
 
             if (response <= 0)

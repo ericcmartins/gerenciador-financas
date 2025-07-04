@@ -15,7 +15,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public MovimentacaoFinanceiraRepository(ISqlServerConnectionHandler connectionHandler,
-                                         NotificationPool notificationPool)
+                                              NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
@@ -25,16 +25,24 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var parametros = new
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
             {
-                IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today,
-                TipoMovimentacao = tipoMovimentacao
-            };
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
 
             var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(
-                MovimentacaoFinanceira.GetMovimentacoesPorPeriodo, parametros);
+                MovimentacaoFinanceira.GetMovimentacoesPorPeriodo,
+                new
+                {
+                    IdUsuario = idUsuario,
+                    DataInicio = dataInicio,
+                    DataFim = dataFim,
+                    TipoMovimentacao = tipoMovimentacao
+                });
 
             var responseList = response.ToList();
 
@@ -49,7 +57,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var response = await connection.QueryAsync<SaldoPorContaResponseInfra>(
-                MovimentacaoFinanceira.GetSaldoPorConta, new {idUsuario});
+                MovimentacaoFinanceira.GetSaldoPorConta, new { idUsuario });
 
             var responseList = response.ToList();
 

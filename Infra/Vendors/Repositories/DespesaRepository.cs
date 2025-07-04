@@ -14,7 +14,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public DespesaRepository(ISqlServerConnectionHandler connectionHandler,
-                                         NotificationPool notificationPool)
+                                     NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
@@ -29,8 +29,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             if (periodo.HasValue)
             {
                 dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1); 
-
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
             var response = await connection.QueryAsync<DespesaResponseInfra>(
@@ -52,16 +51,24 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-
         public async Task<List<DespesaPorCategoriaResponseInfra?>> GetDespesasPorCategoria(int idUsuario, int? periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
             var response = await connection.QueryAsync<DespesaPorCategoriaResponseInfra>(SqlQueries.Despesa.GetDespesasPorCategoria, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                DataInicio = dataInicio,
+                DataFim = dataFim
             });
 
             var responseList = response.ToList();
@@ -76,11 +83,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
             var response = await connection.QueryAsync<DespesaPorContaResponseInfra>(SqlQueries.Despesa.GetDespesasPorConta, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                DataInicio = dataInicio,
+                DataFim = dataFim
             });
 
             var responseList = response.ToList();
@@ -95,10 +111,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var response = await connection.QueryAsync<DespesaPorMetodoPagamentoResponseInfra>(SqlQueries.Despesa.GetDespesasPorMetodoPagamento, new {
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
+            var response = await connection.QueryAsync<DespesaPorMetodoPagamentoResponseInfra>(SqlQueries.Despesa.GetDespesasPorMetodoPagamento, new
+            {
                 IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                DataInicio = dataInicio,
+                DataFim = dataFim
             });
 
             var responseList = response.ToList();
@@ -113,11 +139,20 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            DateTime? dataInicio = null;
+            DateTime? dataFim = null;
+
+            if (periodo.HasValue)
+            {
+                dataInicio = DateTime.Today.AddDays(-periodo.Value);
+                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            }
+
             var response = await connection.ExecuteScalarAsync<decimal>(SqlQueries.Despesa.GetTotalDespesasNoPeriodo, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = periodo.HasValue ? DateTime.Today.AddDays(-periodo.Value) : DateTime.MinValue,
-                DataFim = DateTime.Today.AddDays(1).AddTicks(-1)
+                DataInicio = dataInicio,
+                DataFim = dataFim
             });
 
             if (response <= 0)
@@ -188,7 +223,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 IdDespesa = idDespesa
             });
 
-            if (linhasAfetadas != 1)
+            if (linhasAfetadas != -1)
             {
                 _notificationPool.AddNotification(500, "Erro ao deletar despesa");
                 return false;
