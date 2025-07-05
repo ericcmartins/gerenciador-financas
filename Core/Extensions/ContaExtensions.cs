@@ -14,6 +14,7 @@ namespace gerenciador.financas.Application.Extensions
                 NumeroConta = infra.NumeroConta,
                 Tipo = infra.Tipo,
                 Instituicao = infra.Instituicao,
+                IdConta = infra.IdConta
 
             };
         }
@@ -25,6 +26,7 @@ namespace gerenciador.financas.Application.Extensions
                 NumeroConta = domain.NumeroConta,
                 Tipo = domain.Tipo,
                 Instituicao = domain.Instituicao,
+                IdConta = domain.IdConta
             };
         }
 

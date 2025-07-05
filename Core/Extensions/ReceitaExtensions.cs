@@ -15,7 +15,8 @@ namespace gerenciador.financas.Application.Extensions
                 Descricao = infra.Descricao,
                 DataReceita = infra.DataReceita,
                 Conta = infra.Conta,
-                Categoria = infra.Categoria                
+                Categoria = infra.Categoria     ,
+                IdReceita = infra.IdReceita
             };
         }
 
@@ -61,7 +62,8 @@ namespace gerenciador.financas.Application.Extensions
                 Descricao = domain.Descricao,
                 DataReceita = domain.DataReceita,
                 Conta = domain.Conta,
-                Categoria = domain.Categoria
+                Categoria = domain.Categoria,
+                IdReceita = domain.IdReceita
             };
         }
         public static ReceitaRequestInfra ToInfra(this ReceitaRequestViewModel viewModel)

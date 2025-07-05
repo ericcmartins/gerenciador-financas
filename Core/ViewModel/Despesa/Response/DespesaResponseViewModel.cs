@@ -8,5 +8,6 @@ namespace gerenciador.financas.Application.ViewModel.Cliente
         public string? Conta { get; set; }
         public string? Categoria { get; set; }
         public string? MetodoPagamento { get; set; }
+        public int IdDespesa { get; set; }
     }
 }

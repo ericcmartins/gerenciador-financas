@@ -9,5 +9,6 @@ namespace gerenciador.financas.Application.ViewModel.Cliente
         public DateTime DataInicio { get; set; }
         public DateTime DataLimite { get; set; }
         public bool Concluida { get; set; }
+        public int IdMetaFinanceira { get; set; }
     }
 }

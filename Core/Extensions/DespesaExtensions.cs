@@ -16,7 +16,8 @@ namespace gerenciador.financas.Application.Extensions
                 DataDespesa = infra.DataDespesa,
                 Conta = infra.Conta,
                 Categoria = infra.Categoria,
-                MetodoPagamento = infra.MetodoPagamento
+                MetodoPagamento = infra.MetodoPagamento,
+                IdDespesa = infra.IdDespesa,
             };
         }
         public static DespesaCategoria ToService(this DespesaPorCategoriaResponseInfra infra)
@@ -76,7 +77,8 @@ namespace gerenciador.financas.Application.Extensions
                 DataDespesa = domain.DataDespesa,
                 Conta = domain.Conta,
                 Categoria = domain.Categoria,
-                MetodoPagamento = domain.MetodoPagamento
+                MetodoPagamento = domain.MetodoPagamento,
+                IdDespesa = domain.IdDespesa,
             };
         }
         public static DespesaRequestInfra ToInfra(this DespesaRequestViewModel viewModel)

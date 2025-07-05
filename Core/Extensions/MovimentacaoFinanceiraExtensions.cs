@@ -17,6 +17,7 @@ namespace gerenciador.financas.Application.Extensions
                 Descricao = infra.Descricao,
                 NumeroContaDestino = infra.NumeroContaDestino,
                 NumeroContaOrigem = infra.NumeroContaOrigem,
+                IdMovimentacao = infra.IdMovimentacao
             };
         }
 
@@ -68,6 +69,7 @@ namespace gerenciador.financas.Application.Extensions
                 Descricao = domain.Descricao,
                 NumeroContaDestino = domain.NumeroContaDestino,
                 NumeroContaOrigem = domain.NumeroContaOrigem,
+                IdMovimentacao = domain.IdMovimentacao
 
             };
         }

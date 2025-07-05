@@ -12,7 +12,9 @@ namespace gerenciador.financas.Application.Extensions
             return new Categoria
             {
                 Nome = infra.Nome,
-                Descricao = infra.Descricao
+                Descricao = infra.Descricao,
+                IdCategoria = infra.IdCategoria,
+
             };
         }
 
@@ -21,7 +23,8 @@ namespace gerenciador.financas.Application.Extensions
             return new CategoriaResponseViewModel
             {
                 Nome = domain.Nome,
-                Descricao = domain.Descricao
+                Descricao = domain.Descricao,
+                IdCategoria = domain.IdCategoria,
             };
         }
 
@@ -31,7 +34,6 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Nome = viewModel.Nome,
                 Descricao = viewModel.Descricao
-
             };
         }
     }

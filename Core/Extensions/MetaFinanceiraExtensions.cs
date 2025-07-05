@@ -16,7 +16,8 @@ namespace gerenciador.financas.Application.Extensions
                 ValorAtual = infra.ValorAtual,
                 DataInicio = infra.DataInicio,
                 DataLimite = infra.DataLimite,
-                Concluida = infra.Concluida
+                Concluida = infra.Concluida,
+                IdMetaFinanceira = infra.IdMetaFinanceira
             };
         }
 
@@ -29,7 +30,8 @@ namespace gerenciador.financas.Application.Extensions
                 ValorAtual = domain.ValorAtual,
                 DataInicio = domain.DataInicio,
                 DataLimite = domain.DataLimite,
-                Concluida = domain.Concluida
+                Concluida = domain.Concluida,
+                IdMetaFinanceira = domain.IdMetaFinanceira
             };
         }
 

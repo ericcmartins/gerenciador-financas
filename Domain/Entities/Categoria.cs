@@ -4,5 +4,6 @@ namespace gerenciador.financas.Domain.Entities
     {
         public string? Nome { get; set; }
         public string Descricao { get; set; }
+        public int? IdCategoria { get; set; }
     }
 }

@@ -8,5 +8,6 @@ namespace gerenciador.financas.Domain.Entities
         public string? Descricao { get; set; }
         public string? NumeroContaOrigem { get; set; }
         public string? NumeroContaDestino { get; set; }
+        public int IdMovimentacao { get; set; }
     }
 }

@@ -6,5 +6,6 @@ namespace gerenciador.financas.Application.ViewModel.Cliente
         public string? Descricao { get; set; }
         public Decimal? Limite { get; set; }
         public string? Tipo { get; set; }
+        public int IdMetodo { get; set; }
     }
 }
