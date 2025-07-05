@@ -9,5 +9,6 @@ namespace gerenciador.financas.Domain.Entities
         public string? Tipo { get; set; }
         public int IdUsuario { get; set; }
         public string? NumeroConta { get; set; }
+        public int IdConta { get; set; }
     }
 }

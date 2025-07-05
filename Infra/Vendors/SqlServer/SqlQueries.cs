@@ -196,10 +196,19 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #region MetodoPagamento
         public static class MetodoPagamento
         {
-            public const string GetMetodosPagamentoUsuario = @"
-                SELECT IdMetodo, Nome, Descricao, Limite, Tipo, IdUsuario, IdConta
-                FROM MetodoPagamento
-                WHERE IdUsuario = @IdUsuario";
+            public const string GetMetodosPagamentoUsuario = @"SELECT 
+                mp.IdMetodo,
+                mp.Nome,
+                mp.Descricao,
+                mp.Limite,
+                mp.Tipo,
+                mp.IdUsuario,
+                mp.IdConta,
+                c.NumeroConta
+            FROM MetodoPagamento mp
+            INNER JOIN Conta c ON c.IdConta = mp.IdConta
+            WHERE mp.IdUsuario = @IdUsuario;
+            ";
 
             public const string InsertMetodoPagamento = @"
                 INSERT INTO MetodoPagamento (Nome, Descricao, Limite, Tipo, IdUsuario, IdConta)

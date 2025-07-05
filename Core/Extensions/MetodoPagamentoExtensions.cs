@@ -16,7 +16,8 @@ namespace gerenciador.financas.Application.Extensions
                 Limite = infra.Limite,
                 Tipo = infra.Tipo,
                 NumeroConta = infra.NumeroConta,
-                IdMetodo = infra.IdMetodo
+                IdMetodo = infra.IdMetodo,
+                IdConta = infra.IdConta
             };
         }
 
@@ -28,7 +29,9 @@ namespace gerenciador.financas.Application.Extensions
                 Descricao = domain.Descricao,
                 Limite = domain.Limite,
                 Tipo = domain.Tipo,
-                IdMetodo = domain.IdMetodo
+                IdMetodo = domain.IdMetodo,
+                IdConta = domain.IdConta,
+                NumeroConta = domain.NumeroConta
             };
         }
 
