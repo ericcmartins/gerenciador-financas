@@ -8,9 +8,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
+    <div class="container-autenticacao">
+        <div class="cartao">
+            <div class="cartao-cabecalho">
                 <div class="logo">
                     <i class="fas fa-chart-line"></i>
                     <h1>FinOn</h1>
@@ -19,98 +19,96 @@
                 <p>Comece a gerenciar suas finanças hoje</p>
             </div>
 
-            <form id="cadastroForm" class="auth-form">
-                <div class="form-group">
+            <form id="formularioCadastro" class="cartao-formulario">
+                <div class="grupo-formulario">
                     <label for="nome">Nome completo</label>
-                    <div class="input-group">
+                    <div class="grupo-input">
                         <i class="fas fa-user"></i>
                         <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="grupo-formulario">
                     <label for="email">Email</label>
-                    <div class="input-group">
+                    <div class="grupo-input">
                         <i class="fas fa-envelope"></i>
                         <input type="email" id="email" name="email" required placeholder="seu@email.com">
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
+                <div class="linha-formulario">
+                    <div class="grupo-formulario">
                         <label for="telefone">Telefone</label>
-                        <div class="input-group">
+                        <div class="grupo-input">
                             <i class="fas fa-phone"></i>
                             <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="grupo-formulario">
                         <label for="dataNascimento">Data de nascimento</label>
-                        <div class="input-group">
+                        <div class="grupo-input">
                             <i class="fas fa-calendar"></i>
                             <input type="date" id="dataNascimento" name="dataNascimento">
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="grupo-formulario">
                     <label for="senha">Senha</label>
-                    <div class="input-group">
+                    <div class="grupo-input">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="senha" name="senha" required placeholder="Mínimo 6 caracteres">
-                        <button type="button" class="toggle-password" onclick="togglePassword('senha')">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                    <button type="button" class="alternar-visibilidade-senha">
+                        <i class="fas fa-eye" id="icone-senha"></i>
+                    </button>
                     </div>
-                    <div class="password-strength">
-                        <div class="strength-bar">
-                            <div class="strength-fill"></div>
+                    <div class="indicador-forca-senha">
+                        <div class="barra-forca">
+                            <div class="preenchimento-forca"></div>
                         </div>
-                        <span class="strength-text">Digite uma senha</span>
+                        <span class="texto-forca">Digite uma senha</span>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="grupo-formulario">
                     <label for="confirmarSenha">Confirmar senha</label>
-                    <div class="input-group">
+                    <div class="grupo-input">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="confirmarSenha" name="confirmarSenha" required placeholder="Confirme sua senha">
-                        <button type="button" class="toggle-password" onclick="togglePassword('confirmarSenha')">
-                            <i class="fas fa-eye"></i>
+                        <button type="button" class="alternar-visibilidade-senha" onclick="togglePassword('confirmarSenha')">
+                            <i class="fas fa-eye" id="icone-confirmar-senha"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="checkbox-label">
+                <div class="grupo-formulario">
+                    <label class="label-checkbox">
                         <input type="checkbox" id="aceitarTermos" name="aceitarTermos" required>
-                        <span class="checkmark"></span>
+                        <span class="marcador-checkbox"></span>
                         Aceito os <a href="#" target="_blank">Termos de Uso</a> e <a href="#" target="_blank">Política de Privacidade</a>
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <span class="btn-text">Criar conta</span>
-                    <div class="btn-loading" style="display: none;">
-                        <div class="spinner"></div>
+                <button type="submit" class="botao botao-primario">
+                    <span class="botao-texto">Criar conta</span>
+                    <div class="botao-carregando" style="display: none;">
+                        <div class="animacao-carregando"></div>
                     </div>
                 </button>
             </form>
 
-            <div class="auth-footer">
+            <div class="cartao-rodape">
                 <p>Já tem uma conta? <a href="login.html">Fazer login</a></p>
             </div>
         </div>
 
-        <div class="auth-background">
-            <div class="bg-shape shape-1"></div>
-            <div class="bg-shape shape-2"></div>
-            <div class="bg-shape shape-3"></div>
+        <div class="fundo-decorativo">
+            <div class="forma forma-1"></div>
+            <div class="forma forma-2"></div>
+            <div class="forma forma-3"></div>
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
+    <script type="module" src="js/auth.js"></script>
 </body>
 </html>

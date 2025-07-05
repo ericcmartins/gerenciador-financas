@@ -1,349 +1,423 @@
-// Métodos de Pagamento page functionality
+import { api } from './api.js';
+import { CONFIG } from './config.js';
 
-let allMetodos = [];
-let editingMetodo = null;
-let deletingMetodoId = null;
+document.addEventListener('DOMContentLoaded', () => {
+    const idUsuario = localStorage.getItem('finon_user_id');
+    if (!idUsuario) return;
 
-// Initialize métodos de pagamento page
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.pathname.includes('metodos-pagamento.html')) {
-        initializeMetodosPage();
-    }
-});
+    // --- Seleção de Elementos ---
+    const btnNovoMetodo = document.getElementById('btnNovoMetodo');
+    const gridMetodosPagamento = document.getElementById('gridMetodosPagamento');
+    const corpoTabelaMetodos = document.getElementById('corpoTabelaMetodos');
+    const inputBusca = document.getElementById('inputBusca');
 
-async function initializeMetodosPage() {
-    try {
-        // Load initial data
-        await loadMetodos();
+    // Elementos do Modal de Método de Pagamento (Adicionar/Editar)
+    const fundoModalMetodo = document.getElementById('fundoModalMetodo');
+    const modalMetodo = document.getElementById('modalMetodo');
+    const tituloModalMetodo = modalMetodo.querySelector('#tituloModal'); // Reutiliza o ID 'tituloModal'
+    const fecharModalMetodoBtn = document.getElementById('fecharModalMetodo');
+    const btnCancelarMetodo = document.getElementById('btnCancelarMetodo');
+    const formularioMetodo = document.getElementById('formularioMetodo');
+    const inputMetodoId = document.getElementById('metodoId'); // Campo hidden para o ID do método
+    const inputNomeMetodo = document.getElementById('nomeMetodo');
+    const selectTipoMetodo = document.getElementById('tipoMetodo');
+    const selectContaVinculada = document.getElementById('contaVinculada');
+    const inputLimiteMetodo = document.getElementById('limiteMetodo');
+    const inputDescricaoMetodo = document.getElementById('descricaoMetodo');
+
+    // Elementos do Modal de Deleção
+    const fundoModalDelecao = document.getElementById('fundoModalDelecao');
+    const fecharModalDelecaoBtn = document.getElementById('fecharModalDelecao');
+    const btnCancelarDelecao = document.getElementById('btnCancelarDelecao');
+    const btnConfirmarDelecao = document.getElementById('btnConfirmarDelecao');
+
+    let metodoSendoDeletadoId = null; // Variável para armazenar o ID do método a ser deletado
+    let contasDisponiveis = []; // Armazena as contas para popular o select
+
+    // --- Funções Auxiliares (reutilizadas de outros módulos) ---
+
+    /**
+     * Valida o formulário de método de pagamento.
+     * @param {HTMLFormElement} form - O formulário a ser validado.
+     * @returns {boolean} True se o formulário for válido, false caso contrário.
+     */
+    function validarFormulario(form) {
+        limparErrosFormulario(form);
+        let isValid = true;
+        const camposObrigatorios = form.querySelectorAll('[required]');
+
+        camposObrigatorios.forEach(campo => {
+            if (!campo.value.trim()) {
+                exibirErroCampo(campo, 'Este campo é obrigatório.');
+                isValid = false;
+            }
+        });
+
+        // Validação específica para campos numéricos
+        const camposNumericos = form.querySelectorAll('input[type="number"]');
+        camposNumericos.forEach(campo => {
+            if (campo.value && isNaN(parseFloat(campo.value))) {
+                exibirErroCampo(campo, 'Deve ser um número válido.');
+                isValid = false;
+            }
+            if (campo.hasAttribute('min') && parseFloat(campo.value) < parseFloat(campo.min)) {
+                exibirErroCampo(campo, `O valor mínimo é ${campo.min}.`);
+                isValid = false;
+            }
+        });
         
-        // Setup event listeners
-        setupMetodosEventListeners();
-        
-        // Display métodos
-        displayMetodos();
-        displayMetodosGrid();
-        
-    } catch (error) {
-        console.error('Error initializing métodos page:', error);
-        showErrorMessage('Erro ao carregar página de métodos de pagamento');
+        // Validação de selects
+        const selectsObrigatorios = form.querySelectorAll('select[required]');
+        selectsObrigatorios.forEach(select => {
+            if (!select.value) {
+                exibirErroCampo(select, 'Selecione uma opção.');
+                isValid = false;
+            }
+        });
+
+        return isValid;
     }
-}
 
-async function loadMetodos() {
-    try {
-        allMetodos = await api.getPaymentMethods();
-    } catch (error) {
-        console.error('Error loading métodos:', error);
-        allMetodos = [];
+    /**
+     * Exibe uma mensagem de erro abaixo de um campo do formulário.
+     * @param {HTMLElement} campo - O campo onde o erro ocorreu.
+     * @param {string} mensagem - A mensagem de erro.
+     */
+    function exibirErroCampo(campo, mensagem) {
+        campo.classList.add('campo-erro');
+        let erroElement = campo.nextElementSibling;
+        if (!erroElement || !erroElement.classList.contains('mensagem-erro')) {
+            erroElement = document.createElement('span');
+            erroElement.classList.add('mensagem-erro');
+            campo.parentNode.insertBefore(erroElement, campo.nextSibling);
+        }
+        erroElement.textContent = mensagem;
     }
-}
 
-function displayMetodos() {
-    const tableBody = document.getElementById('metodosTableBody');
-    if (!tableBody) return;
-    
-    if (allMetodos.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center">
-                    <div class="page-empty-state">
-                        <i class="fas fa-credit-card"></i>
-                        <h3>Nenhum método de pagamento encontrado</h3>
-                        <p>Adicione seus cartões e formas de pagamento</p>
-                        <button class="btn btn-primary" onclick="openMetodoModal()">
-                            <i class="fas fa-plus"></i>
-                            Novo Método
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-        return;
+    /**
+     * Limpa as mensagens de erro de um formulário.
+     * @param {HTMLFormElement} form - O formulário a ser limpo.
+     */
+    function limparErrosFormulario(form) {
+        form.querySelectorAll('.campo-erro').forEach(campo => {
+            campo.classList.remove('campo-erro');
+        });
+        form.querySelectorAll('.mensagem-erro').forEach(erro => {
+            erro.remove();
+        });
     }
-    
-    tableBody.innerHTML = allMetodos.map(metodo => `
-        <tr>
-            <td>${metodo.nome}</td>
-            <td>
-                <span class="status-badge active">${metodo.tipo}</span>
-            </td>
-            <td>${getAccountName(metodo.contaId) || '-'}</td>
-            <td>${metodo.limite ? formatCurrency(metodo.limite) : 'Sem limite'}</td>
-            <td>${metodo.descricao || '-'}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn edit-btn" onclick="editMetodo(${metodo.id})" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="confirmDeleteMetodo(${metodo.id})" title="Excluir">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
-}
 
-function displayMetodosGrid() {
-    const grid = document.getElementById('paymentMethodsGrid');
-    if (!grid) return;
-    
-    if (allMetodos.length === 0) {
-        grid.innerHTML = '';
-        return;
+    /**
+     * Exibe uma notificação global (sucesso ou erro).
+     * @param {string} mensagem - A mensagem a ser exibida.
+     * @param {string} tipo - 'sucesso' ou 'erro'.
+     */
+    function exibirNotificacao(mensagem, tipo) {
+        const notificacaoDiv = document.createElement('div');
+        notificacaoDiv.classList.add('notificacao', tipo);
+        notificacaoDiv.textContent = mensagem;
+        document.body.appendChild(notificacaoDiv);
+
+        setTimeout(() => {
+            notificacaoDiv.remove();
+        }, 3000);
     }
-    
-    grid.innerHTML = allMetodos.map(metodo => `
-        <div class="payment-method-card">
-            <div class="payment-method-header">
-                <div class="payment-method-info">
-                    <h3>${metodo.nome}</h3>
-                    <div class="payment-method-type">${metodo.tipo}</div>
-                    <div class="payment-method-account">${getAccountName(metodo.contaId) || 'Conta não encontrada'}</div>
-                </div>
-                <div class="payment-method-icon">
-                    <i class="fas fa-${getPaymentMethodIcon(metodo.tipo)}"></i>
-                </div>
-            </div>
-            <div class="payment-method-details">
-                ${metodo.limite ? `<div class="payment-method-limit">Limite: ${formatCurrency(metodo.limite)}</div>` : ''}
-                ${metodo.descricao ? `<div class="payment-method-description">${metodo.descricao}</div>` : ''}
-            </div>
-            <div class="payment-method-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
-                <button class="action-btn edit-btn" onclick="editMetodo(${metodo.id})" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn delete-btn" onclick="confirmDeleteMetodo(${metodo.id})" title="Excluir">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
 
-function getAccountName(accountId) {
-    const account = accounts.find(acc => acc.id === accountId);
-    return account ? account.numeroConta : null;
-}
-
-function getPaymentMethodIcon(tipo) {
-    const icons = {
-        'Cartão de Crédito': 'credit-card',
-        'Cartão de Débito': 'credit-card',
-        'PIX': 'mobile-alt',
-        'Dinheiro': 'money-bill-wave',
-        'Transferência': 'exchange-alt',
-        'Boleto': 'barcode',
-        'Outro': 'wallet'
-    };
-    return icons[tipo] || 'wallet';
-}
-
-function setupMetodosEventListeners() {
-    // Form submission
-    const metodoForm = document.getElementById('metodoForm');
-    if (metodoForm) {
-        metodoForm.addEventListener('submit', handleMetodoSubmit);
+    /**
+     * Popula um elemento <select> com opções.
+     * @param {HTMLElement} selectElement - O elemento <select> a ser populado.
+     * @param {Array} data - Os dados para preencher as opções.
+     * @param {string} valueKey - A chave do objeto a ser usada como valor da opção.
+     * @param {string} textKey - A chave do objeto a ser usada como texto da opção.
+     * @param {string} placeholder - O texto do placeholder inicial.
+     */
+    function popularSelect(selectElement, data, valueKey, textKey, placeholder) {
+        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item[valueKey];
+            option.textContent = item[textKey];
+            selectElement.appendChild(option);
+        });
     }
-    
-    // Search functionality
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', UTILS.debounce(handleSearch, 300));
-    }
-}
 
-function handleSearch(event) {
-    const searchTerm = event.target.value.toLowerCase();
-    const filteredMetodos = allMetodos.filter(metodo => 
-        metodo.nome.toLowerCase().includes(searchTerm) ||
-        metodo.tipo.toLowerCase().includes(searchTerm) ||
-        (metodo.descricao && metodo.descricao.toLowerCase().includes(searchTerm))
-    );
-    
-    displayFilteredMetodos(filteredMetodos);
-}
+    /**
+     * Abre o modal de método de pagamento (para adicionar ou editar).
+     * @param {object | null} metodo - Objeto método se for edição, null se for nova.
+     */
+    async function abrirModalMetodo(metodo = null) {
+        fundoModalMetodo.classList.add('ativo');
+        modalMetodo.classList.add('ativo');
+        document.body.style.overflow = 'hidden'; // Evita rolagem do corpo
 
-function displayFilteredMetodos(metodos) {
-    const tableBody = document.getElementById('metodosTableBody');
-    if (!tableBody) return;
-    
-    if (metodos.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center">
-                    <div class="empty-state">
-                        <i class="fas fa-search"></i>
-                        <h3>Nenhum método encontrado</h3>
-                        <p>Tente ajustar os termos de busca</p>
-                    </div>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    tableBody.innerHTML = metodos.map(metodo => `
-        <tr>
-            <td>${metodo.nome}</td>
-            <td>
-                <span class="status-badge active">${metodo.tipo}</span>
-            </td>
-            <td>${getAccountName(metodo.contaId) || '-'}</td>
-            <td>${metodo.limite ? formatCurrency(metodo.limite) : 'Sem limite'}</td>
-            <td>${metodo.descricao || '-'}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn edit-btn" onclick="editMetodo(${metodo.id})" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="confirmDeleteMetodo(${metodo.id})" title="Excluir">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
-}
+        formularioMetodo.reset();
+        limparErrosFormulario(formularioMetodo);
+        inputMetodoId.value = ''; // Limpa o ID para novo método
 
-// Global functions for HTML onclick events
-window.openMetodoModal = function(metodoId = null) {
-    const modal = document.getElementById('modalOverlay');
-    const modalTitle = document.getElementById('modalTitle');
-    const form = document.getElementById('metodoForm');
-    
-    if (!modal || !modalTitle || !form) return;
-    
-    // Reset form
-    form.reset();
-    clearFormErrors(form);
-    editingMetodo = null;
-    
-    if (metodoId) {
-        // Edit mode
-        const metodo = allMetodos.find(m => m.id === metodoId);
+        // Popula o select de contas vinculadas
+        try {
+            contasDisponiveis = await api.buscarContas({ idUsuario });
+            popularSelect(selectContaVinculada, contasDisponiveis, 'idConta', 'numeroConta', 'Selecione uma conta');
+        } catch (error) {
+            console.error('Erro ao carregar contas para o modal de método de pagamento:', error.message);
+            exibirNotificacao('Erro ao carregar contas para o formulário.', 'erro');
+        }
+
         if (metodo) {
-            modalTitle.textContent = 'Editar Método de Pagamento';
-            editingMetodo = metodo;
-            
-            // Populate form
-            document.getElementById('nome').value = metodo.nome;
-            document.getElementById('tipo').value = metodo.tipo;
-            document.getElementById('limite').value = metodo.limite || '';
-            document.getElementById('descricao').value = metodo.descricao || '';
-        }
-    } else {
-        // Create mode
-        modalTitle.textContent = 'Novo Método de Pagamento';
-    }
-    
-    // Populate accounts select
-    const contaSelect = document.getElementById('conta');
-    if (contaSelect) {
-        populateAccounts(contaSelect);
-        if (editingMetodo) {
-            contaSelect.value = editingMetodo.contaId;
+            tituloModalMetodo.textContent = 'Editar Método de Pagamento';
+            inputMetodoId.value = metodo.idMetodoPagamento; // Supondo que a API retorne idMetodoPagamento
+            inputNomeMetodo.value = metodo.nome;
+            selectTipoMetodo.value = metodo.tipo;
+            inputLimiteMetodo.value = metodo.limite || '';
+            inputDescricaoMetodo.value = metodo.descricao || '';
+
+            // Preencher a conta vinculada se a API retornar o ID da conta no MetodoPagamentoResponseViewModel
+            // ATENÇÃO: A API atual (Swagger YAML) não retorna idConta no MetodoPagamentoResponseViewModel.
+            // Para que este campo seja preenchido automaticamente, a API precisaria ser ajustada.
+            // Por enquanto, o select será populado, mas não pré-selecionado automaticamente.
+            // Se a API for atualizada para incluir 'idConta' no response:
+            // if (metodo.idConta) {
+            //     selectContaVinculada.value = metodo.idConta;
+            // }
+        } else {
+            tituloModalMetodo.textContent = 'Novo Método de Pagamento';
         }
     }
-    
-    // Show modal
-    openModal();
-};
 
-window.editMetodo = function(metodoId) {
-    openMetodoModal(metodoId);
-};
+    /**
+     * Fecha o modal de método de pagamento.
+     */
+    function fecharModalMetodo() {
+        fundoModalMetodo.classList.remove('ativo');
+        modalMetodo.classList.remove('ativo');
+        document.body.style.overflow = ''; // Restaura a rolagem
+        formularioMetodo.reset();
+        limparErrosFormulario(formularioMetodo);
+    }
 
-window.confirmDeleteMetodo = function(metodoId) {
-    deletingMetodoId = metodoId;
-    const deleteModal = document.getElementById('deleteModalOverlay');
-    if (deleteModal) {
-        deleteModal.classList.add('active');
+    /**
+     * Abre o modal de confirmação de deleção.
+     * @param {number} id - O ID do método a ser deletado.
+     */
+    function abrirModalDelecao(id) {
+        metodoSendoDeletadoId = id;
+        fundoModalDelecao.classList.add('ativo');
+        fundoModalDelecao.querySelector('.janela-modal').classList.add('ativo');
         document.body.style.overflow = 'hidden';
     }
-};
 
-window.closeDeleteModal = function() {
-    const deleteModal = document.getElementById('deleteModalOverlay');
-    if (deleteModal) {
-        deleteModal.classList.remove('active');
+    /**
+     * Fecha o modal de confirmação de deleção.
+     */
+    function fecharModalDelecao() {
+        metodoSendoDeletadoId = null;
+        fundoModalDelecao.classList.remove('ativo');
+        fundoModalDelecao.querySelector('.janela-modal').classList.remove('ativo');
         document.body.style.overflow = '';
     }
-    deletingMetodoId = null;
-};
 
-window.confirmDelete = function() {
-    if (deletingMetodoId) {
-        handleDeleteMetodo(deletingMetodoId);
-    }
-};
+    // --- Funções de Carregamento de Dados e Tabela ---
 
-async function handleMetodoSubmit(event) {
-    event.preventDefault();
-    
-    const form = event.target;
-    const formData = new FormData(form);
-    
-    if (!validateForm(form)) {
-        return;
-    }
-    
-    try {
-        const metodoData = {
-            nome: formData.get('nome'),
-            tipo: formData.get('tipo'),
-            limite: formData.get('limite') ? parseFloat(formData.get('limite')) : null,
-            descricao: formData.get('descricao') || null
-        };
-        
-        const contaId = parseInt(formData.get('conta'));
-        
-        if (editingMetodo) {
-            // Update existing método
-            await api.updatePaymentMethod(editingMetodo.id, metodoData, contaId);
-            showSuccessMessage('Método de pagamento atualizado com sucesso!');
-        } else {
-            // Create new método
-            await api.createPaymentMethod(metodoData, contaId);
-            showSuccessMessage('Método de pagamento criado com sucesso!');
+    async function carregarMetodosPagamento() {
+        gridMetodosPagamento.innerHTML = '<div class="estado-carregando">Carregando métodos...</div>';
+        corpoTabelaMetodos.innerHTML = `<tr><td colspan="6" class="estado-carregando">Carregando métodos...</td></tr>`;
+
+        try {
+            const todosOsMetodos = await api.buscarMetodosPagamento({ idUsuario });
+            const termoBusca = inputBusca.value.toLowerCase();
+
+            const metodosFiltrados = todosOsMetodos.filter(metodo =>
+                metodo.nome.toLowerCase().includes(termoBusca) ||
+                metodo.tipo.toLowerCase().includes(termoBusca) ||
+                (metodo.descricao && metodo.descricao.toLowerCase().includes(termoBusca))
+            );
+
+            // Renderizar Cartões de Resumo
+            gridMetodosPagamento.innerHTML = ''; // Limpa antes de preencher
+            if (metodosFiltrados.length === 0) {
+                gridMetodosPagamento.innerHTML = `<div class="estado-vazio full-width"><p>Nenhum método de pagamento encontrado.</p></div>`;
+            } else {
+                metodosFiltrados.forEach(metodo => {
+                    // Para exibir a conta vinculada no cartão, a API precisaria retornar o idConta ou numeroConta
+                    // no MetodoPagamentoResponseViewModel. Por enquanto, será "N/A".
+                    const contaVinculadaNome = contasDisponiveis.find(c => c.idConta === metodo.idConta)?.numeroConta || 'N/A'; // Supondo que 'metodo.idConta' exista
+                    const cardHtml = `
+                        <div class="cartao cartao-metodo">
+                            <div class="cartao-icone">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="cartao-conteudo">
+                                <h3>${metodo.nome}</h3>
+                                <p>${metodo.tipo} ${metodo.limite ? `(Limite: ${CONFIG.UTIL.formatarMoeda(metodo.limite)})` : ''}</p>
+                                <p class="texto-secundario">Conta: ${contaVinculadaNome}</p>
+                            </div>
+                            <div class="acoes">
+                                <button class="botao-icone" data-action="editar" data-id="${metodo.idMetodoPagamento}"><i class="fas fa-edit"></i></button>
+                                <button class="botao-icone" data-action="excluir" data-id="${metodo.idMetodoPagamento}"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    gridMetodosPagamento.innerHTML += cardHtml;
+                });
+            }
+
+            // Renderizar Tabela de Métodos de Pagamento
+            corpoTabelaMetodos.innerHTML = ''; // Limpa antes de preencher
+            if (metodosFiltrados.length === 0) {
+                corpoTabelaMetodos.innerHTML = `<tr><td colspan="6" class="estado-vazio">Nenhum método de pagamento encontrado.</td></tr>`;
+                return;
+            }
+
+            metodosFiltrados.forEach(metodo => {
+                // Para exibir a conta vinculada na tabela, a API precisaria retornar o idConta ou numeroConta
+                // no MetodoPagamentoResponseViewModel. Por enquanto, será "N/A".
+                const contaVinculadaNome = contasDisponiveis.find(c => c.idConta === metodo.idConta)?.numeroConta || 'N/A'; // Supondo que 'metodo.idConta' exista
+                const row = corpoTabelaMetodos.insertRow();
+                row.innerHTML = `
+                    <td>${metodo.nome}</td>
+                    <td>${metodo.tipo}</td>
+                    <td>${contaVinculadaNome}</td>
+                    <td>${metodo.limite ? CONFIG.UTIL.formatarMoeda(metodo.limite) : 'N/A'}</td>
+                    <td>${metodo.descricao || 'N/A'}</td>
+                    <td class="acoes">
+                        <button class="botao-icone" data-action="editar" data-id="${metodo.idMetodoPagamento}"><i class="fas fa-edit"></i></button>
+                        <button class="botao-icone" data-action="excluir" data-id="${metodo.idMetodoPagamento}"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+            });
+
+        } catch (error) {
+            console.error('Erro ao carregar métodos de pagamento:', error.message);
+            gridMetodosPagamento.innerHTML = `<div class="estado-erro full-width"><p>Erro ao carregar métodos de pagamento.</p></div>`;
+            corpoTabelaMetodos.innerHTML = `<tr><td colspan="6" class="estado-erro">Erro ao carregar métodos de pagamento.</td></tr>`;
+            exibirNotificacao('Erro ao carregar métodos de pagamento.', 'erro');
         }
-        
-        // Close modal and refresh data
-        closeModal();
-        await loadMetodos();
-        
-        // Update global payment methods array
-        paymentMethods = allMetodos;
-        
-        displayMetodos();
-        displayMetodosGrid();
-        
-    } catch (error) {
-        console.error('Error saving método:', error);
-        showErrorMessage('Erro ao salvar método de pagamento. Tente novamente.');
     }
-}
 
-async function handleDeleteMetodo(metodoId) {
-    try {
-        await api.deletePaymentMethod(metodoId);
-        showSuccessMessage('Método de pagamento excluído com sucesso!');
+    // --- Manipuladores de Eventos ---
+
+    btnNovoMetodo.addEventListener('click', () => abrirModalMetodo());
+    fecharModalMetodoBtn.addEventListener('click', fecharModalMetodo);
+    btnCancelarMetodo.addEventListener('click', fecharModalMetodo);
+
+    // Fechar modal de método de pagamento ao clicar fora
+    fundoModalMetodo.addEventListener('click', (event) => {
+        if (event.target === fundoModalMetodo) {
+            fecharModalMetodo();
+        }
+    });
+
+    // Submissão do formulário de método de pagamento
+    formularioMetodo.addEventListener('submit', async (event) => {
+        event.preventDefault();
         
-        // Close delete modal
-        closeDeleteModal();
-        
-        // Refresh data
-        await loadMetodos();
-        
-        // Update global payment methods array
-        paymentMethods = allMetodos;
-        
-        displayMetodos();
-        displayMetodosGrid();
-        
-    } catch (error) {
-        console.error('Error deleting método:', error);
-        showErrorMessage('Erro ao excluir método de pagamento. Tente novamente.');
-        closeDeleteModal();
-    }
-}
+        if (!validarFormulario(formularioMetodo)) {
+            exibirNotificacao('Por favor, preencha todos os campos obrigatórios corretamente.', 'erro');
+            return;
+        }
+
+        const dadosMetodo = {
+            nome: inputNomeMetodo.value,
+            tipo: selectTipoMetodo.value,
+            limite: inputLimiteMetodo.value ? parseFloat(inputLimiteMetodo.value) : null,
+            descricao: inputDescricaoMetodo.value
+        };
+
+        // A API de criar/atualizar método de pagamento espera idConta como parâmetro de query
+        const params = { 
+            idUsuario: idUsuario,
+            idConta: parseInt(selectContaVinculada.value) // ID da conta selecionada
+        };
+
+        try {
+            const metodoId = inputMetodoId.value;
+            if (metodoId) {
+                // Atualizar Método de Pagamento
+                params.idMetodoPagamento = parseInt(metodoId);
+                await api.atualizarMetodoPagamento(dadosMetodo, params);
+                exibirNotificacao('Método de pagamento atualizado com sucesso!', 'sucesso');
+            } else {
+                // Criar Novo Método de Pagamento
+                await api.criarMetodoPagamento(dadosMetodo, params);
+                exibirNotificacao('Método de pagamento criado com sucesso!', 'sucesso');
+            }
+            fecharModalMetodo();
+            carregarMetodosPagamento(); // Recarrega a lista após a operação
+        } catch (error) {
+            console.error('Erro ao salvar método de pagamento:', error.message);
+            exibirNotificacao('Erro ao salvar método de pagamento. Verifique os dados.', 'erro');
+        }
+    });
+
+    // Ações da tabela e dos cartões (editar/excluir)
+    document.addEventListener('click', async (event) => {
+        const target = event.target.closest('button');
+        if (!target) return;
+
+        const action = target.dataset.action;
+        const idMetodoPagamento = parseInt(target.dataset.id); 
+
+        if (action === 'editar') {
+            try {
+                // Para editar, precisamos dos dados completos do método.
+                const todosOsMetodos = await api.buscarMetodosPagamento({ idUsuario });
+                const metodoParaEditar = todosOsMetodos.find(m => m.idMetodoPagamento === idMetodoPagamento);
+
+                if (metodoParaEditar) {
+                    abrirModalMetodo(metodoParaEditar);
+                } else {
+                    exibirNotificacao('Método de pagamento não encontrado para edição.', 'erro');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar método de pagamento para edição:', error.message);
+                exibirNotificacao('Erro ao carregar dados do método para edição.', 'erro');
+            }
+        } else if (action === 'excluir') {
+            abrirModalDelecao(idMetodoPagamento);
+        }
+    });
+
+    // Eventos do modal de deleção
+    fecharModalDelecaoBtn.addEventListener('click', fecharModalDelecao);
+    btnCancelarDelecao.addEventListener('click', fecharModalDelecao);
+    btnConfirmarDelecao.addEventListener('click', async () => {
+        if (metodoSendoDeletadoId) {
+            try {
+                await api.deletarMetodoPagamento({ idUsuario, idMetodoPagamento: metodoSendoDeletadoId });
+                exibirNotificacao('Método de pagamento excluído com sucesso!', 'sucesso');
+                fecharModalDelecao();
+                carregarMetodosPagamento(); // Recarrega a lista após a exclusão
+            } catch (error) {
+                console.error('Erro ao excluir método de pagamento:', error.message);
+                exibirNotificacao('Erro ao excluir método de pagamento.', 'erro');
+            }
+        }
+    });
+
+    // Fechar modal de deleção ao clicar fora
+    fundoModalDelecao.addEventListener('click', (event) => {
+        if (event.target === fundoModalDelecao) {
+            fecharModalDelecao();
+        }
+    });
+
+    // Busca com debounce para evitar muitas requisições
+    inputBusca.addEventListener('keyup', CONFIG.UTIL.debounce(carregarMetodosPagamento, 300));
+
+    // --- Inicialização ---
+    // Carrega as contas primeiro para que o select de contas vinculadas possa ser populado
+    // antes de carregar os métodos de pagamento.
+    api.buscarContas({ idUsuario })
+        .then(contas => {
+            contasDisponiveis = contas;
+            carregarMetodosPagamento(); // Carrega os métodos de pagamento iniciais
+        })
+        .catch(error => {
+            console.error('Erro na inicialização: Não foi possível carregar as contas.', error.message);
+            exibirNotificacao('Erro na inicialização: Não foi possível carregar as contas.', 'erro');
+            carregarMetodosPagamento(); // Tenta carregar os métodos mesmo sem as contas
+        });
+});
+
+
+

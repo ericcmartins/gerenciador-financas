@@ -8,9 +8,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
+    <div class="container-autenticacao">
+        <div class="cartao">
+            <div class="cartao-cabecalho">
                 <div class="logo">
                     <i class="fas fa-chart-line"></i>
                     <h1>FinOn</h1>
@@ -19,72 +19,55 @@
                 <p>Entre na sua conta para continuar</p>
             </div>
 
-            <form id="loginForm" class="auth-form" onsubmit="return false;">
-                <div class="form-group">
+            <form id="formularioLogin" class="cartao-formulario" onsubmit="return false;">
+                <div class="grupo-formulario">
                     <label for="email">Email</label>
-                    <div class="input-group">
+                    <div class="grupo-input">
                         <i class="fas fa-envelope"></i>
                         <input type="email" id="email" required placeholder="seu@email.com">
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="grupo-formulario">
                     <label for="senha">Senha</label>
-                    <div class="input-group">
+                    <div class="grupo-input">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="senha" required placeholder="Sua senha">
-                        <button type="button" class="toggle-password" onclick="togglePassword('senha')">
-                            <i class="fas fa-eye" id="toggleIcon-senha"></i>
-                        </button>
+                    <button type="button" class="alternar-visibilidade-senha">
+                        <i class="fas fa-eye" id="icone-senha"></i>
+                    </button>
                     </div>
                 </div>
 
-                <div class="form-options">
-                    <label class="checkbox-label">
+                <div class="opcoes-formulario">
+                    <label class="label-checkbox">
                         <input type="checkbox" id="lembrarMe">
-                        <span class="checkmark"></span>
+                        <span class="marcador-checkbox"></span>
                         Lembrar de mim
                     </label>
-                    <a href="esqueci-senha.html" class="forgot-link">Esqueci minha senha</a>
+                    <a href="esqueci-senha.html" class="link-esqueci-senha">Esqueci minha senha</a>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <span class="btn-text">Entrar</span>
-                    <div class="btn-loading" style="display: none;">
-                        <div class="spinner"></div>
+                <button type="submit" class="botao botao-primario">
+                    <span class="botao-texto">Entrar</span>
+                    <div class="botao-carregando" style="display: none;">
+                        <div class="animacao-carregando"></div>
                     </div>
                 </button>
             </form>
 
-            <div class="auth-footer">
+            <div class="cartao-rodape">
                 <p>Não tem uma conta? <a href="cadastro.html">Criar conta</a></p>
             </div>
         </div>
 
-        <div class="auth-background">
-            <div class="bg-shape shape-1"></div>
-            <div class="bg-shape shape-2"></div>
-            <div class="bg-shape shape-3"></div>
+        <div class="fundo-decorativo">
+            <div class="forma forma-1"></div>
+            <div class="forma forma-2"></div>
+            <div class="forma forma-3"></div>
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-
-    <!-- Adiciona função togglePassword caso não esteja em auth.js 
-    <script>
-        function togglePassword(id) {
-            const input = document.getElementById(id);
-            const icon = document.getElementById(`toggleIcon-${id}`);
-            if (input.type === "password") {
-                input.type = "text";
-                if (icon) icon.classList.replace("fa-eye", "fa-eye-slash");
-            } else {
-                input.type = "password";
-                if (icon) icon.classList.replace("fa-eye-slash", "fa-eye");
-            }
-        }
-    </script>-->
+    <script type="module" src="js/auth.js"></script>
 </body>
 </html>

@@ -9,97 +9,78 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
+    <div class="container-app">
+        <nav class="barra-lateral">
+            <div class="barra-lateral-cabecalho">
                 <h2><i class="fas fa-chart-line"></i> FinOn</h2>
             </div>
-            <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a href="index.html">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
+            <ul class="menu-lateral">
+                <li class="item-menu">
+                    <a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="receitas.html">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>Receitas</span>
-                    </a>
+                <li class="item-menu ativo">
+                    <a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="despesas.html">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>Despesas</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="categorias.html">
-                        <i class="fas fa-tags"></i>
-                        <span>Categorias</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a>
                 </li>
-                <li class="menu-item active">
-                    <a href="metodos-pagamento.html">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Métodos de Pagamento</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a>
+                </li>
+                <li class="item-menu">
+                    <a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a>
                 </li>
             </ul>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Bar -->
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <button class="menu-toggle" id="menuToggle">
+        <div class="conteudo-principal">
+            <header class="barra-superior">
+                <div class="barra-superior-esquerda">
+                    <button class="alternar-menu" id="alternarMenu">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1>Métodos de Pagamento</h1>
                 </div>
-                <div class="top-bar-right">
-                    <div class="user-info">
-                        <span class="user-name">João Silva</span>
-                        <div class="user-avatar">
+                <div class="barra-superior-direita">
+                    <div class="info-usuario">
+                        <span class="nome-usuario">Juliano Mauro</span>
+                        <div class="avatar-usuario" id="avatarUsuario">
                             <i class="fas fa-user"></i>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
-            <main class="content">
-                <div class="page-header">
-                    <div class="page-title">
+            <main class="conteudo">
+                <div class="cabecalho-pagina">
+                    <div class="titulo-pagina">
                         <h2>Gerenciar Métodos de Pagamento</h2>
                         <p>Configure seus cartões, contas e formas de pagamento</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openMetodoModal()">
+                    <button class="botao botao-primario" id="btnNovoMetodo">
                         <i class="fas fa-plus"></i>
                         Novo Método
                     </button>
                 </div>
 
-                <!-- Payment Methods Grid -->
-                <div class="payment-methods-grid" id="paymentMethodsGrid">
-                    <!-- Payment methods will be loaded here -->
-                </div>
+                <div class="grid-metodos-pagamento" id="gridMetodosPagamento">
+                    </div>
 
-                <!-- Payment Methods Table -->
-                <div class="card table-card">
-                    <div class="card-header">
+                <div class="cartao cartao-tabela">
+                    <div class="cartao-cabecalho">
                         <h3>Lista de Métodos de Pagamento</h3>
-                        <div class="table-actions">
-                            <div class="search-box">
+                        <div class="acoes-tabela">
+                            <div class="caixa-busca">
                                 <i class="fas fa-search"></i>
-                                <input type="text" id="searchInput" placeholder="Buscar método...">
+                                <input type="text" id="inputBusca" placeholder="Buscar método...">
                             </div>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table class="data-table">
+                    <div class="container-tabela">
+                        <table class="tabela-dados">
                             <thead>
                                 <tr>
                                     <th>Nome</th>
@@ -110,9 +91,8 @@
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="metodosTableBody">
-                                <!-- Payment methods will be loaded here -->
-                            </tbody>
+                            <tbody id="corpoTabelaMetodos">
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -120,25 +100,25 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="modalOverlay" class="modal-overlay">
-        <div class="modal" id="metodoModal">
-            <div class="modal-header">
-                <h3 id="modalTitle">Novo Método de Pagamento</h3>
-                <button class="close-btn" onclick="closeModal()">
+    <div id="fundoModalMetodo" class="fundo-modal">
+        <div class="janela-modal" id="modalMetodo">
+            <div class="modal-cabecalho">
+                <h3 id="tituloModal">Novo Método de Pagamento</h3>
+                <button class="botao-fechar" id="fecharModalMetodo">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form id="metodoForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nome">Nome do Método *</label>
-                            <input type="text" id="nome" required placeholder="Ex: Cartão Nubank, PIX, Dinheiro...">
+            <div class="modal-corpo">
+                <form id="formularioMetodo">
+                    <input type="hidden" id="metodoId">
+                    <div class="linha-formulario">
+                        <div class="grupo-formulario">
+                            <label for="nomeMetodo">Nome do Método *</label>
+                            <input type="text" id="nomeMetodo" required placeholder="Ex: Cartão Nubank, PIX, Dinheiro...">
                         </div>
-                        <div class="form-group">
-                            <label for="tipo">Tipo *</label>
-                            <select id="tipo" required>
+                        <div class="grupo-formulario">
+                            <label for="tipoMetodo">Tipo *</label>
+                            <select id="tipoMetodo" required>
                                 <option value="">Selecione o tipo</option>
                                 <option value="Cartão de Crédito">Cartão de Crédito</option>
                                 <option value="Cartão de Débito">Cartão de Débito</option>
@@ -150,55 +130,51 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="conta">Conta Vinculada *</label>
-                        <select id="conta" required>
+                    <div class="grupo-formulario">
+                        <label for="contaVinculada">Conta Vinculada *</label>
+                        <select id="contaVinculada" required>
                             <option value="">Selecione uma conta</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="limite">Limite (opcional)</label>
-                        <input type="number" id="limite" step="0.01" placeholder="Deixe em branco se não houver limite">
+                    <div class="grupo-formulario">
+                        <label for="limiteMetodo">Limite (opcional)</label>
+                        <input type="number" id="limiteMetodo" step="0.01" placeholder="Deixe em branco se não houver limite">
                     </div>
-                    <div class="form-group">
-                        <label for="descricao">Descrição</label>
-                        <textarea id="descricao" rows="3" placeholder="Informações adicionais sobre este método..."></textarea>
+                    <div class="grupo-formulario">
+                        <label for="descricaoMetodo">Descrição</label>
+                        <textarea id="descricaoMetodo" rows="3" placeholder="Informações adicionais sobre este método..."></textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                <button type="submit" form="metodoForm" class="btn btn-primary">Salvar</button>
+            <div class="modal-rodape">
+                <button type="button" class="botao botao-secundario" id="btnCancelarMetodo">Cancelar</button>
+                <button type="submit" form="formularioMetodo" class="botao botao-primario">Salvar</button>
             </div>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModalOverlay" class="modal-overlay">
-        <div class="modal delete-modal">
-            <div class="modal-header">
+    <div id="fundoModalDelecao" class="fundo-modal">
+        <div class="janela-modal modal-delecao">
+            <div class="modal-cabecalho">
                 <h3>Confirmar Exclusão</h3>
-                <button class="close-btn" onclick="closeDeleteModal()">
+                <button class="botao-fechar" id="fecharModalDelecao">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="delete-warning">
+            <div class="modal-corpo">
+                <div class="aviso-delecao">
                     <i class="fas fa-exclamation-triangle"></i>
                     <p>Tem certeza que deseja excluir este método de pagamento?</p>
-                    <p class="warning-text">Esta ação não pode ser desfeita e pode afetar transações existentes.</p>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
-                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Excluir</button>
+            <div class="modal-rodape">
+                <button type="button" class="botao botao-secundario" id="btnCancelarDelecao">Cancelar</button>
+                <button type="button" class="botao botao-perigo" id="btnConfirmarDelecao">Excluir</button>
             </div>
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/metodos-pagamento.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/metodos-pagamento.js"></script>
 </body>
 </html>

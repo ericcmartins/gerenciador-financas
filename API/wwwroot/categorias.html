@@ -9,109 +9,84 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
+    <div class="container-app">
+        <nav class="barra-lateral">
+            <div class="barra-lateral-cabecalho">
                 <h2><i class="fas fa-chart-line"></i> FinOn</h2>
             </div>
-            <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a href="index.html">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
+            <ul class="menu-lateral">
+                <li class="item-menu">
+                    <a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="receitas.html">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>Receitas</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="despesas.html">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>Despesas</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a>
                 </li>
-                <li class="menu-item active">
-                    <a href="categorias.html">
-                        <i class="fas fa-tags"></i>
-                        <span>Categorias</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="metodos-pagamento.html">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Métodos de Pagamento</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a>
+                </li>
+                <li class="item-menu">
+                    <a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a>
                 </li>
             </ul>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Bar -->
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <button class="menu-toggle" id="menuToggle">
+        <div class="conteudo-principal">
+            <header class="barra-superior">
+                <div class="barra-superior-esquerda">
+                    <button class="alternar-menu" id="alternarMenu">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1>Categorias</h1>
                 </div>
-                <div class="top-bar-right">
-                    <div class="user-info">
-                        <span class="user-name">João Silva</span>
-                        <div class="user-avatar">
+                <div class="barra-superior-direita">
+                    <div class="info-usuario">
+                        <span class="nome-usuario">Juliano Mauro</span>
+                        <div class="avatar-usuario" id="avatarUsuario">
                             <i class="fas fa-user"></i>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
-            <main class="content">
-                <div class="page-header">
-                    <div class="page-title">
+            <main class="conteudo">
+                <div class="cabecalho-pagina">
+                    <div class="titulo-pagina">
                         <h2>Gerenciar Categorias</h2>
                         <p>Organize suas receitas e despesas por categorias</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openCategoriaModal()">
+                    <button class="botao botao-primario" id="btnNovaCategoria">
                         <i class="fas fa-plus"></i>
                         Nova Categoria
                     </button>
                 </div>
 
-                <!-- Categories Grid -->
-                <div class="categories-grid" id="categoriesGrid">
-                    <!-- Categories will be loaded here -->
-                </div>
-
-                <!-- Categories Table -->
-                <div class="card table-card">
-                    <div class="card-header">
+                <div class="cartao cartao-tabela">
+                    <div class="cartao-cabecalho">
                         <h3>Lista de Categorias</h3>
-                        <div class="table-actions">
-                            <div class="search-box">
+                        <div class="acoes-tabela">
+                            <div class="caixa-busca">
                                 <i class="fas fa-search"></i>
-                                <input type="text" id="searchInput" placeholder="Buscar categoria...">
+                                <input type="text" id="inputBusca" placeholder="Buscar categoria...">
                             </div>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table class="data-table">
+                    <div class="container-tabela">
+                        <table class="tabela-dados">
                             <thead>
                                 <tr>
                                     <th>Nome</th>
                                     <th>Descrição</th>
-                                    <th>Uso em Receitas</th>
-                                    <th>Uso em Despesas</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="categoriasTableBody">
-                                <!-- Categories will be loaded here -->
-                            </tbody>
+                            <tbody id="corpoTabelaCategorias">
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -119,60 +94,57 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="modalOverlay" class="modal-overlay">
-        <div class="modal" id="categoriaModal">
-            <div class="modal-header">
-                <h3 id="modalTitle">Nova Categoria</h3>
-                <button class="close-btn" onclick="closeModal()">
+    <div id="fundoModalCategoria" class="fundo-modal">
+        <div class="janela-modal" id="modalCategoria">
+            <div class="modal-cabecalho">
+                <h3 id="tituloModal">Nova Categoria</h3>
+                <button class="botao-fechar" id="fecharModalCategoria">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form id="categoriaForm">
-                    <div class="form-group">
-                        <label for="nome">Nome da Categoria *</label>
-                        <input type="text" id="nome" required placeholder="Ex: Alimentação, Transporte, Salário...">
+            <div class="modal-corpo">
+                <form id="formularioCategoria">
+                    <input type="hidden" id="categoriaId">
+                    <div class="grupo-formulario">
+                        <label for="nomeCategoria">Nome da Categoria *</label>
+                        <input type="text" id="nomeCategoria" required placeholder="Ex: Alimentação, Transporte...">
                     </div>
-                    <div class="form-group">
-                        <label for="descricao">Descrição</label>
-                        <textarea id="descricao" rows="3" placeholder="Descreva o uso desta categoria..."></textarea>
+                    <div class="grupo-formulario">
+                        <label for="descricaoCategoria">Descrição</label>
+                        <textarea id="descricaoCategoria" rows="3" placeholder="Descreva o uso desta categoria..."></textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                <button type="submit" form="categoriaForm" class="btn btn-primary">Salvar</button>
+            <div class="modal-rodape">
+                <button type="button" class="botao botao-secundario" id="btnCancelarCategoria">Cancelar</button>
+                <button type="submit" form="formularioCategoria" class="botao botao-primario">Salvar</button>
             </div>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModalOverlay" class="modal-overlay">
-        <div class="modal delete-modal">
-            <div class="modal-header">
+    <div id="fundoModalDelecao" class="fundo-modal">
+        <div class="janela-modal modal-delecao">
+            <div class="modal-cabecalho">
                 <h3>Confirmar Exclusão</h3>
-                <button class="close-btn" onclick="closeDeleteModal()">
+                <button class="botao-fechar" id="fecharModalDelecao">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="delete-warning">
+            <div class="modal-corpo">
+                <div class="aviso-delecao">
                     <i class="fas fa-exclamation-triangle"></i>
                     <p>Tem certeza que deseja excluir esta categoria?</p>
-                    <p class="warning-text">Esta ação não pode ser desfeita e pode afetar transações existentes.</p>
+                    <p class="texto-aviso">Esta ação não pode ser desfeita.</p>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
-                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Excluir</button>
+            <div class="modal-rodape">
+                <button type="button" class="botao botao-secundario" id="btnCancelarDelecao">Cancelar</button>
+                <button type="button" class="botao botao-perigo" id="btnConfirmarDelecao">Excluir</button>
             </div>
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/categorias.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/categorias.js"></script>
 </body>
 </html>

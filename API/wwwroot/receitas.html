@@ -9,83 +9,62 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
+    <div class="container-app">
+        <nav class="barra-lateral">
+            <div class="barra-lateral-cabecalho">
                 <h2><i class="fas fa-chart-line"></i> FinOn</h2>
             </div>
-            <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a href="index.html">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
+            <ul class="menu-lateral">
+                <li class="item-menu">
+                    <a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
                 </li>
-                <li class="menu-item active">
-                    <a href="receitas.html">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>Receitas</span>
-                    </a>
+                <li class="item-menu ativo">
+                    <a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="despesas.html">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>Despesas</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="categorias.html">
-                        <i class="fas fa-tags"></i>
-                        <span>Categorias</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a>
                 </li>
-                <li class="menu-item">
-                    <a href="metodos-pagamento.html">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Métodos de Pagamento</span>
-                    </a>
+                <li class="item-menu">
+                    <a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a>
+                </li>
+                <li class="item-menu">
+                    <a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a>
                 </li>
             </ul>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Bar -->
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
+        <div class="conteudo-principal">
+            <header class="barra-superior">
+                <div class="barra-superior-esquerda">
+                    <button class="alternar-menu" id="alternarMenu"><i class="fas fa-bars"></i></button>
                     <h1>Receitas</h1>
                 </div>
-                <div class="top-bar-right">
-                    <div class="user-info">
-                        <span class="user-name">João Silva</span>
-                        <div class="user-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
+                <div class="barra-superior-direita">
+                    <div class="info-usuario">
+                        <span class="nome-usuario"></span>
+                        <div class="avatar-usuario" id="avatarUsuario"><i class="fas fa-user"></i></div>
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
-            <main class="content">
-                <div class="page-header">
-                    <div class="page-title">
+            <main class="conteudo">
+                <div class="cabecalho-pagina">
+                    <div class="titulo-pagina">
                         <h2>Gerenciar Receitas</h2>
                         <p>Controle suas fontes de renda</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openReceitaModal()">
+                    <button class="botao botao-primario" id="btnNovaReceita">
                         <i class="fas fa-plus"></i>
                         Nova Receita
                     </button>
                 </div>
 
-                <!-- Filters -->
-                <div class="card filters-card">
-                    <div class="filters">
-                        <div class="filter-group">
+                <div class="cartao cartao-filtros">
+                    <div class="filtros">
+                        <div class="grupo-filtro">
                             <label for="filtroData">Período</label>
                             <select id="filtroData">
                                 <option value="1">Este Mês</option>
@@ -94,69 +73,67 @@
                                 <option value="12">Este Ano</option>
                             </select>
                         </div>
-                        <div class="filter-group">
+                        <div class="grupo-filtro">
                             <label for="filtroCategoria">Categoria</label>
                             <select id="filtroCategoria">
                                 <option value="">Todas as categorias</option>
                             </select>
                         </div>
-                        <div class="filter-group">
+                        <div class="grupo-filtro">
                             <label for="filtroConta">Conta</label>
                             <select id="filtroConta">
                                 <option value="">Todas as contas</option>
                             </select>
                         </div>
-                        <button class="btn btn-secondary" onclick="aplicarFiltros()">
+                        <button class="botao botao-secundario" id="btnAplicarFiltros">
                             <i class="fas fa-filter"></i>
                             Filtrar
                         </button>
                     </div>
                 </div>
 
-                <!-- Summary -->
-                <div class="summary-row">
-                    <div class="card summary-item">
-                        <div class="summary-icon income">
+                <div class="linha-resumo">
+                    <div class="cartao item-resumo">
+                        <div class="icone-resumo receita">
                             <i class="fas fa-arrow-up"></i>
                         </div>
-                        <div class="summary-content">
+                        <div class="conteudo-resumo">
                             <h3>Total de Receitas</h3>
-                            <p class="amount" id="totalReceitas">R$ 0,00</p>
+                            <p class="valor" id="totalReceitas">R$ 0,00</p>
                         </div>
                     </div>
-                    <div class="card summary-item">
-                        <div class="summary-icon">
+                    <div class="cartao item-resumo">
+                        <div class="icone-resumo">
                             <i class="fas fa-calendar"></i>
                         </div>
-                        <div class="summary-content">
+                        <div class="conteudo-resumo">
                             <h3>Receitas Recorrentes</h3>
-                            <p class="amount" id="receitasRecorrentes">0</p>
+                            <p class="valor" id="receitasRecorrentes">0</p>
                         </div>
                     </div>
-                    <div class="card summary-item">
-                        <div class="summary-icon">
+                    <div class="cartao item-resumo">
+                        <div class="icone-resumo">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <div class="summary-content">
+                        <div class="conteudo-resumo">
                             <h3>Média Mensal</h3>
-                            <p class="amount" id="mediaMensal">R$ 0,00</p>
+                            <p class="valor" id="mediaMensal">R$ 0,00</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Receitas Table -->
-                <div class="card table-card">
-                    <div class="card-header">
+                <div class="cartao cartao-tabela">
+                    <div class="cartao-cabecalho">
                         <h3>Lista de Receitas</h3>
-                        <div class="table-actions">
-                            <button class="btn btn-outline" onclick="exportarReceitas()">
+                        <div class="acoes-tabela">
+                            <button class="botao botao-outline" id="btnExportar">
                                 <i class="fas fa-download"></i>
                                 Exportar
                             </button>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table class="data-table">
+                    <div class="container-tabela">
+                        <table class="tabela-dados">
                             <thead>
                                 <tr>
                                     <th>Data</th>
@@ -168,18 +145,17 @@
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="receitasTableBody">
-                                <!-- Receitas will be loaded here -->
-                            </tbody>
+                            <tbody id="corpoTabelaReceitas">
+                                </tbody>
                         </table>
                     </div>
-                    <div class="table-footer">
-                        <div class="pagination">
-                            <button class="btn btn-outline" id="prevPage" onclick="previousPage()">
+                    <div class="rodape-tabela">
+                        <div class="paginacao">
+                            <button class="botao botao-outline" id="paginaAnterior">
                                 <i class="fas fa-chevron-left"></i>
                             </button>
-                            <span id="pageInfo">Página 1 de 1</span>
-                            <button class="btn btn-outline" id="nextPage" onclick="nextPage()">
+                            <span id="infoPagina">Página 1 de 1</span>
+                            <button class="botao botao-outline" id="proximaPagina">
                                 <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
@@ -189,68 +165,66 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="modalOverlay" class="modal-overlay">
-        <div class="modal" id="receitaModal">
-            <div class="modal-header">
-                <h3 id="modalTitle">Nova Receita</h3>
-                <button class="close-btn" onclick="closeModal()">
+    <div id="fundoModal" class="fundo-modal">
+        <div class="janela-modal" id="modalReceita">
+            <div class="modal-cabecalho">
+                <h3 id="tituloModal">Nova Receita</h3>
+                <button class="botao-fechar" id="fecharModal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form id="receitaForm">
-                    <div class="form-row">
-                        <div class="form-group">
+            <div class="modal-corpo">
+                <form id="formularioReceita">
+                     <input type="hidden" id="receitaId">
+                    <div class="linha-formulario">
+                        <div class="grupo-formulario">
                             <label for="valor">Valor *</label>
                             <input type="number" id="valor" step="0.01" required>
                         </div>
-                        <div class="form-group">
+                        <div class="grupo-formulario">
                             <label for="dataReceita">Data *</label>
                             <input type="date" id="dataReceita" required>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="grupo-formulario">
                         <label for="descricao">Descrição *</label>
                         <input type="text" id="descricao" required>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
+                    <div class="linha-formulario">
+                        <div class="grupo-formulario">
                             <label for="categoria">Categoria *</label>
                             <select id="categoria" required>
                                 <option value="">Selecione uma categoria</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="grupo-formulario">
                             <label for="conta">Conta *</label>
                             <select id="conta" required>
                                 <option value="">Selecione uma conta</option>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="checkbox-label">
+                    <div class="grupo-formulario">
+                        <label class="label-checkbox">
                             <input type="checkbox" id="recorrente">
-                            <span class="checkmark"></span>
+                            <span class="marcador-checkbox"></span>
                             Receita recorrente
                         </label>
                     </div>
-                    <div class="form-group" id="frequenciaGroup" style="display: none;">
+                    <div class="grupo-formulario" id="grupoFrequencia" style="display: none;">
                         <label for="frequencia">Frequência (dias)</label>
                         <input type="number" id="frequencia" min="1" placeholder="Ex: 30 para mensal">
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                <button type="submit" form="receitaForm" class="btn btn-primary">Salvar</button>
+            <div class="modal-rodape">
+                <button type="button" class="botao botao-secundario" id="btnCancelar">Cancelar</button>
+                <button type="submit" form="formularioReceita" class="botao botao-primario">Salvar</button>
             </div>
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/receitas.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/receitas.js"></script>
 </body>
 </html>

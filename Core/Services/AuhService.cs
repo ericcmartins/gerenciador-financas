@@ -71,7 +71,8 @@ namespace gerenciador.financas.Application.Services
             {
                 Token = token,
                 Expiracao = expiracao,
-                Tipo = "Bearer"
+                Tipo = "Bearer",
+                IdUsuario = usuario.IdUsuario
             };
         }
 

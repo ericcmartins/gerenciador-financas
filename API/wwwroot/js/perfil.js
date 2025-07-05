@@ -1,4 +1,4 @@
-// Profile page functionality
+/*// Profile page functionality
 
 let isEditMode = false;
 let originalUserData = {};
@@ -448,3 +448,4 @@ function togglePassword(inputId) {
 
 // Make functions available globally
 window.togglePassword = togglePassword;
+*/

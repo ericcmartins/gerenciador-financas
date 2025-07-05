@@ -9,185 +9,129 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
+    <div class="container-app">
+        <nav class="barra-lateral">
+            <div class="barra-lateral-cabecalho">
                 <h2><i class="fas fa-chart-line"></i> FinOn</h2>
             </div>
-            <ul class="sidebar-menu">
-                <li class="menu-item">
-                    <a href="index.html">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="receitas.html">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>Receitas</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="despesas.html">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>Despesas</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="categorias.html">
-                        <i class="fas fa-tags"></i>
-                        <span>Categorias</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="metodos-pagamento.html">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Métodos de Pagamento</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="contas.html">
-                        <i class="fas fa-university"></i>
-                        <span>Contas</span>
-                    </a>
-                </li>
+            <ul class="menu-lateral">
+                <li class="item-menu"><a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li class="item-menu"><a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a></li>
+                <li class="item-menu"><a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a></li>
+                <li class="item-menu"><a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a></li>
+                <li class="item-menu"><a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a></li>
+                <li class="item-menu"><a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a></li>
             </ul>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Bar -->
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
+        <div class="conteudo-principal">
+            <header class="barra-superior">
+                <div class="barra-superior-esquerda">
+                    <button class="alternar-menu" id="alternarMenu"><i class="fas fa-bars"></i></button>
                     <h1>Meu Perfil</h1>
                 </div>
-                <div class="top-bar-right">
-                    <div class="user-info">
-                        <span class="user-name">João Silva</span>
-                        <div class="user-avatar" onclick="toggleUserMenu()">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="user-menu" id="userMenu">
+                <div class="barra-superior-direita">
+                    <div class="info-usuario">
+                        <span class="nome-usuario"></span>
+                        <div class="avatar-usuario" id="avatarUsuario"><i class="fas fa-user"></i></div>
+                        <div class="menu-usuario" id="menuUsuario">
                             <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
-                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                            <a href="#" id="botaoSair"><i class="fas fa-sign-out-alt"></i> Sair</a>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
-            <main class="content">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h2>Informações Pessoais</h2>
-                        <p>Gerencie suas informações de conta e preferências</p>
+            <main class="conteudo">
+                <div class="cabecalho-pagina">
+                    <div class="titulo-pagina">
+                        <h2>Informações da Conta</h2>
+                        <p>Gerencie suas informações pessoais e de segurança</p>
                     </div>
                 </div>
 
-                <div class="profile-container">
-                    <!-- Profile Card -->
-                    <div class="card profile-card">
-                        <div class="profile-header">
-                            <div class="profile-avatar">
-                                <div class="avatar-circle">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <button class="change-avatar-btn" onclick="changeAvatar()">
-                                    <i class="fas fa-camera"></i>
-                                </button>
+                <div class="container-perfil">
+                    <div class="cartao cartao-perfil">
+                        <div class="cabecalho-perfil">
+                            <div class="avatar-perfil">
+                                <div class="circulo-avatar"><i class="fas fa-user"></i></div>
+                                <button class="botao-alterar-avatar" id="btnAlterarAvatar"><i class="fas fa-camera"></i></button>
                             </div>
-                            <div class="profile-info">
-                                <h3 id="profileName">João Silva</h3>
-                                <p id="profileEmail">joao@email.com</p>
-                                <span class="profile-status active">Conta Ativa</span>
+                            <div class="info-perfil">
+                                <h3 id="nomePerfil"></h3>
+                                <p id="emailPerfil"></p>
+                                <span class="status-perfil ativo">Conta Ativa</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Personal Information -->
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="cartao">
+                        <div class="cartao-cabecalho">
                             <h3>Informações Pessoais</h3>
-                            <button class="btn btn-outline" onclick="toggleEditMode()">
+                            <button class="botao botao-outline" id="btnEditarPerfil">
                                 <i class="fas fa-edit"></i>
-                                <span id="editButtonText">Editar</span>
+                                <span id="textoBotaoEditar">Editar</span>
                             </button>
                         </div>
-                        <div class="card-body">
-                            <form id="profileForm">
-                                <div class="form-row">
-                                    <div class="form-group">
+                        <div class="cartao-corpo">
+                            <form id="formularioPerfil">
+                                <div class="linha-formulario">
+                                    <div class="grupo-formulario">
                                         <label for="nome">Nome completo</label>
                                         <input type="text" id="nome" name="nome" disabled>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="grupo-formulario">
                                         <label for="email">Email</label>
                                         <input type="email" id="email" name="email" disabled>
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-group">
+                                <div class="linha-formulario">
+                                    <div class="grupo-formulario">
                                         <label for="telefone">Telefone</label>
                                         <input type="tel" id="telefone" name="telefone" disabled>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="grupo-formulario">
                                         <label for="dataNascimento">Data de nascimento</label>
                                         <input type="date" id="dataNascimento" name="dataNascimento" disabled>
                                     </div>
                                 </div>
-                                <div class="form-actions" id="formActions" style="display: none;">
-                                    <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
-                                        Cancelar
-                                    </button>
-                                    <button type="submit" class="btn btn-primary">
-                                        Salvar alterações
-                                    </button>
+                                <div class="acoes-formulario" id="acoesFormularioPerfil" style="display: none;">
+                                    <button type="button" class="botao botao-secundario" id="btnCancelarEdicao">Cancelar</button>
+                                    <button type="submit" class="botao botao-primario">Salvar alterações</button>
                                 </div>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Security Settings -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Segurança</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="security-item">
-                                <div class="security-info">
+                    <div class="cartao">
+                        <div class="cartao-cabecalho"><h3>Segurança</h3></div>
+                        <div class="cartao-corpo">
+                            <div class="item-seguranca">
+                                <div class="info-seguranca">
                                     <h4>Senha</h4>
-                                    <p>Última alteração há 30 dias</p>
+                                    <p>Para sua segurança, recomendamos alterar sua senha periodicamente.</p>
                                 </div>
-                                <button class="btn btn-outline" onclick="openChangePasswordModal()">
-                                    Alterar senha
-                                </button>
+                                <button class="botao botao-outline" id="btnAbrirModalSenha">Alterar senha</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Account Actions -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Ações da Conta</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="account-actions">
-                                <button class="btn btn-outline" onclick="exportData()">
-                                    <i class="fas fa-download"></i>
-                                    Exportar dados
-                                </button>
-                                <button class="btn btn-secondary" onclick="logout()">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    Sair da conta
-                                </button>
-                                <button class="btn btn-danger" onclick="deleteAccount()">
-                                    <i class="fas fa-trash"></i>
-                                    Excluir conta
-                                </button>
+                    <div class="cartao">
+                        <div class="cartao-cabecalho"><h3>Ações da Conta</h3></div>
+                        <div class="cartao-corpo">
+                            <div class="item-seguranca">
+                                <div class="info-seguranca">
+                                    <h4>Exportar Dados</h4>
+                                    <p>Baixe todos os seus dados em formato CSV.</p>
+                                </div>
+                                <button class="botao botao-secundario" id="btnExportarDados"><i class="fas fa-download"></i> Exportar</button>
+                            </div>
+                            <div class="item-seguranca">
+                                <div class="info-seguranca">
+                                    <h4>Excluir Conta</h4>
+                                    <p>Esta ação é permanente e não pode ser desfeita.</p>
+                                </div>
+                                <button class="botao botao-perigo" id="btnAbrirModalDelecaoConta"><i class="fas fa-trash"></i> Excluir conta</button>
                             </div>
                         </div>
                     </div>
@@ -196,103 +140,7 @@
         </div>
     </div>
 
-    <!-- Change Password Modal -->
-    <div id="changePasswordModal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>Alterar Senha</h3>
-                <button class="close-btn" onclick="closeChangePasswordModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="changePasswordForm">
-                    <div class="form-group">
-                        <label for="senhaAtual">Senha atual</label>
-                        <div class="input-group">
-                            <input type="password" id="senhaAtual" name="senhaAtual" required>
-                            <button type="button" class="toggle-password" onclick="togglePassword('senhaAtual')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="novaSenha">Nova senha</label>
-                        <div class="input-group">
-                            <input type="password" id="novaSenha" name="novaSenha" required>
-                            <button type="button" class="toggle-password" onclick="togglePassword('novaSenha')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <div class="password-strength">
-                            <div class="strength-bar">
-                                <div class="strength-fill"></div>
-                            </div>
-                            <span class="strength-text">Digite uma senha</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmarNovaSenha">Confirmar nova senha</label>
-                        <div class="input-group">
-                            <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" required>
-                            <button type="button" class="toggle-password" onclick="togglePassword('confirmarNovaSenha')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()">
-                    Cancelar
-                </button>
-                <button type="submit" form="changePasswordForm" class="btn btn-primary">
-                    Alterar senha
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Account Modal -->
-    <div id="deleteAccountModal" class="modal-overlay">
-        <div class="modal delete-modal">
-            <div class="modal-header">
-                <h3>Excluir Conta</h3>
-                <button class="close-btn" onclick="closeDeleteAccountModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="delete-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h4>Esta ação não pode ser desfeita!</h4>
-                    <p>Todos os seus dados serão permanentemente excluídos, incluindo:</p>
-                    <ul>
-                        <li>Todas as receitas e despesas</li>
-                        <li>Categorias personalizadas</li>
-                        <li>Métodos de pagamento</li>
-                        <li>Histórico de transações</li>
-                    </ul>
-                    <div class="form-group">
-                        <label for="confirmDelete">Digite "EXCLUIR" para confirmar:</label>
-                        <input type="text" id="confirmDelete" placeholder="EXCLUIR">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeDeleteAccountModal()">
-                    Cancelar
-                </button>
-                <button type="button" class="btn btn-danger" onclick="confirmDeleteAccount()" disabled id="confirmDeleteBtn">
-                    Excluir conta
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/perfil.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/perfil.js"></script>
 </body>
 </html>

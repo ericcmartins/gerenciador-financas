@@ -32,7 +32,18 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
-builder.Services.AddControllers(); 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Permitir",
+        policy =>
+        {
+            policy.AllowAnyOrigin() 
+                  .AllowAnyMethod() 
+                  .AllowAnyHeader(); 
+        });
+});
+
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -47,10 +58,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gerenciador de Finanças API v1"));
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.UseDefaultFiles(); 
-app.UseStaticFiles();  
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.UseCors("Permitir");
 
 app.UseAuthorization();
 app.MapControllers();
