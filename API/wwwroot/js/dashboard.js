@@ -3,166 +3,246 @@ import { CONFIG } from './config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const idUsuario = localStorage.getItem('finon_user_id');
-    if (!idUsuario) return;
+    if (!idUsuario) {
+        window.location.href = 'login.html';
+        return;
+    }
 
-    // --- Seleção de Elementos ---
-    const elementoTotalReceitas = document.getElementById('totalReceitas');
-    const elementoTotalDespesas = document.getElementById('totalDespesas');
-    const elementoSaldoTotal = document.getElementById('saldoTotal');
-    const elementoMetasAtivas = document.getElementById('metasAtivas');
-    const listaTransacoes = document.getElementById('listaTransacoes');
-    const selecaoPeriodo = document.getElementById('selecaoPeriodo');
+    // --- ESTADO DA PÁGINA ---
+    const estado = {
+        contas: [],
+        contaParaDeletarId: null,
+    };
+
+    // --- SELEÇÃO DE ELEMENTOS DO DOM ---
+    const gridContas = document.getElementById('gridContas');
+    const corpoTabelaContas = document.getElementById('corpoTabelaContas');
+    const btnNovaConta = document.getElementById('btnNovaConta');
+    const inputBusca = document.getElementById('inputBusca');
     
-    // Variável para guardar a instância do gráfico e poder atualizá-la
-    let graficoDespesasInstance = null;
+    // Modal
+    const fundoModalConta = document.getElementById('fundoModalConta');
+    const tituloModal = document.getElementById('tituloModal');
+    const formularioConta = document.getElementById('formularioConta');
+    const fecharModalContaBtn = document.getElementById('fecharModalConta');
+    const btnCancelarConta = document.getElementById('btnCancelarConta');
+    const inputContaId = document.getElementById('contaId');
 
-    // --- Funções Auxiliares ---
+    // Modal de Deleção
+    const fundoModalDelecao = document.getElementById('fundoModalDelecao');
+    const btnConfirmarDelecao = document.getElementById('btnConfirmarDelecao');
+    const btnCancelarDelecao = document.getElementById('btnCancelarDelecao');
+    const fecharModalDelecaoBtn = document.getElementById('fecharModalDelecao');
+
+
+    // --- FUNÇÕES DE CARREGAMENTO E RENDERIZAÇÃO ---
 
     /**
-     * Converte o valor do seletor de período para o número de dias correspondente.
-     * @param {string} valorPeriodo - O valor da opção selecionada ('1', '3', '6', '12').
-     * @returns {number} O número de dias.
+     * Carrega as contas e seus respectivos saldos da API.
      */
-    function converterPeriodoParaDias(valorPeriodo) {
-        const hoje = new Date();
-        switch (valorPeriodo) {
-            case '1': // Este Mês
-                return hoje.getDate(); // Retorna o dia do mês, que é o número de dias corridos.
-            case '3': // Últimos 3 Meses
-                return 90; // Aproximação
-            case '6': // Últimos 6 Meses
-                return 180; // Aproximação
-            case '12': // Este Ano
-                const inicioDoAno = new Date(hoje.getFullYear(), 0, 1);
-                const diffEmMs = hoje - inicioDoAno;
-                const diffEmDias = Math.ceil(diffEmMs / (1000 * 60 * 60 * 24));
-                return diffEmDias;
-            default:
-                return 30; // Padrão para 30 dias se algo der errado.
-        }
-    }
+    async function carregarContas() {
+        gridContas.innerHTML = `<div class="carregando">Carregando...</div>`;
+        corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="carregando">Carregando...</td></tr>`;
 
-
-    // --- Funções de Carregamento de Dados ---
-
-    async function carregarResumo() {
         try {
-            const diasEsteMes = converterPeriodoParaDias('1');
-            const [dadosReceitas, dadosDespesas, dadosSaldo, dadosMetas] = await Promise.all([
-                api.buscarReceitas({ idUsuario, periodo: diasEsteMes }),
-                api.buscarDespesas({ idUsuario, periodo: diasEsteMes }),
-                api.buscarSaldoTotal({ idUsuario }),
-                api.buscarMetas({ idUsuario })
+            // Faz as duas chamadas em paralelo para mais velocidade
+            const [contas, saldos] = await Promise.all([
+                api.buscarContas({ idUsuario }),
+                api.buscarSaldoPorConta({ idUsuario })
             ]);
 
-            const totalReceitas = dadosReceitas.reduce((acc, r) => acc + r.valor, 0);
-            elementoTotalReceitas.textContent = CONFIG.UTIL.formatarMoeda(totalReceitas);
-
-            const totalDespesas = dadosDespesas.reduce((acc, d) => acc + d.valor, 0);
-            elementoTotalDespesas.textContent = CONFIG.UTIL.formatarMoeda(totalDespesas);
-
-            const saldo = dadosSaldo.length > 0 ? dadosSaldo[0].saldoTotal : 0;
-            elementoSaldoTotal.textContent = CONFIG.UTIL.formatarMoeda(saldo);
-
-            const metasAtivas = dadosMetas.filter(m => !m.concluida).length;
-            elementoMetasAtivas.textContent = metasAtivas;
-
-        } catch (erro) {
-            console.error('Falha ao carregar resumo do dashboard:', erro.message);
-        }
-    }
-
-    async function carregarGraficoDespesas() {
-        try {
-            const valorPeriodoSelecionado = selecaoPeriodo.value;
-            const dias = converterPeriodoParaDias(valorPeriodoSelecionado);
-
-            const dados = await api.buscarDespesasPorCategoria({ idUsuario, periodo: dias });
-            const ctx = document.getElementById('graficoDespesas').getContext('2d');
-
-            // Se já existe uma instância do gráfico, destrói antes de criar uma nova.
-            if (graficoDespesasInstance) {
-                graficoDespesasInstance.destroy();
-            }
-
-            graficoDespesasInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: dados.map(d => d.categoria),
-                    datasets: [{
-                        label: 'Despesas por Categoria',
-                        data: dados.map(d => d.totalDespesa),
-                        backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1'],
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right' } }
-                }
+            // Combina os dados de contas e saldos em um único array
+            estado.contas = contas.map(conta => {
+                const saldoInfo = saldos.find(s => s.numeroConta === conta.numeroConta);
+                return { ...conta, saldoConta: saldoInfo ? saldoInfo.saldoConta : 0 };
             });
+
+            renderizarConteudo();
         } catch (erro) {
-            console.error('Falha ao carregar gráfico de despesas:', erro.message);
+            console.error("Erro ao carregar contas:", erro);
+            gridContas.innerHTML = `<div class="estado-vazio-pagina">Erro ao carregar os dados.</div>`;
+            corpoTabelaContas.innerHTML = `<tr><td colspan="5">Erro ao carregar os dados.</td></tr>`;
         }
     }
 
-    async function carregarTransacoesRecentes() {
-        // (Esta função permanece a mesma da versão anterior)
-        try {
-            const transacoes = await api.buscarMovimentacoes({ idUsuario });
-            listaTransacoes.innerHTML = ''; 
+    /**
+     * Renderiza o grid e a tabela com base nos dados do estado e no termo de busca.
+     */
+    function renderizarConteudo() {
+        const termoBusca = inputBusca.value.toLowerCase();
+        const contasFiltradas = estado.contas.filter(conta =>
+            conta.numeroConta.toLowerCase().includes(termoBusca) ||
+            conta.tipo.toLowerCase().includes(termoBusca) ||
+            conta.instituicao.toLowerCase().includes(termoBusca)
+        );
+        renderizarGrid(contasFiltradas);
+        renderizarTabela(contasFiltradas);
+    }
 
-            if (transacoes.length === 0) {
-                listaTransacoes.innerHTML = `<div class="estado-vazio"><p>Nenhuma transação encontrada.</p></div>`;
-                return;
-            }
+    function renderizarGrid(contas) {
+        gridContas.innerHTML = '';
+        if (contas.length === 0) {
+            gridContas.innerHTML = `<div class="estado-vazio-pagina">Nenhuma conta encontrada.</div>`;
+            return;
+        }
 
-            const transacoesRecentes = transacoes.slice(0, 5);
-
-            transacoesRecentes.forEach(transacao => {
-                const tipo = transacao.valor > 0 ? 'receita' : 'despesa';
-                const iconeClasse = tipo === 'receita' ? 'fa-arrow-up' : 'fa-arrow-down';
-                const valorClasse = tipo === 'receita' ? 'receita' : 'despesa';
-
-                const itemHtml = `
-                    <div class="item-transacao">
-                        <div class="info-transacao">
-                            <div class="icone-transacao ${valorClasse}"> <i class="fas ${iconeClasse}"></i> </div>
-                            <div class="detalhes-transacao">
-                                <h4>${transacao.descricao}</h4>
-                                <p>${transacao.numeroContaOrigem || 'N/A'}</p>
-                            </div>
+        contas.forEach(conta => {
+            const saldoClasse = conta.saldoConta >= 0 ? 'positivo' : 'negativo';
+            const cardHtml = `
+                <div class="cartao-conta">
+                    <div class="cabecalho-conta">
+                        <div class="info-conta">
+                            <h3>${conta.numeroConta}</h3>
+                            <p class="tipo-conta">${conta.instituicao} (${conta.tipo})</p>
                         </div>
-                        <div class="valor-transacao">
-                            <p class="valor ${valorClasse}">${CONFIG.UTIL.formatarMoeda(transacao.valor)}</p>
-                            <p class="data">${CONFIG.UTIL.formatarData(transacao.dataMovimentacao)}</p>
+                        <div class="botoes-acao">
+                            <button class="botao-acao editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
+                            <button class="botao-acao deletar" data-id="${conta.idConta}"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
-                `;
-                listaTransacoes.innerHTML += itemHtml;
-            });
+                    <div class="saldo-conta">
+                        <span class="label-saldo">Saldo</span>
+                        <p class="valor-saldo ${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</p>
+                    </div>
+                </div>
+            `;
+            gridContas.innerHTML += cardHtml;
+        });
+    }
+
+    function renderizarTabela(contas) {
+        corpoTabelaContas.innerHTML = '';
+        if (contas.length === 0) {
+            corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="estado-vazio-pagina">Nenhuma conta encontrada.</td></tr>`;
+            return;
+        }
+
+        contas.forEach(conta => {
+            const saldoClasse = conta.saldoConta >= 0 ? 'receita' : 'despesa';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${conta.numeroConta}</td>
+                <td>${conta.tipo}</td>
+                <td>${conta.instituicao}</td>
+                <td class="celula-valor ${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</td>
+                <td>
+                    <div class="botoes-acao">
+                        <button class="botao-acao editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
+                        <button class="botao-acao deletar" data-id="${conta.idConta}"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            corpoTabelaContas.appendChild(tr);
+        });
+    }
+
+    // --- LÓGICA DO MODAL ---
+
+    function abrirModal(conta = null) {
+        formularioConta.reset();
+        inputContaId.value = '';
+        tituloModal.textContent = 'Nova Conta';
+
+        if (conta) { // Modo Edição
+            tituloModal.textContent = 'Editar Conta';
+            inputContaId.value = conta.idConta;
+            document.getElementById('numeroConta').value = conta.numeroConta;
+            document.getElementById('tipoConta').value = conta.tipo;
+            document.getElementById('instituicaoConta').value = conta.instituicao;
+        }
+        
+        fundoModalConta.classList.add('ativo');
+    }
+
+    function fecharModal() {
+        fundoModalConta.classList.remove('ativo');
+    }
+
+    async function submeterFormulario(evento) {
+        evento.preventDefault();
+        const id = inputContaId.value;
+        const dadosCorpo = {
+            numeroConta: document.getElementById('numeroConta').value.trim(),
+            tipo: document.getElementById('tipoConta').value,
+            instituicao: document.getElementById('instituicaoConta').value.trim()
+        };
+
+        if (!dadosCorpo.numeroConta || !dadosCorpo.tipo || !dadosCorpo.instituicao) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        try {
+            if (id) { // ATUALIZAR
+                await api.atualizarConta(dadosCorpo, { idUsuario, idConta: id });
+                alert('Conta atualizada com sucesso!');
+            } else { // CRIAR
+                await api.criarConta(dadosCorpo, { idUsuario });
+                alert('Conta criada com sucesso!');
+            }
+            fecharModal();
+            carregarContas();
         } catch (erro) {
-            console.error('Falha ao carregar transações recentes:', erro.message);
-            listaTransacoes.innerHTML = `<div class="estado-vazio"><p>Erro ao carregar transações.</p></div>`;
+            alert(`Erro ao salvar conta: ${erro.message}`);
         }
     }
+
+    function abrirModalDelecao(id) {
+        estado.contaParaDeletarId = id;
+        fundoModalDelecao.classList.add('ativo');
+    }
+
+    function fecharModalDelecao() {
+        estado.contaParaDeletarId = null;
+        fundoModalDelecao.classList.remove('ativo');
+    }
+
+    async function confirmarDelecao() {
+        if (!estado.contaParaDeletarId) return;
+        try {
+            await api.deletarConta({ idUsuario, idConta: estado.contaParaDeletarId });
+            alert('Conta excluída com sucesso.');
+            fecharModalDelecao();
+            carregarContas();
+        } catch(erro) {
+            alert(`Erro ao excluir: ${erro.message}`);
+        }
+    }
+
+
+    // --- CONFIGURAÇÃO DE EVENTOS ---
     
-    // (Lógica do Modal permanece a mesma)
-    const fundoModal = document.getElementById('fundoModal');
-    // ... (resto da lógica do modal que já tínhamos) ...
+    function configurarEventListeners() {
+        btnNovaConta.addEventListener('click', () => abrirModal());
+        fecharModalContaBtn.addEventListener('click', fecharModal);
+        btnCancelarConta.addEventListener('click', fecharModal);
+        formularioConta.addEventListener('submit', submeterFormulario);
+        inputBusca.addEventListener('keyup', CONFIG.UTIL.debounce(renderizarConteudo, 300));
 
+        // Delegação de eventos para botões de ação
+        document.querySelector('.conteudo').addEventListener('click', (evento) => {
+            const botao = evento.target.closest('.botao-acao');
+            if (!botao) return;
 
-    // --- Event Listeners ---
+            const id = botao.dataset.id;
+            const acao = botao.classList.contains('editar') ? 'editar' : 'deletar';
+
+            if (acao === 'editar') {
+                const conta = estado.contas.find(c => c.idConta == id);
+                if (conta) abrirModal(conta);
+            } else if (acao === 'deletar') {
+                abrirModalDelecao(id);
+            }
+        });
+
+        // Eventos do modal de deleção
+        fecharModalDelecaoBtn.addEventListener('click', fecharModalDelecao);
+        btnCancelarDelecao.addEventListener('click', fecharModalDelecao);
+        btnConfirmarDelecao.addEventListener('click', confirmarDelecao);
+    }
     
-    // Adiciona o "ouvinte" para o seletor de período.
-    // Sempre que o valor mudar, a função para carregar o gráfico será chamada novamente.
-    selecaoPeriodo.addEventListener('change', carregarGraficoDespesas);
-
-
-    // --- Inicialização ---
-    carregarResumo();
-    carregarGraficoDespesas(); // Carrega o gráfico com o período inicial
-    carregarTransacoesRecentes();
+    // --- INICIALIZAÇÃO DA PÁGINA ---
+    
+    carregarContas();
+    configurarEventListeners();
 });

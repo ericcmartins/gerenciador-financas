@@ -3,344 +3,246 @@ import { CONFIG } from './config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const idUsuario = localStorage.getItem('finon_user_id');
-    if (!idUsuario) return;
+    if (!idUsuario) {
+        window.location.href = 'login.html';
+        return;
+    }
 
-    // --- Seleção de Elementos ---
-    const btnNovaConta = document.getElementById('btnNovaConta');
+    // --- ESTADO DA PÁGINA ---
+    const estado = {
+        contas: [],
+        contaParaDeletarId: null,
+    };
+
+    // --- SELEÇÃO DE ELEMENTOS DO DOM ---
     const gridContas = document.getElementById('gridContas');
     const corpoTabelaContas = document.getElementById('corpoTabelaContas');
+    const btnNovaConta = document.getElementById('btnNovaConta');
     const inputBusca = document.getElementById('inputBusca');
-
-    // Elementos do Modal de Conta (Adicionar/Editar)
+    
+    // Modal
     const fundoModalConta = document.getElementById('fundoModalConta');
-    const modalConta = document.getElementById('modalConta');
-    const tituloModalConta = modalConta.querySelector('#tituloModal'); // Reutiliza o ID 'tituloModal'
+    const tituloModal = document.getElementById('tituloModal');
+    const formularioConta = document.getElementById('formularioConta');
     const fecharModalContaBtn = document.getElementById('fecharModalConta');
     const btnCancelarConta = document.getElementById('btnCancelarConta');
-    const formularioConta = document.getElementById('formularioConta');
-    const inputContaId = document.getElementById('contaId'); // Campo hidden para o ID da conta
-    const inputNumeroConta = document.getElementById('numeroConta');
-    const selectTipoConta = document.getElementById('tipoConta');
-    const inputInstituicaoConta = document.getElementById('instituicaoConta');
+    const inputContaId = document.getElementById('contaId');
 
-    // Elementos do Modal de Deleção
+    // Modal de Deleção
     const fundoModalDelecao = document.getElementById('fundoModalDelecao');
-    const fecharModalDelecaoBtn = document.getElementById('fecharModalDelecao');
-    const btnCancelarDelecao = document.getElementById('btnCancelarDelecao');
     const btnConfirmarDelecao = document.getElementById('btnConfirmarDelecao');
+    const btnCancelarDelecao = document.getElementById('btnCancelarDelecao');
+    const fecharModalDelecaoBtn = document.getElementById('fecharModalDelecao');
 
-    let contaSendoDeletadaId = null; // Variável para armazenar o ID da conta a ser deletada
 
-    // --- Funções Auxiliares (reutilizadas de outros módulos) ---
-
-    /**
-     * Valida o formulário de conta.
-     * @param {HTMLFormElement} form - O formulário a ser validado.
-     * @returns {boolean} True se o formulário for válido, false caso contrário.
-     */
-    function validarFormulario(form) {
-        limparErrosFormulario(form);
-        let isValid = true;
-        const camposObrigatorios = form.querySelectorAll('[required]');
-
-        camposObrigatorios.forEach(campo => {
-            if (!campo.value.trim()) {
-                exibirErroCampo(campo, 'Este campo é obrigatório.');
-                isValid = false;
-            }
-        });
-        return isValid;
-    }
+    // --- FUNÇÕES DE CARREGAMENTO E RENDERIZAÇÃO ---
 
     /**
-     * Exibe uma mensagem de erro abaixo de um campo do formulário.
-     * @param {HTMLElement} campo - O campo onde o erro ocorreu.
-     * @param {string} mensagem - A mensagem de erro.
+     * Carrega as contas e seus respectivos saldos da API.
      */
-    function exibirErroCampo(campo, mensagem) {
-        campo.classList.add('campo-erro');
-        let erroElement = campo.nextElementSibling;
-        if (!erroElement || !erroElement.classList.contains('mensagem-erro')) {
-            erroElement = document.createElement('span');
-            erroElement.classList.add('mensagem-erro');
-            campo.parentNode.insertBefore(erroElement, campo.nextSibling);
-        }
-        erroElement.textContent = mensagem;
-    }
-
-    /**
-     * Limpa as mensagens de erro de um formulário.
-     * @param {HTMLFormElement} form - O formulário a ser limpo.
-     */
-    function limparErrosFormulario(form) {
-        form.querySelectorAll('.campo-erro').forEach(campo => {
-            campo.classList.remove('campo-erro');
-        });
-        form.querySelectorAll('.mensagem-erro').forEach(erro => {
-            erro.remove();
-        });
-    }
-
-    /**
-     * Exibe uma notificação global (sucesso ou erro).
-     * @param {string} mensagem - A mensagem a ser exibida.
-     * @param {string} tipo - 'sucesso' ou 'erro'.
-     */
-    function exibirNotificacao(mensagem, tipo) {
-        const notificacaoDiv = document.createElement('div');
-        notificacaoDiv.classList.add('notificacao', tipo);
-        notificacaoDiv.textContent = mensagem;
-        document.body.appendChild(notificacaoDiv);
-
-        setTimeout(() => {
-            notificacaoDiv.remove();
-        }, 3000);
-    }
-
-    /**
-     * Abre o modal de conta (para adicionar ou editar).
-     * @param {object | null} conta - Objeto conta se for edição, null se for nova.
-     */
-    function abrirModalConta(conta = null) {
-        fundoModalConta.classList.add('ativo');
-        modalConta.classList.add('ativo');
-        document.body.style.overflow = 'hidden'; // Evita rolagem do corpo
-
-        formularioConta.reset();
-        limparErrosFormulario(formularioConta);
-        inputContaId.value = ''; // Limpa o ID para nova conta
-
-        if (conta) {
-            tituloModalConta.textContent = 'Editar Conta';
-            inputContaId.value = conta.idConta; // Supondo que a API retorne idConta
-            inputNumeroConta.value = conta.numeroConta;
-            selectTipoConta.value = conta.tipo;
-            inputInstituicaoConta.value = conta.instituicao;
-        } else {
-            tituloModalConta.textContent = 'Nova Conta';
-        }
-    }
-
-    /**
-     * Fecha o modal de conta.
-     */
-    function fecharModalConta() {
-        fundoModalConta.classList.remove('ativo');
-        modalConta.classList.remove('ativo');
-        document.body.style.overflow = ''; // Restaura a rolagem
-        formularioConta.reset();
-        limparErrosFormulario(formularioConta);
-    }
-
-    /**
-     * Abre o modal de confirmação de deleção.
-     * @param {number} id - O ID da conta a ser deletada.
-     */
-    function abrirModalDelecao(id) {
-        contaSendoDeletadaId = id;
-        fundoModalDelecao.classList.add('ativo');
-        fundoModalDelecao.querySelector('.janela-modal').classList.add('ativo');
-        document.body.style.overflow = 'hidden';
-    }
-
-    /**
-     * Fecha o modal de confirmação de deleção.
-     */
-    function fecharModalDelecao() {
-        contaSendoDeletadaId = null;
-        fundoModalDelecao.classList.remove('ativo');
-        fundoModalDelecao.querySelector('.janela-modal').classList.remove('ativo');
-        document.body.style.overflow = '';
-    }
-
-    // --- Funções de Carregamento de Dados e Tabela ---
-
     async function carregarContas() {
-        gridContas.innerHTML = '<div class="estado-carregando">Carregando contas...</div>';
-        corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="estado-carregando">Carregando contas...</td></tr>`;
+        gridContas.innerHTML = `<div class="carregando">Carregando...</div>`;
+        corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="carregando">Carregando...</td></tr>`;
 
         try {
-            const todasAsContas = await api.buscarContas({ idUsuario });
-            const saldosPorConta = await api.buscarSaldoPorConta({ idUsuario });
+            // Faz as duas chamadas em paralelo para mais velocidade
+            const [contas, saldos] = await Promise.all([
+                api.buscarContas({ idUsuario }),
+                api.buscarSaldoPorConta({ idUsuario })
+            ]);
 
-            const termoBusca = inputBusca.value.toLowerCase();
-
-            const contasComSaldo = todasAsContas.map(conta => {
-                const saldoInfo = saldosPorConta.find(s => s.numeroConta === conta.numeroConta);
-                return {
-                    ...conta,
-                    saldoConta: saldoInfo ? saldoInfo.saldoConta : 0 // Adiciona o saldo à conta
-                };
-            }).filter(conta =>
-                conta.numeroConta.toLowerCase().includes(termoBusca) ||
-                conta.tipo.toLowerCase().includes(termoBusca) ||
-                conta.instituicao.toLowerCase().includes(termoBusca)
-            );
-
-            // Renderizar Cartões de Resumo
-            gridContas.innerHTML = ''; // Limpa antes de preencher
-            if (contasComSaldo.length === 0) {
-                gridContas.innerHTML = `<div class="estado-vazio full-width"><p>Nenhuma conta encontrada.</p></div>`;
-            } else {
-                contasComSaldo.forEach(conta => {
-                    const saldoClasse = conta.saldoConta >= 0 ? 'texto-sucesso' : 'texto-erro';
-                    const cardHtml = `
-                        <div class="cartao cartao-conta">
-                            <div class="cartao-icone">
-                                <i class="fas fa-university"></i>
-                            </div>
-                            <div class="cartao-conteudo">
-                                <h3>${conta.numeroConta}</h3>
-                                <p>${conta.instituicao} (${conta.tipo})</p>
-                                <p class="valor ${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</p>
-                            </div>
-                            <div class="acoes">
-                                <button class="botao-icone" data-action="editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
-                                <button class="botao-icone" data-action="excluir" data-id="${conta.idConta}"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </div>
-                    `;
-                    gridContas.innerHTML += cardHtml;
-                });
-            }
-
-
-            // Renderizar Tabela de Contas
-            corpoTabelaContas.innerHTML = ''; // Limpa antes de preencher
-            if (contasComSaldo.length === 0) {
-                corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="estado-vazio">Nenhuma conta encontrada.</td></tr>`;
-                return;
-            }
-
-            contasComSaldo.forEach(conta => {
-                const saldoClasse = conta.saldoConta >= 0 ? 'texto-sucesso' : 'texto-erro';
-                const row = corpoTabelaContas.insertRow();
-                row.innerHTML = `
-                    <td>${conta.numeroConta}</td>
-                    <td>${conta.tipo}</td>
-                    <td>${conta.instituicao}</td>
-                    <td class="${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</td>
-                    <td class="acoes">
-                        <button class="botao-icone" data-action="editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
-                        <button class="botao-icone" data-action="excluir" data-id="${conta.idConta}"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                `;
+            // Combina os dados de contas e saldos em um único array
+            estado.contas = contas.map(conta => {
+                const saldoInfo = saldos.find(s => s.numeroConta === conta.numeroConta);
+                return { ...conta, saldoConta: saldoInfo ? saldoInfo.saldoConta : 0 };
             });
 
-        } catch (error) {
-            console.error('Erro ao carregar contas:', error.message);
-            gridContas.innerHTML = `<div class="estado-erro full-width"><p>Erro ao carregar contas.</p></div>`;
-            corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="estado-erro">Erro ao carregar contas.</td></tr>`;
-            exibirNotificacao('Erro ao carregar contas.', 'erro');
+            renderizarConteudo();
+        } catch (erro) {
+            console.error("Erro ao carregar contas:", erro);
+            gridContas.innerHTML = `<div class="estado-vazio-pagina">Erro ao carregar os dados.</div>`;
+            corpoTabelaContas.innerHTML = `<tr><td colspan="5">Erro ao carregar os dados.</td></tr>`;
         }
     }
 
-    // --- Manipuladores de Eventos ---
+    /**
+     * Renderiza o grid e a tabela com base nos dados do estado e no termo de busca.
+     */
+    function renderizarConteudo() {
+        const termoBusca = inputBusca.value.toLowerCase();
+        const contasFiltradas = estado.contas.filter(conta =>
+            conta.numeroConta.toLowerCase().includes(termoBusca) ||
+            conta.tipo.toLowerCase().includes(termoBusca) ||
+            conta.instituicao.toLowerCase().includes(termoBusca)
+        );
+        renderizarGrid(contasFiltradas);
+        renderizarTabela(contasFiltradas);
+    }
 
-    btnNovaConta.addEventListener('click', () => abrirModalConta());
-    fecharModalContaBtn.addEventListener('click', fecharModalConta);
-    btnCancelarConta.addEventListener('click', fecharModalConta);
-
-    // Fechar modal de conta ao clicar fora
-    fundoModalConta.addEventListener('click', (event) => {
-        if (event.target === fundoModalConta) {
-            fecharModalConta();
-        }
-    });
-
-    // Submissão do formulário de conta
-    formularioConta.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        
-        if (!validarFormulario(formularioConta)) {
-            exibirNotificacao('Por favor, preencha todos os campos obrigatórios corretamente.', 'erro');
+    function renderizarGrid(contas) {
+        gridContas.innerHTML = '';
+        if (contas.length === 0) {
+            gridContas.innerHTML = `<div class="estado-vazio-pagina">Nenhuma conta encontrada.</div>`;
             return;
         }
 
-        const dadosConta = {
-            numeroConta: inputNumeroConta.value,
-            tipo: selectTipoConta.value,
-            instituicao: inputInstituicaoConta.value
+        contas.forEach(conta => {
+            const saldoClasse = conta.saldoConta >= 0 ? 'positivo' : 'negativo';
+            const cardHtml = `
+                <div class="cartao-conta">
+                    <div class="cabecalho-conta">
+                        <div class="info-conta">
+                            <h3>${conta.numeroConta}</h3>
+                            <p class="tipo-conta">${conta.instituicao} (${conta.tipo})</p>
+                        </div>
+                        <div class="botoes-acao">
+                            <button class="botao-acao editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
+                            <button class="botao-acao deletar" data-id="${conta.idConta}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="saldo-conta">
+                        <span class="label-saldo">Saldo</span>
+                        <p class="valor-saldo ${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</p>
+                    </div>
+                </div>
+            `;
+            gridContas.innerHTML += cardHtml;
+        });
+    }
+
+    function renderizarTabela(contas) {
+        corpoTabelaContas.innerHTML = '';
+        if (contas.length === 0) {
+            corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="estado-vazio-pagina">Nenhuma conta encontrada.</td></tr>`;
+            return;
+        }
+
+        contas.forEach(conta => {
+            const saldoClasse = conta.saldoConta >= 0 ? 'receita' : 'despesa';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${conta.numeroConta}</td>
+                <td>${conta.tipo}</td>
+                <td>${conta.instituicao}</td>
+                <td class="celula-valor ${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</td>
+                <td>
+                    <div class="botoes-acao">
+                        <button class="botao-acao editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
+                        <button class="botao-acao deletar" data-id="${conta.idConta}"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            corpoTabelaContas.appendChild(tr);
+        });
+    }
+
+    // --- LÓGICA DO MODAL ---
+
+    function abrirModal(conta = null) {
+        formularioConta.reset();
+        inputContaId.value = '';
+        tituloModal.textContent = 'Nova Conta';
+
+        if (conta) { // Modo Edição
+            tituloModal.textContent = 'Editar Conta';
+            inputContaId.value = conta.idConta;
+            document.getElementById('numeroConta').value = conta.numeroConta;
+            document.getElementById('tipoConta').value = conta.tipo;
+            document.getElementById('instituicaoConta').value = conta.instituicao;
+        }
+        
+        fundoModalConta.classList.add('ativo');
+    }
+
+    function fecharModal() {
+        fundoModalConta.classList.remove('ativo');
+    }
+
+    async function submeterFormulario(evento) {
+        evento.preventDefault();
+        const id = inputContaId.value;
+        const dadosCorpo = {
+            numeroConta: document.getElementById('numeroConta').value.trim(),
+            tipo: document.getElementById('tipoConta').value,
+            instituicao: document.getElementById('instituicaoConta').value.trim()
         };
 
-        const params = { idUsuario: idUsuario };
+        if (!dadosCorpo.numeroConta || !dadosCorpo.tipo || !dadosCorpo.instituicao) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
 
         try {
-            const contaId = inputContaId.value;
-            if (contaId) {
-                // Atualizar Conta
-                params.idConta = parseInt(contaId);
-                await api.atualizarConta(dadosConta, params);
-                exibirNotificacao('Conta atualizada com sucesso!', 'sucesso');
-            } else {
-                // Criar Nova Conta
-                await api.criarConta(dadosConta, params);
-                exibirNotificacao('Conta criada com sucesso!', 'sucesso');
+            if (id) { // ATUALIZAR
+                await api.atualizarConta(dadosCorpo, { idUsuario, idConta: id });
+                alert('Conta atualizada com sucesso!');
+            } else { // CRIAR
+                await api.criarConta(dadosCorpo, { idUsuario });
+                alert('Conta criada com sucesso!');
             }
-            fecharModalConta();
-            carregarContas(); // Recarrega a lista após a operação
-        } catch (error) {
-            console.error('Erro ao salvar conta:', error.message);
-            exibirNotificacao('Erro ao salvar conta. Verifique os dados.', 'erro');
+            fecharModal();
+            carregarContas();
+        } catch (erro) {
+            alert(`Erro ao salvar conta: ${erro.message}`);
         }
-    });
+    }
 
-    // Ações da tabela e dos cartões (editar/excluir)
-    document.addEventListener('click', async (event) => {
-        const target = event.target.closest('button');
-        if (!target) return;
+    function abrirModalDelecao(id) {
+        estado.contaParaDeletarId = id;
+        fundoModalDelecao.classList.add('ativo');
+    }
 
-        const action = target.dataset.action;
-        const idConta = parseInt(target.dataset.id); 
+    function fecharModalDelecao() {
+        estado.contaParaDeletarId = null;
+        fundoModalDelecao.classList.remove('ativo');
+    }
 
-        if (action === 'editar') {
-            try {
-                // Para editar, precisamos dos dados completos da conta.
-                const todasAsContas = await api.buscarContas({ idUsuario });
-                const contaParaEditar = todasAsContas.find(c => c.idConta === idConta);
-
-                if (contaParaEditar) {
-                    abrirModalConta(contaParaEditar);
-                } else {
-                    exibirNotificacao('Conta não encontrada para edição.', 'erro');
-                }
-            } catch (error) {
-                console.error('Erro ao buscar conta para edição:', error.message);
-                exibirNotificacao('Erro ao carregar dados da conta para edição.', 'erro');
-            }
-        } else if (action === 'excluir') {
-            abrirModalDelecao(idConta);
-        }
-    });
-
-    // Eventos do modal de deleção
-    fecharModalDelecaoBtn.addEventListener('click', fecharModalDelecao);
-    btnCancelarDelecao.addEventListener('click', fecharModalDelecao);
-    btnConfirmarDelecao.addEventListener('click', async () => {
-        if (contaSendoDeletadaId) {
-            try {
-                await api.deletarConta({ idUsuario, idConta: contaSendoDeletadaId });
-                exibirNotificacao('Conta excluída com sucesso!', 'sucesso');
-                fecharModalDelecao();
-                carregarContas(); // Recarrega a lista após a exclusão
-            } catch (error) {
-                console.error('Erro ao excluir conta:', error.message);
-                exibirNotificacao('Erro ao excluir conta.', 'erro');
-            }
-        }
-    });
-
-    // Fechar modal de deleção ao clicar fora
-    fundoModalDelecao.addEventListener('click', (event) => {
-        if (event.target === fundoModalDelecao) {
+    async function confirmarDelecao() {
+        if (!estado.contaParaDeletarId) return;
+        try {
+            await api.deletarConta({ idUsuario, idConta: estado.contaParaDeletarId });
+            alert('Conta excluída com sucesso.');
             fecharModalDelecao();
+            carregarContas();
+        } catch(erro) {
+            alert(`Erro ao excluir: ${erro.message}`);
         }
-    });
+    }
 
-    // Busca com debounce para evitar muitas requisições
-    inputBusca.addEventListener('keyup', CONFIG.UTIL.debounce(carregarContas, 300));
 
-    // --- Inicialização ---
-    carregarContas(); // Carrega as contas iniciais
+    // --- CONFIGURAÇÃO DE EVENTOS ---
+    
+    function configurarEventListeners() {
+        btnNovaConta.addEventListener('click', () => abrirModal());
+        fecharModalContaBtn.addEventListener('click', fecharModal);
+        btnCancelarConta.addEventListener('click', fecharModal);
+        formularioConta.addEventListener('submit', submeterFormulario);
+        inputBusca.addEventListener('keyup', CONFIG.UTIL.debounce(renderizarConteudo, 300));
+
+        // Delegação de eventos para botões de ação
+        document.querySelector('.conteudo').addEventListener('click', (evento) => {
+            const botao = evento.target.closest('.botao-acao');
+            if (!botao) return;
+
+            const id = botao.dataset.id;
+            const acao = botao.classList.contains('editar') ? 'editar' : 'deletar';
+
+            if (acao === 'editar') {
+                const conta = estado.contas.find(c => c.idConta == id);
+                if (conta) abrirModal(conta);
+            } else if (acao === 'deletar') {
+                abrirModalDelecao(id);
+            }
+        });
+
+        // Eventos do modal de deleção
+        fecharModalDelecaoBtn.addEventListener('click', fecharModalDelecao);
+        btnCancelarDelecao.addEventListener('click', fecharModalDelecao);
+        btnConfirmarDelecao.addEventListener('click', confirmarDelecao);
+    }
+    
+    // --- INICIALIZAÇÃO DA PÁGINA ---
+    
+    carregarContas();
+    configurarEventListeners();
 });
-

@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Lançar Chrome no Live Server",
-      "type": "chrome", // <-- AQUI ESTÁ A CORREÇÃO
-      "request": "launch",
-      "url": "http://127.0.0.1:5500/API/wwwroot/login.html",
-      "webRoot": "${workspaceFolder}"
+        "name": "Iniciar Frontend (Chrome)",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://127.0.0.1:5500/login.html", 
+        "webRoot": "${workspaceFolder}/API/wwwroot"
     }
   ]
 }
