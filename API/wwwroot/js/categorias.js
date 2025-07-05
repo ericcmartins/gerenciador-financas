@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const corpoTabelaCategorias = document.getElementById('corpoTabelaCategorias');
     const btnNovaCategoria = document.getElementById('btnNovaCategoria');
     const inputBusca = document.getElementById('inputBusca');
+    const nomeUsuarioEl = document.querySelector('.nome-usuario');
 
     // Modal de Categoria
     const fundoModalCategoria = document.getElementById('fundoModalCategoria');
-    const modalCategoria = document.getElementById('modalCategoria');
     const tituloModal = document.getElementById('tituloModal');
     const formularioCategoria = document.getElementById('formularioCategoria');
     const fecharModalCategoriaBtn = document.getElementById('fecharModalCategoria');
@@ -37,15 +37,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÕES DE RENDERIZAÇÃO E DADOS ---
 
+    /**
+     * Carrega o nome do usuário do localStorage e exibe no cabeçalho.
+     * Esta função é idealmente colocada no main.js para ser compartilhada.
+     */
+    function carregarInfoUsuario() {
+        const nomeUsuario = localStorage.getItem('finon_user_name');
+        if (nomeUsuario && nomeUsuarioEl) {
+            nomeUsuarioEl.textContent = nomeUsuario;
+        }
+    }
+
     async function carregarCategorias() {
         corpoTabelaCategorias.innerHTML = `<tr><td colspan="3" class="carregando">Carregando...</td></tr>`;
         try {
             const categoriasDaApi = await api.buscarCategorias({ idUsuario });
-            estado.categorias = categoriasDaApi;
+            estado.categorias = Array.isArray(categoriasDaApi) ? categoriasDaApi : [];
             renderizarTabela();
         } catch (erro) {
             console.error('Erro ao carregar categorias:', erro.message);
-            corpoTabelaCategorias.innerHTML = `<tr><td colspan="3">Erro ao carregar categorias.</td></tr>`;
+            corpoTabelaCategorias.innerHTML = `<tr><td colspan="3" class="estado-vazio-pagina">Erro ao carregar categorias.</td></tr>`;
         }
     }
     
@@ -104,8 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
         evento.preventDefault();
         const id = inputCategoriaId.value;
         const dadosCorpo = {
-            nome: document.getElementById('nomeCategoria').value,
-            descricao: document.getElementById('descricaoCategoria').value
+            nome: document.getElementById('nomeCategoria').value.trim(),
+            descricao: document.getElementById('descricaoCategoria').value.trim()
         };
 
         if (!dadosCorpo.nome) {
@@ -184,7 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- INICIALIZAÇÃO DA PÁGINA ---
-    
-    carregarCategorias();
-    configurarEventListeners();
+    function init() {
+        carregarInfoUsuario();
+        carregarCategorias();
+        configurarEventListeners();
+    }
+
+    init();
 });

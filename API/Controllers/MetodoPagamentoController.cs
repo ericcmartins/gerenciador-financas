@@ -21,7 +21,7 @@ namespace gerenciador.financas.API.Controllers
             _metodoPagamentoService = metodoPagamentoService;
             _notificationPool = notificationPool;
         }
-
+               
         [HttpGet("metodospagamento")]
         [ProducesResponseType(typeof(List<MetodoPagamentoResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
@@ -72,7 +72,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created(string.Empty, "método de pagamento inserido com sucesso");
+                return Created(string.Empty, "mï¿½todo de pagamento inserido com sucesso");
             }
 
             catch (Exception ex)

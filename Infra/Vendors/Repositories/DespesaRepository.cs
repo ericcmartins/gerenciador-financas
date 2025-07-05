@@ -161,7 +161,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return response;
         }
 
-        public async Task<bool> InsertDespesa(DespesaRequestInfra despesaRequest, int idUsuario, int idConta, int idCategoria, int idMetodoPagamento)
+        public async Task<bool> InsertDespesa(DespesaRequestInfra despesaRequest, int idUsuario, int idCategoria, int idConta, int idMetodoPagamento)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 

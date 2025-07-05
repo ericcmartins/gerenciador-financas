@@ -24,7 +24,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
             var response = await connection.QueryAsync<MetaFinanceiraResponseInfra>(SqlQueries.MetaFinanceira.GetMetasFinanceiras, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
@@ -48,7 +47,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 metaFinanceiraRequest.ValorAtual,
                 metaFinanceiraRequest.DataInicio,
                 metaFinanceiraRequest.DataLimite,
-                IdUsuario = idUsuario
+                IdUsuario = idUsuario,
+                Concluida = false
             });
 
             if (linhasAfetadas != 1)

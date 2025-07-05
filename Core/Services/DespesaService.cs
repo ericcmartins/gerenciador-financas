@@ -75,10 +75,10 @@ namespace gerenciador.financas.Application.Services
 
             return responseInfra;
         }
-
-        public async Task<bool> InsertDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idConta, int idCategoria, int idMetodoPagamento)
+        
+        public async Task<bool> InsertDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idCategoria, int idConta, int idMetodoPagamento)
         {
-            var resultado = await _despesaRepository.InsertDespesa(despesaRequest.ToInfra(), idUsuario, idConta, idCategoria, idMetodoPagamento);
+            var resultado = await _despesaRepository.InsertDespesa(despesaRequest.ToInfra(), idUsuario, idCategoria, idConta, idMetodoPagamento);
             if (_despesaRepository.HasNotifications)
                 return false;
 

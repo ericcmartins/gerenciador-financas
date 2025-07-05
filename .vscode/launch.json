@@ -1,12 +1,41 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-        "name": "Iniciar Frontend (Chrome)",
-        "type": "chrome",
-        "request": "launch",
-        "url": "http://127.0.0.1:5500/login.html", 
-        "webRoot": "${workspaceFolder}/API/wwwroot"
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Iniciar Backend (.NET)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/API/bin/Debug/net8.0/gerenciador.financas.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "Iniciar Frontend (Chrome)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://127.0.0.1:5500/login.html",
+            "webRoot": "${workspaceFolder}/API/wwwroot"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Iniciar Back e Front",
+            "configurations": [
+                "Iniciar Backend (.NET)",
+                "Iniciar Frontend (Chrome)"
+            ]
+        }
+    ]
 }

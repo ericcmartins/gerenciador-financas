@@ -39,6 +39,7 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new MetaFinanceiraRequestInfra
             {
+                Nome = viewModel.Nome,
                 Descricao = viewModel.Descricao,
                 ValorAlvo = viewModel.ValorAlvo,
                 ValorAtual = viewModel.ValorAtual,

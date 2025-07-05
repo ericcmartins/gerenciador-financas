@@ -15,24 +15,14 @@
                 <h2><i class="fas fa-chart-line"></i> FinOn</h2>
             </div>
             <ul class="menu-lateral">
-                <li class="item-menu">
-                    <a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a>
-                </li>
+                <li class="item-menu"><a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li class="item-menu"><a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a></li>
+                <li class="item-menu"><a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a></li>
+                <li class="item-menu"><a href="movimentacoes.html"><i class="fas fa-exchange-alt"></i><span>Movimentações</span></a></li>
+                <li class="item-menu ativo"><a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a></li>
+                <li class="item-menu"><a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a></li>
+                <li class="item-menu"><a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a></li>
+                <li class="item-menu"><a href="metas.html"><i class="fas fa-bullseye"></i><span>Metas</span></a></li>
             </ul>
         </nav>
 
@@ -46,9 +36,13 @@
                 </div>
                 <div class="barra-superior-direita">
                     <div class="info-usuario">
-                        <span class="nome-usuario">Juliano Mauro</span>
+                        <span class="nome-usuario"></span> 
                         <div class="avatar-usuario" id="avatarUsuario">
                             <i class="fas fa-user"></i>
+                        </div>
+                        <div class="menu-usuario" id="menuUsuario">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" id="botaoSair"><i class="fas fa-sign-out-alt"></i> Sair</a>
                         </div>
                     </div>
                 </div>
@@ -86,7 +80,8 @@
                                 </tr>
                             </thead>
                             <tbody id="corpoTabelaCategorias">
-                                </tbody>
+                                <!-- Conteúdo preenchido via JS -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -94,6 +89,7 @@
         </div>
     </div>
 
+    <!-- Modal de Criar/Editar Categoria -->
     <div id="fundoModalCategoria" class="fundo-modal">
         <div class="janela-modal" id="modalCategoria">
             <div class="modal-cabecalho">
@@ -122,6 +118,7 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmação de Deleção -->
     <div id="fundoModalDelecao" class="fundo-modal">
         <div class="janela-modal modal-delecao">
             <div class="modal-cabecalho">
@@ -134,12 +131,12 @@
                 <div class="aviso-delecao">
                     <i class="fas fa-exclamation-triangle"></i>
                     <p>Tem certeza que deseja excluir esta categoria?</p>
-                    <p class="texto-aviso">Esta ação não pode ser desfeita.</p>
+                    <p class="texto-aviso" style="font-size: 0.9rem; color: #6b7280;">Esta ação não pode ser desfeita.</p>
                 </div>
             </div>
             <div class="modal-rodape">
                 <button type="button" class="botao botao-secundario" id="btnCancelarDelecao">Cancelar</button>
-                <button type="button" class="botao botao-perigo" id="btnConfirmarDelecao">Excluir</button>
+                <button type="button" class="botao botao-primario" style="background: #ef4444;" id="btnConfirmarDelecao">Excluir</button>
             </div>
         </div>
     </div>

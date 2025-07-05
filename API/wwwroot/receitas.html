@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinOn - Receitas</title>
+    <title>FinOn - Análise de Receitas</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/pages.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container-app">
@@ -15,24 +16,14 @@
                 <h2><i class="fas fa-chart-line"></i> FinOn</h2>
             </div>
             <ul class="menu-lateral">
-                <li class="item-menu">
-                    <a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a>
-                </li>
-                <li class="item-menu ativo">
-                    <a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a>
-                </li>
-                <li class="item-menu">
-                    <a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a>
-                </li>
+                <li class="item-menu"><a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li class="item-menu ativo"><a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a></li>
+                <li class="item-menu"><a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a></li>
+                <li class="item-menu"><a href="movimentacoes.html"><i class="fas fa-exchange-alt"></i><span>Movimentações</span></a></li>
+                <li class="item-menu"><a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a></li>
+                <li class="item-menu"><a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a></li>
+                <li class="item-menu"><a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a></li>
+                <li class="item-menu"><a href="metas.html"><i class="fas fa-bullseye"></i><span>Metas</span></a></li>
             </ul>
         </nav>
 
@@ -40,12 +31,16 @@
             <header class="barra-superior">
                 <div class="barra-superior-esquerda">
                     <button class="alternar-menu" id="alternarMenu"><i class="fas fa-bars"></i></button>
-                    <h1>Receitas</h1>
+                    <h1>Análise de Receitas</h1>
                 </div>
                 <div class="barra-superior-direita">
                     <div class="info-usuario">
                         <span class="nome-usuario"></span>
                         <div class="avatar-usuario" id="avatarUsuario"><i class="fas fa-user"></i></div>
+                        <div class="menu-usuario" id="menuUsuario">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" id="botaoSair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -53,8 +48,8 @@
             <main class="conteudo">
                 <div class="cabecalho-pagina">
                     <div class="titulo-pagina">
-                        <h2>Gerenciar Receitas</h2>
-                        <p>Controle suas fontes de renda</p>
+                        <h2>Visão Geral das Receitas</h2>
+                        <p>Analise suas fontes de renda por período.</p>
                     </div>
                     <button class="botao botao-primario" id="btnNovaReceita">
                         <i class="fas fa-plus"></i>
@@ -65,71 +60,64 @@
                 <div class="cartao cartao-filtros">
                     <div class="filtros">
                         <div class="grupo-filtro">
-                            <label for="filtroData">Período</label>
+                            <label for="filtroData">Selecione o Período</label>
                             <select id="filtroData">
-                                <option value="1">Este Mês</option>
-                                <option value="3">Últimos 3 Meses</option>
-                                <option value="6">Últimos 6 Meses</option>
-                                <option value="12">Este Ano</option>
-                            </select>
-                        </div>
-                        <div class="grupo-filtro">
-                            <label for="filtroCategoria">Categoria</label>
-                            <select id="filtroCategoria">
-                                <option value="">Todas as categorias</option>
-                            </select>
-                        </div>
-                        <div class="grupo-filtro">
-                            <label for="filtroConta">Conta</label>
-                            <select id="filtroConta">
-                                <option value="">Todas as contas</option>
+                                <option value="30" selected>Últimos 30 dias</option>
+                                <option value="90">Últimos 3 meses</option>
+                                <option value="180">Últimos 6 meses</option>
+                                <option value="365">Este Ano</option>
                             </select>
                         </div>
                         <button class="botao botao-secundario" id="btnAplicarFiltros">
                             <i class="fas fa-filter"></i>
-                            Filtrar
+                            Analisar Período
                         </button>
                     </div>
                 </div>
 
-                <div class="linha-resumo">
+                <div class="linha-resumo" style="grid-template-columns: 1fr;">
                     <div class="cartao item-resumo">
-                        <div class="icone-resumo receita">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
+                        <div class="icone-resumo receita"><i class="fas fa-dollar-sign"></i></div>
                         <div class="conteudo-resumo">
-                            <h3>Total de Receitas</h3>
+                            <h3>Receita Total no Período</h3>
                             <p class="valor" id="totalReceitas">R$ 0,00</p>
                         </div>
                     </div>
-                    <div class="cartao item-resumo">
-                        <div class="icone-resumo">
-                            <i class="fas fa-calendar"></i>
+                </div>
+                
+                <div class="linha-resumo" style="grid-template-columns: 1fr 1fr; align-items: flex-start;">
+                    <div class="cartao">
+                        <div class="cartao-cabecalho">
+                            <h3>Receitas por Categoria</h3>
                         </div>
-                        <div class="conteudo-resumo">
-                            <h3>Receitas Recorrentes</h3>
-                            <p class="valor" id="receitasRecorrentes">0</p>
+                        <div class="cartao-corpo" style="min-height: 350px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="graficoReceitasCategoria"></canvas>
                         </div>
                     </div>
-                    <div class="cartao item-resumo">
-                        <div class="icone-resumo">
-                            <i class="fas fa-chart-line"></i>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="cartao">
+                            <div class="cartao-cabecalho">
+                                <h3>Resumo por Conta</h3>
+                            </div>
+                            <div class="cartao-corpo" id="resumoPorConta">
+                                </div>
                         </div>
-                        <div class="conteudo-resumo">
-                            <h3>Média Mensal</h3>
-                            <p class="valor" id="mediaMensal">R$ 0,00</p>
+                        <div class="cartao">
+                            <div class="cartao-cabecalho">
+                                <h3>Resumo por Categoria</h3>
+                            </div>
+                            <div class="cartao-corpo" id="resumoPorCategoria">
+                                </div>
                         </div>
                     </div>
                 </div>
 
+
                 <div class="cartao cartao-tabela">
                     <div class="cartao-cabecalho">
-                        <h3>Lista de Receitas</h3>
+                        <h3>Lançamentos de Receitas no Período</h3>
                         <div class="acoes-tabela">
-                            <button class="botao botao-outline" id="btnExportar">
-                                <i class="fas fa-download"></i>
-                                Exportar
-                            </button>
+                            <button class="botao botao-outline" id="btnExportar"><i class="fas fa-download"></i> Exportar</button>
                         </div>
                     </div>
                     <div class="container-tabela">
@@ -140,24 +128,18 @@
                                     <th>Descrição</th>
                                     <th>Categoria</th>
                                     <th>Conta</th>
-                                    <th>Valor</th>
-                                    <th>Recorrente</th>
+                                    <th style="text-align: right;">Valor</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="corpoTabelaReceitas">
-                                </tbody>
+                            <tbody id="corpoTabelaReceitas"></tbody>
                         </table>
                     </div>
                     <div class="rodape-tabela">
                         <div class="paginacao">
-                            <button class="botao botao-outline" id="paginaAnterior">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
+                            <button class="botao botao-outline" id="paginaAnterior"><i class="fas fa-chevron-left"></i></button>
                             <span id="infoPagina">Página 1 de 1</span>
-                            <button class="botao botao-outline" id="proximaPagina">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+                            <button class="botao botao-outline" id="proximaPagina"><i class="fas fa-chevron-right"></i></button>
                         </div>
                     </div>
                 </div>
@@ -169,13 +151,11 @@
         <div class="janela-modal" id="modalReceita">
             <div class="modal-cabecalho">
                 <h3 id="tituloModal">Nova Receita</h3>
-                <button class="botao-fechar" id="fecharModal">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="botao-fechar" id="fecharModal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-corpo">
                 <form id="formularioReceita">
-                     <input type="hidden" id="receitaId">
+                    <input type="hidden" id="receitaId">
                     <div class="linha-formulario">
                         <div class="grupo-formulario">
                             <label for="valor">Valor *</label>
@@ -193,27 +173,12 @@
                     <div class="linha-formulario">
                         <div class="grupo-formulario">
                             <label for="categoria">Categoria *</label>
-                            <select id="categoria" required>
-                                <option value="">Selecione uma categoria</option>
-                            </select>
+                            <select id="categoria" required></select>
                         </div>
                         <div class="grupo-formulario">
                             <label for="conta">Conta *</label>
-                            <select id="conta" required>
-                                <option value="">Selecione uma conta</option>
-                            </select>
+                            <select id="conta" required></select>
                         </div>
-                    </div>
-                    <div class="grupo-formulario">
-                        <label class="label-checkbox">
-                            <input type="checkbox" id="recorrente">
-                            <span class="marcador-checkbox"></span>
-                            Receita recorrente
-                        </label>
-                    </div>
-                    <div class="grupo-formulario" id="grupoFrequencia" style="display: none;">
-                        <label for="frequencia">Frequência (dias)</label>
-                        <input type="number" id="frequencia" min="1" placeholder="Ex: 30 para mensal">
                     </div>
                 </form>
             </div>

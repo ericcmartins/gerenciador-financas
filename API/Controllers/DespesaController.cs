@@ -87,7 +87,7 @@ namespace gerenciador.financas.API.Controllers
         }
 
         [HttpGet("despesas/conta/cliente")]
-        [ProducesResponseType(typeof(List<DespesaPorCategoriaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<DespesaPorContaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
@@ -118,7 +118,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
         [HttpGet("despesas/metodo/cliente")]
-        [ProducesResponseType(typeof(List<DespesaPorCategoriaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<DespesaPorMetodoPagamentoResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
@@ -149,7 +149,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
         [HttpGet("despesas/total/cliente")]
-        [ProducesResponseType(typeof(List<DespesaPorCategoriaResponseViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]

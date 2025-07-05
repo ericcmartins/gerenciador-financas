@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOn - Movimentações</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-app">
+        <nav class="barra-lateral">
+            <div class="barra-lateral-cabecalho">
+                <h2><i class="fas fa-chart-line"></i> FinOn</h2>
+            </div>
+            <ul class="menu-lateral">
+                <li class="item-menu"><a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li class="item-menu"><a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a></li>
+                <li class="item-menu"><a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a></li>
+                <li class="item-menu ativo"><a href="movimentacoes.html"><i class="fas fa-exchange-alt"></i><span>Movimentações</span></a></li>
+                <li class="item-menu"><a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a></li>
+                <li class="item-menu"><a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a></li>
+                <li class="item-menu"><a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a></li>
+                <li class="item-menu"><a href="metas.html"><i class="fas fa-bullseye"></i><span>Metas</span></a></li>
+            </ul>
+        </nav>
+
+        <div class="conteudo-principal">
+            <header class="barra-superior">
+                <div class="barra-superior-esquerda">
+                    <button class="alternar-menu" id="alternarMenu"><i class="fas fa-bars"></i></button>
+                    <h1>Extrato de Movimentações</h1>
+                </div>
+                <div class="barra-superior-direita">
+                    <div class="info-usuario">
+                        <span class="nome-usuario"></span>
+                        <div class="avatar-usuario" id="avatarUsuario"><i class="fas fa-user"></i></div>
+                        <div class="menu-usuario" id="menuUsuario">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" id="botaoSair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="conteudo">
+                <div class="cabecalho-pagina">
+                    <div class="titulo-pagina">
+                        <h2>Histórico de Transações</h2>
+                        <p>Visualize todas as suas receitas e despesas em um só lugar.</p>
+                    </div>
+                </div>
+
+                <div class="cartao cartao-filtros">
+                    <div class="filtros">
+                        <div class="grupo-filtro">
+                            <label for="filtroTipo">Tipo de Movimentação</label>
+                            <select id="filtroTipo">
+                                <option value="">Todas</option>
+                                <option value="Receita">Receitas</option>
+                                <option value="Despesa">Despesas</option>
+                            </select>
+                        </div>
+                         <div class="grupo-filtro">
+                            <label for="filtroDataInicio">De</label>
+                            <input type="date" id="filtroDataInicio">
+                        </div>
+                         <div class="grupo-filtro">
+                            <label for="filtroDataFim">Até</label>
+                            <input type="date" id="filtroDataFim">
+                        </div>
+                        <button class="botao botao-primario" id="btnAplicarFiltros">
+                            <i class="fas fa-filter"></i>
+                            Filtrar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cartao cartao-tabela">
+                    <div class="cartao-cabecalho">
+                        <h3>Lançamentos</h3>
+                    </div>
+                    <div class="container-tabela">
+                        <table class="tabela-dados">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Conta</th>
+                                    <th>Categoria</th>
+                                    <th style="text-align: right;">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpoTabelaMovimentacoes">
+                                <!-- Conteúdo preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="rodape-tabela">
+                        <div class="paginacao">
+                            <button class="botao botao-outline" id="paginaAnterior" disabled><i class="fas fa-chevron-left"></i></button>
+                            <span id="infoPagina">Página 1 de 1</span>
+                            <button class="botao botao-outline" id="proximaPagina" disabled><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/movimentacoes.js"></script>
+</body>
+</html>

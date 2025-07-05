@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinOn - Dashboard</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/pages.css">
     <link rel="stylesheet" href="styles/dashboard.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -15,56 +16,26 @@
                 <h2><i class="fas fa-chart-line"></i> FinOn</h2>
             </div>
             <ul class="menu-lateral">
-                <li class="item-menu ativo">
-                    <a href="index.html">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="item-menu">
-                    <a href="receitas.html">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>Receitas</span>
-                    </a>
-                </li>
-                <li class="item-menu">
-                    <a href="despesas.html">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>Despesas</span>
-                    </a>
-                </li>
-                <li class="item-menu">
-                    <a href="categorias.html">
-                        <i class="fas fa-tags"></i>
-                        <span>Categorias</span>
-                    </a>
-                </li>
-                <li class="item-menu">
-                    <a href="metodos-pagamento.html">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Métodos de Pagamento</span>
-                    </a>
-                </li>
-                <li class="item-menu">
-                    <a href="contas.html">
-                        <i class="fas fa-university"></i>
-                        <span>Contas</span>
-                    </a>
-                </li>
+                <li class="item-menu ativo"><a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li class="item-menu"><a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a></li>
+                <li class="item-menu"><a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a></li>
+                <li class="item-menu"><a href="movimentacoes.html"><i class="fas fa-exchange-alt"></i><span>Movimentações</span></a></li>
+                <li class="item-menu"><a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a></li>
+                <li class="item-menu"><a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a></li>
+                <li class="item-menu"><a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a></li>
+                <li class="item-menu"><a href="metas.html"><i class="fas fa-bullseye"></i><span>Metas</span></a></li>
             </ul>
         </nav>
 
         <div class="conteudo-principal">
             <header class="barra-superior">
                 <div class="barra-superior-esquerda">
-                    <button class="alternar-menu" id="alternarMenu">
-                        <i class="fas fa-bars"></i>
-                    </button>
+                    <button class="alternar-menu" id="alternarMenu"><i class="fas fa-bars"></i></button>
                     <h1>Dashboard</h1>
                 </div>
                 <div class="barra-superior-direita">
                     <div class="info-usuario">
-                        <span class="nome-usuario">João Silva</span>
+                        <span class="nome-usuario"></span>
                         <div class="avatar-usuario" id="avatarUsuario">
                             <i class="fas fa-user"></i>
                         </div>
@@ -77,162 +48,87 @@
             </header>
 
             <main class="conteudo">
-                <div class="grid-dashboard">
-                    <div class="cartoes-resumo">
-                        <div class="cartao cartao-resumo receita">
-                            <div class="cartao-icone">
-                                <i class="fas fa-arrow-up"></i>
-                            </div>
-                            <div class="cartao-conteudo">
-                                <h3>Receitas do Mês</h3>
-                                <p class="valor" id="totalReceitas">R$ 0,00</p>
-                                <span class="variacao positivo">+12% vs mês anterior</span>
-                            </div>
-                        </div>
+                <div class="cabecalho-pagina" style="align-items: center;">
+                    <div class="titulo-pagina">
+                        <h2>Visão Geral do Mês</h2>
+                        <p>Resumo das suas atividades financeiras recentes.</p>
+                    </div>
+                    <div class="grupo-filtro" style="min-width: 200px;">
+                        <label for="selecaoPeriodo">Analisar Período</label>
+                        <select id="selecaoPeriodo">
+                            <option value="30" selected>Últimos 30 dias</option>
+                            <option value="90">Últimos 3 meses</option>
+                            <option value="180">Últimos 6 meses</option>
+                            <option value="365">Este Ano</option>
+                        </select>
+                    </div>
+                </div>
 
-                        <div class="cartao cartao-resumo despesa">
-                            <div class="cartao-icone">
-                                <i class="fas fa-arrow-down"></i>
-                            </div>
-                            <div class="cartao-conteudo">
-                                <h3>Despesas do Mês</h3>
-                                <p class="valor" id="totalDespesas">R$ 0,00</p>
-                                <span class="variacao negativo">+5% vs mês anterior</span>
-                            </div>
-                        </div>
-
-                        <div class="cartao cartao-resumo saldo">
-                            <div class="cartao-icone">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div class="cartao-conteudo">
-                                <h3>Saldo Total</h3>
-                                <p class="valor" id="saldoTotal">R$ 0,00</p>
-                                <span class="variacao positivo">+8% vs mês anterior</span>
-                            </div>
-                        </div>
-
-                        <div class="cartao cartao-resumo metas">
-                            <div class="cartao-icone">
-                                <i class="fas fa-target"></i>
-                            </div>
-                            <div class="cartao-conteudo">
-                                <h3>Metas Ativas</h3>
-                                <p class="valor" id="metasAtivas">0</p>
-                                <span class="variacao neutro">2 concluídas este mês</span>
-                            </div>
+                <div class="linha-resumo">
+                    <div class="cartao item-resumo">
+                        <div class="icone-resumo receita"><i class="fas fa-arrow-up"></i></div>
+                        <div class="conteudo-resumo">
+                            <h3>Receitas no Período</h3>
+                            <p class="valor" id="totalReceitas">R$ 0,00</p>
                         </div>
                     </div>
-
-                    <div class="secao-graficos">
-                        <div class="cartao cartao-grafico">
-                            <div class="cartao-cabecalho">
-                                <h3>Despesas por Categoria</h3>
-                                <select id="selecaoPeriodo">
-                                    <option value="1">Este Mês</option>
-                                    <option value="3">Últimos 3 Meses</option>
-                                    <option value="6">Últimos 6 Meses</option>
-                                    <option value="12">Este Ano</option>
-                                </select>
-                            </div>
-                            <div class="container-grafico">
-                                <canvas id="graficoDespesas"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="cartao cartao-grafico">
-                            <div class="cartao-cabecalho">
-                                <h3>Evolução Mensal</h3>
-                            </div>
-                            <div class="container-grafico">
-                                <canvas id="graficoEvolucao"></canvas>
-                            </div>
+                    <div class="cartao item-resumo">
+                        <div class="icone-resumo despesa"><i class="fas fa-arrow-down"></i></div>
+                        <div class="conteudo-resumo">
+                            <h3>Despesas no Período</h3>
+                            <p class="valor" id="totalDespesas">R$ 0,00</p>
                         </div>
                     </div>
-
-                    <div class="cartao cartao-transacoes">
-                        <div class="cartao-cabecalho">
-                            <h3>Transações Recentes</h3>
-                            <a href="despesas.html" class="link-ver-todos">Ver todas</a>
+                    <div class="cartao item-resumo">
+                        <div class="icone-resumo"><i class="fas fa-wallet"></i></div>
+                        <div class="conteudo-resumo">
+                            <h3>Saldo Final no Período</h3>
+                            <p class="valor" id="saldoPeriodo">R$ 0,00</p>
                         </div>
-                        <div class="lista-transacoes" id="listaTransacoes">
-                            </div>
                     </div>
-
-                    <div class="cartao cartao-acoes-rapidas">
-                        <div class="cartao-cabecalho">
-                            <h3>Ações Rápidas</h3>
-                        </div>
-                        <div class="acoes-rapidas">
-                            <button class="botao-acao botao-receita" id="btnNovaReceita">
-                                <i class="fas fa-plus"></i>
-                                Nova Receita
-                            </button>
-                            <button class="botao-acao botao-despesa" id="btnNovaDespesa">
-                                <i class="fas fa-minus"></i>
-                                Nova Despesa
-                            </button>
-                            <button class="botao-acao botao-categoria" onclick="window.location.href='categorias.html'">
-                                <i class="fas fa-tag"></i>
-                                Nova Categoria
-                            </button>
-                            <button class="botao-acao botao-meta" id="btnNovaMeta">
-                                <i class="fas fa-bullseye"></i>
-                                Nova Meta
-                            </button>
+                     <div class="cartao item-resumo">
+                        <div class="icone-resumo"><i class="fas fa-university"></i></div>
+                        <div class="conteudo-resumo">
+                            <h3>Saldo Total (Geral)</h3>
+                            <p class="valor" id="saldoTotalGeral">R$ 0,00</p>
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
-    </div>
 
-    <div id="fundoModal" class="fundo-modal">
-        <div class="janela-modal" id="modalTransacao">
-            <div class="modal-cabecalho">
-                <h3 id="tituloModal">Nova Transação</h3>
-                <button class="botao-fechar" id="fecharModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-corpo">
-                <form id="formularioTransacao">
-                    <div class="grupo-formulario">
-                        <label for="valor">Valor</label>
-                        <input type="number" id="valor" name="valor" step="0.01" required>
+                <div class="linha-resumo" style="grid-template-columns: 1fr 1fr; align-items: flex-start;">
+                    <div class="cartao">
+                        <div class="cartao-cabecalho"><h3>Receitas por Categoria</h3></div>
+                        <div class="cartao-corpo" style="height: 350px;"><canvas id="graficoReceitas"></canvas></div>
                     </div>
-                    <div class="grupo-formulario">
-                        <label for="descricao">Descrição</label>
-                        <input type="text" id="descricao" name="descricao" required>
+                    <div class="cartao">
+                        <div class="cartao-cabecalho"><h3>Despesas por Categoria</h3></div>
+                        <div class="cartao-corpo" style="height: 350px;"><canvas id="graficoDespesas"></canvas></div>
                     </div>
-                    <div class="grupo-formulario">
-                        <label for="data">Data</label>
-                        <input type="date" id="data" name="data" required>
+                </div>
+
+                <div class="cartao cartao-tabela" style="margin-top: 2rem;">
+                    <div class="cartao-cabecalho">
+                        <h3>Transações Recentes</h3>
+                        <a href="movimentacoes.html" class="botao botao-outline" style="padding: 0.5rem 1rem;">Ver todas</a>
                     </div>
-                    <div class="grupo-formulario">
-                        <label for="categoria">Categoria</label>
-                        <select id="categoria" name="categoria" required>
-                            <option value="">Selecione uma categoria</option>
-                        </select>
+                    <div class="container-tabela">
+                        <table class="tabela-dados">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th>Data</th>
+                                    <th style="text-align: right;">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaTransacoes">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="grupo-formulario" id="grupoConta">
-                        <label for="conta">Conta</label>
-                        <select id="conta" name="conta" required>
-                            <option value="">Selecione uma conta</option>
-                        </select>
-                    </div>
-                    <div class="grupo-formulario" id="grupoMetodoPagamento" style="display: none;">
-                        <label for="metodoPagamento">Método de Pagamento</label>
-                        <select id="metodoPagamento" name="metodoPagamento">
-                            <option value="">Selecione um método</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-rodape">
-                <button type="button" class="botao botao-secundario" id="cancelarModal">Cancelar</button>
-                <button type="submit" form="formularioTransacao" class="botao botao-primario">Salvar</button>
-            </div>
+                </div>
+            </main>
         </div>
     </div>
 

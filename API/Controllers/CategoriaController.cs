@@ -23,7 +23,7 @@ namespace gerenciador.financas.API.Controllers
         }
 
         [HttpGet("categorias/cliente")]
-        [ProducesResponseType(typeof(CategoriaResponseViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<CategoriaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]

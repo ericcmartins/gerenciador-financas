@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOn - Metas Financeiras</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-app">
+        <nav class="barra-lateral">
+            <div class="barra-lateral-cabecalho">
+                <h2><i class="fas fa-chart-line"></i> FinOn</h2>
+            </div>
+            <ul class="menu-lateral">
+                <li class="item-menu"><a href="index.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li class="item-menu"><a href="receitas.html"><i class="fas fa-arrow-up"></i><span>Receitas</span></a></li>
+                <li class="item-menu"><a href="despesas.html"><i class="fas fa-arrow-down"></i><span>Despesas</span></a></li>
+                <li class="item-menu"><a href="movimentacoes.html"><i class="fas fa-exchange-alt"></i><span>Movimentações</span></a></li>
+                <li class="item-menu"><a href="categorias.html"><i class="fas fa-tags"></i><span>Categorias</span></a></li>
+                <li class="item-menu"><a href="metodos-pagamento.html"><i class="fas fa-credit-card"></i><span>Métodos de Pagamento</span></a></li>
+                <li class="item-menu"><a href="contas.html"><i class="fas fa-university"></i><span>Contas</span></a></li>
+                <li class="item-menu ativo"><a href="metas.html"><i class="fas fa-bullseye"></i><span>Metas</span></a></li>
+            </ul>
+        </nav>
+
+        <div class="conteudo-principal">
+            <header class="barra-superior">
+                <div class="barra-superior-esquerda">
+                    <button class="alternar-menu" id="alternarMenu"><i class="fas fa-bars"></i></button>
+                    <h1>Metas Financeiras</h1>
+                </div>
+                <div class="barra-superior-direita">
+                    <div class="info-usuario">
+                        <span class="nome-usuario"></span>
+                        <div class="avatar-usuario" id="avatarUsuario"><i class="fas fa-user"></i></div>
+                        <div class="menu-usuario" id="menuUsuario">
+                            <a href="perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                            <a href="#" id="botaoSair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="conteudo">
+                <div class="cabecalho-pagina">
+                    <div class="titulo-pagina">
+                        <h2>Gerenciar Metas</h2>
+                        <p>Acompanhe e gerencie seus objetivos financeiros.</p>
+                    </div>
+                    <button class="botao botao-primario" id="btnNovaMeta">
+                        <i class="fas fa-plus"></i>
+                        Nova Meta
+                    </button>
+                </div>
+
+                <div class="grid-metas" id="gridMetas">
+                    <!-- Cards de metas serão inseridos aqui pelo JS -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Nova/Edição de Meta -->
+    <div id="fundoModal" class="fundo-modal">
+        <div class="janela-modal" id="modalMeta">
+            <div class="modal-cabecalho">
+                <h3 id="tituloModal">Nova Meta Financeira</h3>
+                <button class="botao-fechar" id="fecharModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-corpo">
+                <form id="formularioMeta">
+                    <input type="hidden" id="metaId">
+                    <div class="grupo-formulario">
+                        <label for="nomeMeta">Nome da Meta *</label>
+                        <input type="text" id="nomeMeta" required placeholder="Ex: Viagem para a Europa, Carro Novo...">
+                    </div>
+                    <div class="grupo-formulario">
+                        <label for="descricaoMeta">Descrição</label>
+                        <textarea id="descricaoMeta" rows="3" placeholder="Detalhes sobre seu objetivo..."></textarea>
+                    </div>
+                    <div class="linha-formulario">
+                        <div class="grupo-formulario">
+                            <label for="valorAlvo">Valor Alvo *</label>
+                            <input type="number" id="valorAlvo" step="0.01" required placeholder="R$ 10.000,00">
+                        </div>
+                        <div class="grupo-formulario">
+                            <label for="valorAtual">Valor Atual *</label>
+                            <input type="number" id="valorAtual" step="0.01" required placeholder="R$ 500,00">
+                        </div>
+                    </div>
+                    <div class="linha-formulario">
+                        <div class="grupo-formulario">
+                            <label for="dataInicio">Data de Início *</label>
+                            <input type="date" id="dataInicio" required>
+                        </div>
+                        <div class="grupo-formulario">
+                            <label for="dataLimite">Data Limite *</label>
+                            <input type="date" id="dataLimite" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-rodape">
+                <button type="button" class="botao botao-secundario" id="btnCancelar">Cancelar</button>
+                <button type="submit" form="formularioMeta" class="botao botao-primario">Salvar Meta</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Deleção -->
+    <div id="fundoModalDelecao" class="fundo-modal">
+        <div class="janela-modal modal-delecao" style="max-width: 400px;">
+            <div class="modal-cabecalho">
+                <h3>Confirmar Exclusão</h3>
+                <button class="botao-fechar" id="fecharModalDelecao"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-corpo" style="text-align: center;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;"></i>
+                <p>Tem certeza que deseja excluir esta meta?</p>
+                <p style="font-size: 0.9rem; color: #6b7280;">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-rodape">
+                <button type="button" class="botao botao-secundario" id="btnCancelarDelecao">Cancelar</button>
+                <button type="button" class="botao botao-primario" style="background: #ef4444;" id="btnConfirmarDelecao">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/metas.js"></script>
+</body>
+</html>

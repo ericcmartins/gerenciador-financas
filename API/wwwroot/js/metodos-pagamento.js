@@ -16,14 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- SELEÇÃO DE ELEMENTOS ---
-    const gridMetodosPagamento = document.getElementById('gridMetodosPagamento');
     const corpoTabelaMetodos = document.getElementById('corpoTabelaMetodos');
     const btnNovoMetodo = document.getElementById('btnNovoMetodo');
     const inputBusca = document.getElementById('inputBusca');
+    const nomeUsuarioEl = document.querySelector('.nome-usuario');
 
     // Modal de Adicionar/Editar
     const fundoModalMetodo = document.getElementById('fundoModalMetodo');
-    const modalMetodo = document.getElementById('modalMetodo');
     const tituloModal = document.getElementById('tituloModal');
     const formularioMetodo = document.getElementById('formularioMetodo');
     const fecharModalMetodoBtn = document.getElementById('fecharModalMetodo');
@@ -41,70 +40,48 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNÇÕES DE RENDERIZAÇÃO E DADOS ---
 
     /**
-     * Carrega todos os métodos de pagamento da API e os exibe na tela.
+     * Carrega o nome do usuário do localStorage e exibe no cabeçalho.
      */
-    async function carregarMetodosPagamento() {
-        gridMetodosPagamento.innerHTML = `<div class="carregando">Carregando...</div>`;
-        corpoTabelaMetodos.innerHTML = `<tr><td colspan="6" class="carregando">Carregando...</td></tr>`;
-
-        try {
-            const todosOsMetodos = await api.buscarMetodosPagamento({ idUsuario });
-            estado.metodos = todosOsMetodos;
-            renderizarConteudo();
-        } catch (erro) {
-            console.error('Erro ao carregar métodos de pagamento:', erro);
-            gridMetodosPagamento.innerHTML = `<div class="estado-vazio-pagina">Erro ao carregar dados.</div>`;
-            corpoTabelaMetodos.innerHTML = `<tr><td colspan="6">Erro ao carregar dados.</td></tr>`;
+    function carregarInfoUsuario() {
+        const nomeUsuario = localStorage.getItem('finon_user_name');
+        if (nomeUsuario && nomeUsuarioEl) {
+            nomeUsuarioEl.textContent = nomeUsuario;
         }
     }
 
     /**
-     * Renderiza tanto os cards quanto a tabela com base nos dados do estado.
+     * Carrega todos os métodos de pagamento da API e os exibe na tela.
      */
-    function renderizarConteudo() {
-        const termoBusca = inputBusca.value.toLowerCase();
-        const metodosFiltrados = estado.metodos.filter(m => m.nome.toLowerCase().includes(termoBusca));
+    async function carregarMetodosPagamento() {
+        corpoTabelaMetodos.innerHTML = `<tr><td colspan="6" class="carregando">Carregando...</td></tr>`;
 
-        renderizarGrid(metodosFiltrados);
-        renderizarTabela(metodosFiltrados);
-    }
-    
-    function renderizarGrid(metodos) {
-        gridMetodosPagamento.innerHTML = '';
-        if (metodos.length === 0) {
-            gridMetodosPagamento.innerHTML = `<div class="estado-vazio-pagina">Nenhum método encontrado.</div>`;
-            return;
+        try {
+            const todosOsMetodos = await api.buscarMetodosPagamento({ idUsuario });
+            estado.metodos = Array.isArray(todosOsMetodos) ? todosOsMetodos : [];
+            renderizarTabela();
+        } catch (erro) {
+            console.error('Erro ao carregar métodos de pagamento:', erro);
+            corpoTabelaMetodos.innerHTML = `<tr><td colspan="6" class="estado-vazio-pagina">Erro ao carregar dados.</td></tr>`;
         }
-
-        metodos.forEach(metodo => {
-            const conta = estado.contas.find(c => c.idConta === metodo.idConta);
-            const cardHtml = `
-                <div class="cartao-metodo-pagamento">
-                    <div class="cabecalho-metodo-pagamento">
-                        <div class="info-metodo-pagamento">
-                            <h3>${metodo.nome}</h3>
-                            <p class="tipo-metodo-pagamento">${metodo.tipo}</p>
-                            <p class="conta-metodo-pagamento">Conta: ${conta?.numeroConta || 'N/A'}</p>
-                        </div>
-                        <div class="acoes-cartao">
-                            <button class="botao-acao editar" data-id="${metodo.idMetodo}"><i class="fas fa-edit"></i></button>
-                            <button class="botao-acao deletar" data-id="${metodo.idMetodo}"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            gridMetodosPagamento.innerHTML += cardHtml;
-        });
     }
 
-    function renderizarTabela(metodos) {
+    /**
+     * Renderiza a tabela com base nos dados filtrados do estado.
+     */
+    function renderizarTabela() {
+        const termoBusca = inputBusca.value.toLowerCase();
+        const metodosFiltrados = estado.metodos.filter(m => 
+            m.nome.toLowerCase().includes(termoBusca) ||
+            m.tipo.toLowerCase().includes(termoBusca)
+        );
+
         corpoTabelaMetodos.innerHTML = '';
-        if (metodos.length === 0) {
+        if (metodosFiltrados.length === 0) {
             corpoTabelaMetodos.innerHTML = `<tr><td colspan="6" class="estado-vazio-pagina">Nenhum método encontrado.</td></tr>`;
             return;
         }
 
-        metodos.forEach(metodo => {
+        metodosFiltrados.forEach(metodo => {
             const conta = estado.contas.find(c => c.idConta === metodo.idConta);
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -142,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('limiteMetodo').value = metodo.limite || '';
             document.getElementById('descricaoMetodo').value = metodo.descricao || '';
             
-            // A API precisa retornar o idConta para esta linha funcionar corretamente
             if (metodo.idConta) {
                 selectContaVinculada.value = metodo.idConta;
             }
@@ -160,10 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const id = inputMetodoId.value;
         
         const dadosCorpo = {
-            nome: document.getElementById('nomeMetodo').value,
+            nome: document.getElementById('nomeMetodo').value.trim(),
             tipo: document.getElementById('tipoMetodo').value,
             limite: document.getElementById('limiteMetodo').value ? parseFloat(document.getElementById('limiteMetodo').value) : null,
-            descricao: document.getElementById('descricaoMetodo').value,
+            descricao: document.getElementById('descricaoMetodo').value.trim(),
         };
 
         const dadosParams = {
@@ -221,9 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function popularSelect(elemento, dados, valorKey, textoKey, placeholder) {
         elemento.innerHTML = `<option value="">${placeholder}</option>`;
-        dados.forEach(item => {
-            elemento.innerHTML += `<option value="${item[valorKey]}">${item[textoKey]}</option>`;
-        });
+        if (Array.isArray(dados)) {
+            dados.forEach(item => {
+                elemento.innerHTML += `<option value="${item[valorKey]}">${item[textoKey]}</option>`;
+            });
+        }
     }
 
     // --- CONFIGURAÇÃO DE EVENTOS ---
@@ -233,10 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
         fecharModalMetodoBtn.addEventListener('click', fecharModal);
         btnCancelarMetodo.addEventListener('click', fecharModal);
         formularioMetodo.addEventListener('submit', submeterFormulario);
-        inputBusca.addEventListener('keyup', CONFIG.UTIL.debounce(renderizarConteudo, 300));
+        inputBusca.addEventListener('keyup', CONFIG.UTIL.debounce(renderizarTabela, 300));
 
-        // Listeners para os botões de ação (Editar/Deletar)
-        document.querySelector('.conteudo').addEventListener('click', (evento) => {
+        // Delegação de eventos para a tabela
+        corpoTabelaMetodos.addEventListener('click', (evento) => {
             const botao = evento.target.closest('.botao-acao');
             if (!botao) return;
 
@@ -260,9 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INICIALIZAÇÃO DA PÁGINA ---
     
     async function init() {
+        carregarInfoUsuario();
+        
         // É crucial carregar as contas antes, para que os nomes possam ser exibidos
         try {
-            estado.contas = await api.buscarContas({ idUsuario });
+            const contasDaApi = await api.buscarContas({ idUsuario });
+            estado.contas = Array.isArray(contasDaApi) ? contasDaApi : [];
         } catch (erro) {
             console.error("Erro fatal ao carregar contas:", erro);
             alert("Não foi possível carregar suas contas. A página pode não funcionar corretamente.");

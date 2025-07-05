@@ -14,9 +14,6 @@ const CONFIG = {
     UTIL: {
         /**
          * Formata um número para o padrão de moeda brasileiro.
-         * Ex: formatarMoeda(1234.5) => "R$ 1.234,50"
-         * @param {number} valor 
-         * @returns {string} 
          */
         formatarMoeda: (valor) => {
             return new Intl.NumberFormat(CONFIG.APP.LOCALIDADE, {
@@ -26,36 +23,50 @@ const CONFIG = {
         },
 
         /**
-         * Formata uma data para o padrão brasileiro (dd/mm/aaaa).
+         * Formata uma data (string ISO com ou sem hora) para o padrão brasileiro (dd/mm/aaaa).
          * @param {string | Date} data A data a ser formatada.
          * @returns {string} A data formatada.
          */
         formatarData: (data) => {
             if (!data) return '';
-            // Adiciona 'T00:00:00' para garantir que a data seja interpretada em fuso local
-            const dataObj = new Date(data + 'T00:00:00');
-            return dataObj.toLocaleDateString(CONFIG.APP.LOCALIDADE);
+            // Cria o objeto de data diretamente da string ISO.
+            // Adiciona a opção timeZone: 'UTC' para evitar que a data mude por causa do fuso horário do navegador.
+            const dataObj = new Date(data);
+            return dataObj.toLocaleDateString(CONFIG.APP.LOCALIDADE, { timeZone: 'UTC' });
         },
         
         /**
-         * Formata uma data para ser usada em um campo <input type="date"> (aaaa-mm-dd).
+         * Formata uma data (string ISO com ou sem hora) para ser usada em um campo <input type="date"> (aaaa-mm-dd).
          * @param {string | Date} data A data a ser formatada.
          * @returns {string} A data no formato 'YYYY-MM-DD'.
          */
         formatarDataParaInput: (data) => {
             if (!data) return '';
-            const dataObj = new Date(data + 'T00:00:00');
-            const ano = dataObj.getFullYear();
-            const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
-            const dia = String(dataObj.getDate()).padStart(2, '0');
+            const dataObj = new Date(data);
+            // Usa métodos UTC para pegar o ano, mês e dia corretos, ignorando o fuso horário.
+            const ano = dataObj.getUTCFullYear();
+            const mes = String(dataObj.getUTCMonth() + 1).padStart(2, '0');
+            const dia = String(dataObj.getUTCDate()).padStart(2, '0');
             return `${ano}-${mes}-${dia}`;
+        },
+
+        /**
+         * Gera uma lista de cores elegantes para usar em gráficos.
+         */
+        gerarCores: (quantidade) => {
+            const coresBase = [
+                '#005a44', '#10b981', '#4ade80', '#374151', 
+                '#6b7280', '#a7f3d0', '#00755b', '#9ca3af'
+            ];
+            const coresGeradas = [];
+            for (let i = 0; i < quantidade; i++) {
+                coresGeradas.push(coresBase[i % coresBase.length]);
+            }
+            return coresGeradas;
         },
         
         /**
-         * Função "Debounce" para evitar execuções repetidas de uma função.
-         * Útil em campos de busca, para não fazer uma chamada à API a cada tecla digitada.
-         * @param {Function} func A função a ser executada.
-         * @param {number} espera O tempo de espera em milissegundos.
+         * Função "Debounce" para evitar execuções repetidas.
          */
         debounce: (func, espera) => {
             let timeout;
@@ -70,8 +81,7 @@ const CONFIG = {
         },
         
         /**
-         * Exibe um spinner de carregamento em um elemento do botão.
-         * @param {HTMLElement} botao O elemento do botão.
+         * Exibe um spinner de carregamento em um botão.
          */
         mostrarCarregamento: (botao) => {
             if (botao) {
@@ -85,8 +95,7 @@ const CONFIG = {
         },
         
         /**
-         * Esconde o spinner de carregamento e restaura o texto de um botão.
-         * @param {HTMLElement} botao O elemento do botão.
+         * Esconde o spinner de carregamento de um botão.
          */
         esconderCarregamento: (botao) => {
             if (botao) {
@@ -101,8 +110,6 @@ const CONFIG = {
 
         /**
          * Valida se um email tem um formato válido.
-         * @param {string} email O email a ser validado.
-         * @returns {boolean}
          */
         validarEmail: (email) => {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -112,8 +119,3 @@ const CONFIG = {
 };
 
 export { CONFIG };
-
-
-
-
-

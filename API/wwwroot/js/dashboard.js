@@ -10,239 +10,275 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ESTADO DA PÁGINA ---
     const estado = {
+        categorias: [],
         contas: [],
-        contaParaDeletarId: null,
+        metodosPagamento: [],
+        graficoReceitasInstance: null,
+        graficoDespesasInstance: null,
+        tipoTransacaoModal: null, // 'receita' ou 'despesa'
     };
 
-    // --- SELEÇÃO DE ELEMENTOS DO DOM ---
-    const gridContas = document.getElementById('gridContas');
-    const corpoTabelaContas = document.getElementById('corpoTabelaContas');
-    const btnNovaConta = document.getElementById('btnNovaConta');
-    const inputBusca = document.getElementById('inputBusca');
+    // --- SELEÇÃO DE ELEMENTOS ---
+    const nomeUsuarioEl = document.querySelector('.nome-usuario');
+    const totalReceitasEl = document.getElementById('totalReceitas');
+    const totalDespesasEl = document.getElementById('totalDespesas');
+    const saldoPeriodoEl = document.getElementById('saldoPeriodo');
+    const saldoTotalGeralEl = document.getElementById('saldoTotalGeral');
+    const listaTransacoesEl = document.getElementById('listaTransacoes');
+    const selecaoPeriodoEl = document.getElementById('selecaoPeriodo');
     
-    // Modal
-    const fundoModalConta = document.getElementById('fundoModalConta');
+    // Gráficos
+    const ctxReceitas = document.getElementById('graficoReceitas').getContext('2d');
+    const ctxDespesas = document.getElementById('graficoDespesas').getContext('2d');
+
+    // Modal de Transação
+    const fundoModal = document.getElementById('fundoModal');
+    const modalTransacao = document.getElementById('modalTransacao');
     const tituloModal = document.getElementById('tituloModal');
-    const formularioConta = document.getElementById('formularioConta');
-    const fecharModalContaBtn = document.getElementById('fecharModalConta');
-    const btnCancelarConta = document.getElementById('btnCancelarConta');
-    const inputContaId = document.getElementById('contaId');
+    const formularioTransacao = document.getElementById('formularioTransacao');
+    const grupoMetodoPagamento = document.getElementById('grupoMetodoPagamento');
+    const btnFecharModal = document.getElementById('fecharModal');
+    const btnCancelarModal = document.getElementById('cancelarModal');
+    
+    // Botões de Ação Rápida
+    const btnNovaReceita = document.querySelector('.botao-receita');
+    const btnNovaDespesa = document.querySelector('.botao-despesa');
 
-    // Modal de Deleção
-    const fundoModalDelecao = document.getElementById('fundoModalDelecao');
-    const btnConfirmarDelecao = document.getElementById('btnConfirmarDelecao');
-    const btnCancelarDelecao = document.getElementById('btnCancelarDelecao');
-    const fecharModalDelecaoBtn = document.getElementById('fecharModalDelecao');
+    // --- FUNÇÕES DE CARREGAMENTO DE DADOS (MAIS ROBUSTAS) ---
 
+    function carregarInfoUsuario() {
+        const nomeUsuario = localStorage.getItem('finon_user_name');
+        if (nomeUsuario && nomeUsuarioEl) {
+            nomeUsuarioEl.textContent = nomeUsuario;
+        }
+    }
 
-    // --- FUNÇÕES DE CARREGAMENTO E RENDERIZAÇÃO ---
+    async function carregarDadosDashboard() {
+        selecaoPeriodoEl.disabled = true;
+        
+        const periodo = selecaoPeriodoEl.value;
+        const params = { idUsuario, periodo };
 
-    /**
-     * Carrega as contas e seus respectivos saldos da API.
-     */
-    async function carregarContas() {
-        gridContas.innerHTML = `<div class="carregando">Carregando...</div>`;
-        corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="carregando">Carregando...</td></tr>`;
+        // Carrega cada parte do dashboard independentemente
+        await Promise.all([
+            carregarCardsResumo(params),
+            carregarGraficos(params),
+            carregarTransacoesRecentes({ idUsuario, periodo: 30 }) // Lista sempre dos últimos 30 dias
+        ]);
+        
+        selecaoPeriodoEl.disabled = false;
+    }
 
+    async function carregarCardsResumo(params) {
         try {
-            // Faz as duas chamadas em paralelo para mais velocidade
-            const [contas, saldos] = await Promise.all([
-                api.buscarContas({ idUsuario }),
-                api.buscarSaldoPorConta({ idUsuario })
+            const [totalReceitas, totalDespesas, saldoGeral] = await Promise.all([
+                api.buscarTotalReceitas(params),
+                api.buscarTotalDespesas(params),
+                api.buscarSaldoTotal({ idUsuario: params.idUsuario })
             ]);
 
-            // Combina os dados de contas e saldos em um único array
-            estado.contas = contas.map(conta => {
-                const saldoInfo = saldos.find(s => s.numeroConta === conta.numeroConta);
-                return { ...conta, saldoConta: saldoInfo ? saldoInfo.saldoConta : 0 };
-            });
-
-            renderizarConteudo();
+            const receitasValor = parseFloat(totalReceitas) || 0;
+            const despesasValor = parseFloat(totalDespesas) || 0;
+            
+            totalReceitasEl.textContent = CONFIG.UTIL.formatarMoeda(receitasValor);
+            totalDespesasEl.textContent = CONFIG.UTIL.formatarMoeda(despesasValor);
+            saldoPeriodoEl.textContent = CONFIG.UTIL.formatarMoeda(receitasValor - despesasValor);
+            
+            const saldoGeralValor = saldoGeral.length > 0 ? saldoGeral[0].saldoTotal : 0;
+            saldoTotalGeralEl.textContent = CONFIG.UTIL.formatarMoeda(saldoGeralValor);
         } catch (erro) {
-            console.error("Erro ao carregar contas:", erro);
-            gridContas.innerHTML = `<div class="estado-vazio-pagina">Erro ao carregar os dados.</div>`;
-            corpoTabelaContas.innerHTML = `<tr><td colspan="5">Erro ao carregar os dados.</td></tr>`;
+            console.error("Erro ao carregar cards de resumo:", erro);
         }
     }
 
-    /**
-     * Renderiza o grid e a tabela com base nos dados do estado e no termo de busca.
-     */
-    function renderizarConteudo() {
-        const termoBusca = inputBusca.value.toLowerCase();
-        const contasFiltradas = estado.contas.filter(conta =>
-            conta.numeroConta.toLowerCase().includes(termoBusca) ||
-            conta.tipo.toLowerCase().includes(termoBusca) ||
-            conta.instituicao.toLowerCase().includes(termoBusca)
-        );
-        renderizarGrid(contasFiltradas);
-        renderizarTabela(contasFiltradas);
+    async function carregarGraficos(params) {
+        try {
+            const [dadosReceitas, dadosDespesas] = await Promise.all([
+                api.buscarReceitasPorCategoria(params),
+                api.buscarDespesasPorCategoria(params)
+            ]);
+            
+            estado.graficoReceitasInstance = renderizarGrafico(ctxReceitas, estado.graficoReceitasInstance, 'Receitas', dadosReceitas, 'categoria', 'totalReceita');
+            estado.graficoDespesasInstance = renderizarGrafico(ctxDespesas, estado.graficoDespesasInstance, 'Despesas', dadosDespesas, 'categoria', 'totalDespesa');
+        } catch (erro) {
+            console.error("Erro ao carregar gráficos:", erro);
+        }
     }
 
-    function renderizarGrid(contas) {
-        gridContas.innerHTML = '';
-        if (contas.length === 0) {
-            gridContas.innerHTML = `<div class="estado-vazio-pagina">Nenhuma conta encontrada.</div>`;
-            return;
+    async function carregarTransacoesRecentes(params) {
+        try {
+            const transacoes = await api.buscarMovimentacoes(params);
+            renderizarTransacoes(transacoes);
+        } catch (erro) {
+            console.error("Erro ao carregar transações recentes:", erro);
+            listaTransacoesEl.innerHTML = `<tr><td colspan="5" class="estado-vazio-pagina">Erro ao carregar transações.</td></tr>`;
+        }
+    }
+
+    // --- FUNÇÕES DE RENDERIZAÇÃO ---
+
+    function renderizarGrafico(ctx, instance, label, dados, chaveLabel, chaveValor) {
+        if (instance) {
+            instance.destroy();
         }
 
-        contas.forEach(conta => {
-            const saldoClasse = conta.saldoConta >= 0 ? 'positivo' : 'negativo';
-            const cardHtml = `
-                <div class="cartao-conta">
-                    <div class="cabecalho-conta">
-                        <div class="info-conta">
-                            <h3>${conta.numeroConta}</h3>
-                            <p class="tipo-conta">${conta.instituicao} (${conta.tipo})</p>
-                        </div>
-                        <div class="botoes-acao">
-                            <button class="botao-acao editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
-                            <button class="botao-acao deletar" data-id="${conta.idConta}"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="saldo-conta">
-                        <span class="label-saldo">Saldo</span>
-                        <p class="valor-saldo ${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</p>
-                    </div>
-                </div>
-            `;
-            gridContas.innerHTML += cardHtml;
+        if (!dados || dados.length === 0) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.font = "16px 'Segoe UI'";
+            ctx.fillStyle = '#6b7280';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Sem ${label.toLowerCase()} para exibir.`, ctx.canvas.width / 2, ctx.canvas.height / 2);
+            return null; // Retorna nulo se não houver gráfico
+        }
+
+        return new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: dados.map(d => d[chaveLabel]),
+                datasets: [{
+                    label: label,
+                    data: dados.map(d => d[chaveValor]),
+                    backgroundColor: CONFIG.UTIL.gerarCores(dados.length),
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
         });
     }
 
-    function renderizarTabela(contas) {
-        corpoTabelaContas.innerHTML = '';
-        if (contas.length === 0) {
-            corpoTabelaContas.innerHTML = `<tr><td colspan="5" class="estado-vazio-pagina">Nenhuma conta encontrada.</td></tr>`;
+    function renderizarTransacoes(transacoes) {
+        listaTransacoesEl.innerHTML = '';
+        if (!transacoes || transacoes.length === 0) {
+            listaTransacoesEl.innerHTML = `<tr><td colspan="5" class="estado-vazio-pagina">Nenhuma transação recente.</td></tr>`;
             return;
         }
 
-        contas.forEach(conta => {
-            const saldoClasse = conta.saldoConta >= 0 ? 'receita' : 'despesa';
+        transacoes.slice(0, 5).forEach(t => {
+            const eReceita = t.tipoMovimentacao.toLowerCase() === 'receita';
+            const tipoClasse = eReceita ? 'receita' : 'despesa';
+            const valorFormatado = (eReceita ? '+' : '-') + CONFIG.UTIL.formatarMoeda(Math.abs(t.valor));
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${conta.numeroConta}</td>
-                <td>${conta.tipo}</td>
-                <td>${conta.instituicao}</td>
-                <td class="celula-valor ${saldoClasse}">${CONFIG.UTIL.formatarMoeda(conta.saldoConta)}</td>
-                <td>
-                    <div class="botoes-acao">
-                        <button class="botao-acao editar" data-id="${conta.idConta}"><i class="fas fa-edit"></i></button>
-                        <button class="botao-acao deletar" data-id="${conta.idConta}"><i class="fas fa-trash"></i></button>
-                    </div>
-                </td>
+                <td><span class="selo-status ${tipoClasse}">${t.tipoMovimentacao}</span></td>
+                <td>${t.descricao}</td>
+                <td>${t.categoria || 'N/A'}</td>
+                <td>${CONFIG.UTIL.formatarData(t.dataMovimentacao)}</td>
+                <td class="celula-valor ${tipoClasse}">${valorFormatado}</td>
             `;
-            corpoTabelaContas.appendChild(tr);
+            listaTransacoesEl.appendChild(tr);
         });
     }
+    
+    // --- LÓGICA DO MODAL (RESTAURADA) ---
 
-    // --- LÓGICA DO MODAL ---
+    async function abrirModal(tipo) {
+        estado.tipoTransacaoModal = tipo;
+        formularioTransacao.reset();
+        tituloModal.textContent = tipo === 'receita' ? 'Nova Receita' : 'Nova Despesa';
+        grupoMetodoPagamento.style.display = tipo === 'despesa' ? 'block' : 'none';
 
-    function abrirModal(conta = null) {
-        formularioConta.reset();
-        inputContaId.value = '';
-        tituloModal.textContent = 'Nova Conta';
+        // Carrega dados para os selects do modal
+        try {
+            const [categorias, contas, metodos] = await Promise.all([
+                api.buscarCategorias({ idUsuario }),
+                api.buscarContas({ idUsuario }),
+                tipo === 'despesa' ? api.buscarMetodosPagamento({ idUsuario }) : Promise.resolve([])
+            ]);
+            estado.categorias = categorias;
+            estado.contas = contas;
+            estado.metodosPagamento = metodos;
 
-        if (conta) { // Modo Edição
-            tituloModal.textContent = 'Editar Conta';
-            inputContaId.value = conta.idConta;
-            document.getElementById('numeroConta').value = conta.numeroConta;
-            document.getElementById('tipoConta').value = conta.tipo;
-            document.getElementById('instituicaoConta').value = conta.instituicao;
+            popularSelect(document.getElementById('categoria'), estado.categorias, 'idCategoria', 'nome', 'Selecione');
+            popularSelect(document.getElementById('conta'), estado.contas, 'idConta', 'numeroConta', 'Selecione');
+            if (tipo === 'despesa') {
+                popularSelect(document.getElementById('metodoPagamento'), estado.metodosPagamento, 'idMetodo', 'nome', 'Selecione');
+            }
+        } catch (erro) {
+            console.error("Erro ao carregar dados para o modal:", erro);
+            alert("Não foi possível carregar os dados para o formulário.");
+            return;
         }
-        
-        fundoModalConta.classList.add('ativo');
+
+        fundoModal.classList.add('ativo');
     }
 
     function fecharModal() {
-        fundoModalConta.classList.remove('ativo');
+        fundoModal.classList.remove('ativo');
     }
 
     async function submeterFormulario(evento) {
         evento.preventDefault();
-        const id = inputContaId.value;
+        const tipo = estado.tipoTransacaoModal;
+        
         const dadosCorpo = {
-            numeroConta: document.getElementById('numeroConta').value.trim(),
-            tipo: document.getElementById('tipoConta').value,
-            instituicao: document.getElementById('instituicaoConta').value.trim()
+            valor: parseFloat(document.getElementById('valor').value),
+            descricao: document.getElementById('descricao').value.trim(),
+            dataReceita: tipo === 'receita' ? document.getElementById('data').value : undefined,
+            dataDespesa: tipo === 'despesa' ? document.getElementById('data').value : undefined,
         };
 
-        if (!dadosCorpo.numeroConta || !dadosCorpo.tipo || !dadosCorpo.instituicao) {
-            alert('Por favor, preencha todos os campos obrigatórios.');
-            return;
-        }
+        const dadosParams = {
+            idUsuario,
+            idCategoria: document.getElementById('categoria').value,
+            idConta: document.getElementById('conta').value,
+            idMetodoPagamento: tipo === 'despesa' ? document.getElementById('metodoPagamento').value : undefined,
+        };
 
         try {
-            if (id) { // ATUALIZAR
-                await api.atualizarConta(dadosCorpo, { idUsuario, idConta: id });
-                alert('Conta atualizada com sucesso!');
-            } else { // CRIAR
-                await api.criarConta(dadosCorpo, { idUsuario });
-                alert('Conta criada com sucesso!');
+            if (tipo === 'receita') {
+                await api.criarReceita(dadosCorpo, dadosParams);
+                alert('Receita criada com sucesso!');
+            } else {
+                await api.criarDespesa(dadosCorpo, dadosParams);
+                alert('Despesa criada com sucesso!');
             }
             fecharModal();
-            carregarContas();
+            carregarDadosDashboard(); // Recarrega o dashboard para refletir a nova transação
         } catch (erro) {
-            alert(`Erro ao salvar conta: ${erro.message}`);
+            alert(`Erro ao salvar: ${erro.message}`);
         }
     }
 
-    function abrirModalDelecao(id) {
-        estado.contaParaDeletarId = id;
-        fundoModalDelecao.classList.add('ativo');
-    }
-
-    function fecharModalDelecao() {
-        estado.contaParaDeletarId = null;
-        fundoModalDelecao.classList.remove('ativo');
-    }
-
-    async function confirmarDelecao() {
-        if (!estado.contaParaDeletarId) return;
-        try {
-            await api.deletarConta({ idUsuario, idConta: estado.contaParaDeletarId });
-            alert('Conta excluída com sucesso.');
-            fecharModalDelecao();
-            carregarContas();
-        } catch(erro) {
-            alert(`Erro ao excluir: ${erro.message}`);
+    function popularSelect(elemento, dados, valorKey, textoKey, placeholder) {
+        elemento.innerHTML = `<option value="">${placeholder}</option>`;
+        if (Array.isArray(dados)) {
+            dados.forEach(item => {
+                elemento.innerHTML += `<option value="${item[valorKey]}">${item[textoKey]}</option>`;
+            });
         }
     }
-
 
     // --- CONFIGURAÇÃO DE EVENTOS ---
-    
     function configurarEventListeners() {
-        btnNovaConta.addEventListener('click', () => abrirModal());
-        fecharModalContaBtn.addEventListener('click', fecharModal);
-        btnCancelarConta.addEventListener('click', fecharModal);
-        formularioConta.addEventListener('submit', submeterFormulario);
-        inputBusca.addEventListener('keyup', CONFIG.UTIL.debounce(renderizarConteudo, 300));
+        selecaoPeriodoEl.addEventListener('change', carregarDadosDashboard);
+        
+        // Botões de ação rápida
+        btnNovaReceita.addEventListener('click', () => abrirModal('receita'));
+        btnNovaDespesa.addEventListener('click', () => abrirModal('despesa'));
 
-        // Delegação de eventos para botões de ação
-        document.querySelector('.conteudo').addEventListener('click', (evento) => {
-            const botao = evento.target.closest('.botao-acao');
-            if (!botao) return;
-
-            const id = botao.dataset.id;
-            const acao = botao.classList.contains('editar') ? 'editar' : 'deletar';
-
-            if (acao === 'editar') {
-                const conta = estado.contas.find(c => c.idConta == id);
-                if (conta) abrirModal(conta);
-            } else if (acao === 'deletar') {
-                abrirModalDelecao(id);
-            }
+        // Eventos do modal
+        btnFecharModal.addEventListener('click', fecharModal);
+        btnCancelarModal.addEventListener('click', fecharModal);
+        formularioTransacao.addEventListener('submit', submeterFormulario);
+        fundoModal.addEventListener('click', (e) => {
+            if (e.target === fundoModal) fecharModal();
         });
-
-        // Eventos do modal de deleção
-        fecharModalDelecaoBtn.addEventListener('click', fecharModalDelecao);
-        btnCancelarDelecao.addEventListener('click', fecharModalDelecao);
-        btnConfirmarDelecao.addEventListener('click', confirmarDelecao);
     }
-    
-    // --- INICIALIZAÇÃO DA PÁGINA ---
-    
-    carregarContas();
-    configurarEventListeners();
+
+    // --- INICIALIZAÇÃO ---
+    function init() {
+        carregarInfoUsuario();
+        carregarDadosDashboard();
+        configurarEventListeners();
+    }
+
+    init();
 });
