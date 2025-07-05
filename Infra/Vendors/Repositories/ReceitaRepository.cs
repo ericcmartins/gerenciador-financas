@@ -135,7 +135,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         }
 
 
-        public async Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idConta, int idCategoria)
+        public async Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idCategoria, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 

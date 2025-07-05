@@ -65,9 +65,9 @@ namespace gerenciador.financas.Application.Services
             return responseInfra;
         }
 
-        public async Task<bool> InsertReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idConta, int idCategoria)
+        public async Task<bool> InsertReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idCategoria, int idConta)
         {
-            var resultado = await _receitaRepository.InsertReceita(receitaRequest.ToInfra(), idUsuario, idConta, idCategoria);
+            var resultado = await _receitaRepository.InsertReceita(receitaRequest.ToInfra(), idUsuario, idCategoria, idConta);
             if (_receitaRepository.HasNotifications)
                 return false;
 

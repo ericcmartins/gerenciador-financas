@@ -13,7 +13,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public Task<List<ReceitaPorCategoriaResponseInfra?>> GetReceitasPorCategoria(int idUsuario, int? periodo);
         public Task<List<ReceitaPorContaResponseInfra?>> GetReceitasPorConta(int idUsuario, int? periodo);
         public Task<Decimal> GetReceitasTotalPorPeriodo(int idUsuario, int? periodo);
-        public Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idConta, int idCategoria);
+        public Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idCategoria, int idConta);
         public Task<bool> UpdateReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta);
         public Task<bool> DeleteReceita(int idUsuario, int idReceita);
     }
