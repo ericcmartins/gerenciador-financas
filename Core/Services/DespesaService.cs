@@ -86,7 +86,7 @@ namespace gerenciador.financas.Application.Services
         }
 
         public async Task<bool> UpdateDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idDespesa, int idCategoria, int idConta, int idMetodoPagamento)        {
-            var resultado = await _despesaRepository.UpdateDespesa(despesaRequest.ToInfra(), idUsuario, idDespesa, idConta, idCategoria, idMetodoPagamento);
+            var resultado = await _despesaRepository.UpdateDespesa(despesaRequest.ToInfra(), idUsuario, idDespesa, idCategoria, idConta, idMetodoPagamento);
             if (_despesaRepository.HasNotifications)
                 return false;
 
