@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nomePerfilEl = document.getElementById('nomePerfil');
     const emailPerfilEl = document.getElementById('emailPerfil');
     const formularioPerfil = document.getElementById('formularioPerfil');
-    
+
     // Inputs do formulário
     const inputNome = document.getElementById('nome');
     const inputEmail = document.getElementById('email');
@@ -30,12 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const textoBotaoEditar = document.getElementById('textoBotaoEditar');
     const acoesFormulario = document.getElementById('acoesFormularioPerfil');
     const btnCancelarEdicao = document.getElementById('btnCancelarEdicao');
-    
-    // Botões de segurança (placeholders por enquanto)
+
+    // Botões de segurança
     const btnAbrirModalSenha = document.getElementById('btnAbrirModalSenha');
     const btnAbrirModalDelecaoConta = document.getElementById('btnAbrirModalDelecaoConta');
 
-    
+
     // --- FUNÇÕES ---
 
     /**
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const dados = await api.buscarDadosPessoais({ idUsuario });
             estado.dadosOriginais = dados; // Salva os dados originais
-            
+
             // Preenche o card de cabeçalho
             nomePerfilEl.textContent = dados.nome;
             emailPerfilEl.textContent = dados.email;
@@ -71,22 +71,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // Habilita os campos para edição
             todosOsInputs.forEach(input => input.disabled = false);
             // O email não deve ser editável
-            inputEmail.disabled = true; 
-            
+            inputEmail.disabled = true;
+
             acoesFormulario.style.display = 'flex';
             textoBotaoEditar.textContent = 'Visualizando';
             btnEditarPerfil.disabled = true; // Desativa o botão de editar enquanto estiver em modo de edição
         } else {
             // Desabilita os campos e volta aos dados originais
             todosOsInputs.forEach(input => input.disabled = true);
-            
+
             // Repopula com os dados originais caso o usuário cancele
             if (estado.dadosOriginais) {
                 inputNome.value = estado.dadosOriginais.nome;
                 inputTelefone.value = estado.dadosOriginais.telefone || '';
                 inputDataNascimento.value = CONFIG.UTIL.formatarDataParaInput(estado.dadosOriginais.dataNascimento);
             }
-            
+
             acoesFormulario.style.display = 'none';
             textoBotaoEditar.textContent = 'Editar';
             btnEditarPerfil.disabled = false;
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function submeterFormularioPerfil(evento) {
         evento.preventDefault();
-        
+
         const dadosParaAtualizar = {
             nome: inputNome.value.trim(),
             email: inputEmail.value.trim(), // Mesmo que desabilitado, enviamos para a API
@@ -113,21 +113,61 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('O campo nome é obrigatório.');
             return;
         }
-        
+
         try {
             await api.atualizarDadosPessoais(dadosParaAtualizar, { idUsuario });
             alert('Perfil atualizado com sucesso!');
-            
+
             // Sai do modo de edição e recarrega os dados para garantir consistência
-            alternarModoEdicao(false); 
-            await carregarDadosPerfil(); 
+            alternarModoEdicao(false);
+            await carregarDadosPerfil();
 
         } catch (erro) {
             console.error("Erro ao atualizar perfil:", erro);
             alert(`Erro ao salvar: ${erro.message}`);
         }
     }
-    
+
+    /**
+     * Lida com a exclusão da conta do usuário.
+     */
+    async function excluirContaUsuario() {
+        const confirmacao = window.confirm(
+            "Você tem certeza que deseja excluir sua conta?\n\n" +
+            "ATENÇÃO: Esta ação é permanente e todos os seus dados (receitas, despesas, contas, etc.) serão perdidos para sempre. Não será possível recuperar sua conta."
+        );
+
+        if (!confirmacao) {
+            return; // Usuário cancelou a ação
+        }
+
+        try {
+            // Exibe um feedback visual de que a operação está em andamento
+            document.body.style.cursor = 'wait';
+            btnAbrirModalDelecaoConta.disabled = true;
+            btnAbrirModalDelecaoConta.textContent = 'Excluindo...';
+
+            await api.deletarUsuario({ idUsuario });
+
+            // Executa o logout para limpar o storage local
+            api.logout();
+
+            alert('Sua conta foi excluída com sucesso. Sentiremos sua falta!');
+
+            // Redireciona para a página de login
+            window.location.href = 'login.html';
+
+        } catch (erro) {
+            console.error("Erro ao excluir conta:", erro);
+            alert(`Não foi possível excluir sua conta: ${erro.message}`);
+
+            // Restaura o botão ao estado original em caso de erro
+            document.body.style.cursor = 'default';
+            btnAbrirModalDelecaoConta.disabled = false;
+            btnAbrirModalDelecaoConta.innerHTML = '<i class="fas fa-trash"></i> Excluir conta';
+        }
+    }
+
 
     // --- CONFIGURAÇÃO DOS EVENT LISTENERS ---
 
@@ -135,14 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
         btnEditarPerfil.addEventListener('click', () => alternarModoEdicao(true));
         btnCancelarEdicao.addEventListener('click', () => alternarModoEdicao(false));
         formularioPerfil.addEventListener('submit', submeterFormularioPerfil);
-        
-        // Listeners para os botões de segurança (ainda sem funcionalidade de modal)
+
+        // Listener para o botão de alterar senha (ainda sem funcionalidade de modal)
         btnAbrirModalSenha.addEventListener('click', () => {
             alert('Funcionalidade de alterar senha ainda não implementada.');
         });
-        btnAbrirModalDelecaoConta.addEventListener('click', () => {
-            alert('Funcionalidade de excluir conta ainda não implementada.');
-        });
+
+        // Adiciona o listener para o botão de exclusão de conta
+        btnAbrirModalDelecaoConta.addEventListener('click', excluirContaUsuario);
     }
 
     // --- INICIALIZAÇÃO DA PÁGINA ---

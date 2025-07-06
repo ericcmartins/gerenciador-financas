@@ -143,7 +143,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 IdMovimentacao = idMovimentacaoFinanceira
             });
 
-            if (linhasAfetadas != 1)
+            if (linhasAfetadas == 0)
             {
                 _notificationPool.AddNotification(500, "Erro ao deletar transferência");
                 return false;

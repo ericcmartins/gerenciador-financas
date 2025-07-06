@@ -87,7 +87,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 IdUsuario = idUsuario
             });
 
-            if (linhasAfetadas != 1)
+            if (linhasAfetadas == 0)
             {
                 _notificationPool.AddNotification(500, "Erro ao deletar conta");
                 return false;

@@ -95,7 +95,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 IdMetodo = idMetodoPagamento
             });
 
-            if (linhasAfetadas != 1)
+            if (linhasAfetadas == 0)
             {
                 _notificationPool.AddNotification(500, "Erro ao deletar método de pagamento");
                 return false;

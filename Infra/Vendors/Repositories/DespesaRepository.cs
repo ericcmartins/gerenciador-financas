@@ -223,7 +223,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 IdDespesa = idDespesa
             });
 
-            if (linhasAfetadas != -1)
+            if (linhasAfetadas == 0)
             {
                 _notificationPool.AddNotification(500, "Erro ao deletar despesa");
                 return false;

@@ -75,7 +75,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.DeleteUsuario, new { idUsuario });
-            if (linhasAfetadas != -1)
+            if (linhasAfetadas == 0)
             {
                 _notificationPool.AddNotification(404, "Usuário não encontrado");
                 return false;
