@@ -1,7 +1,11 @@
+using FluentValidation;
+using gerenciador.financas.Application.Services.Validator;
+using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Application.Services;
 using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +25,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<NotificationPool>();
 
 
+
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
@@ -31,6 +36,10 @@ builder.Services.AddScoped<IReceitaRepository, ReceitaRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+
+builder.Services.AddValidatorsFromAssemblyContaining<CadastroUsuarioValidator>();
+
 
 builder.Services.AddCors(options =>
 {
@@ -67,5 +76,8 @@ app.UseCors("Permitir");
 
 app.UseAuthorization();
 app.MapControllers();
+
+app.UseMiddleware<ValidationMiddleware>();
+
 
 app.Run();

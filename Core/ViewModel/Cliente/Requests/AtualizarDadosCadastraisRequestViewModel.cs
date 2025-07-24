@@ -1,6 +1,6 @@
 namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class DadosPessoaisRequestViewModel
+    public class AtualizarDadosCadastraisRequestViewModel
      {
         public string? Nome { get; set; }
         public string? Email { get; set; }

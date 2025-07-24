@@ -26,7 +26,7 @@ namespace gerenciador.financas.API.Controllers
             _authService = authService;
         }
 
-        [HttpGet("cliente/dados")]
+        [HttpGet("usuario/dados")]
         [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
@@ -54,15 +54,15 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("cliente/dados")]
+        [HttpPost("usuario/cadastro")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<IActionResult> InsertCadastroUsuario([Required][FromBody] CadastrarUsuarioRequestViewModel dadosCadastro)
         {
             try
             {
-               var response = await _usuarioService.InsertDadosPessoais(dadosPessoais);
+               var response = await _usuarioService.InsertCadastroUsuario(dadosCadastro);
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -72,7 +72,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created(string.Empty, "usuario inserido com sucesso");
+                return Created(string.Empty, "usuario inserido com sucesso na base");
             }
 
             catch (Exception ex)
@@ -81,15 +81,16 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("cliente/dados")]
+        [HttpPut("usuario/{id}/cadastro")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateDadosCadastrais([Required][FromBody] DadosPessoaisRequestViewModel dadosPessoais, [Required]int idUsuario)
+        public async Task<IActionResult> UpdateDadosPessoais([Required][FromRoute] int id,
+                                                             [Required][FromBody] AtualizarDadosCadastraisRequestViewModel atualizarCadastro)
         {
             try
             {
-                var response = await _usuarioService.UpdateDadosPessoais(dadosPessoais, idUsuario);
+                var response = await _usuarioService.UpdateDadosPessoais(atualizarCadastro, id);
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -108,7 +109,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("cliente/dados")]
+        [HttpDelete("usuario/dados")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -135,7 +136,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("usuario/login")]
+        [HttpPost("usuarios/login")]
         [ProducesResponseType(typeof(LoginResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]

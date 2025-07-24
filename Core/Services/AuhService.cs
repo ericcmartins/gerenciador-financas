@@ -20,11 +20,11 @@ namespace gerenciador.financas.Application.Services
             _configuration = configuration;
             _usuarioRepository = usuarioRepository;
         }
-        public string ComputeHash(string password)
+        public string CalcularHash(string senha)
         {
             using (var hash = SHA256.Create())
             {
-                var passwordBytes = Encoding.UTF8.GetBytes(password);
+                var passwordBytes = Encoding.UTF8.GetBytes(senha);
                 var hashBytes = hash.ComputeHash(passwordBytes);
                 var builder = new StringBuilder();
                 for (var i = 0; i < hashBytes.Length; i++)

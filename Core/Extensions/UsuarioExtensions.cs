@@ -33,17 +33,6 @@ namespace gerenciador.financas.Application.Extensions
             };
         }
 
-        public static DadosPessoaisRequestInfra ToInfra(this DadosPessoaisRequestViewModel viewModel)
-        {
-            return new DadosPessoaisRequestInfra
-            {
-                Nome = viewModel.Nome,
-                Email = viewModel.Email,
-                Senha = viewModel.Senha,
-                DataNascimento= viewModel.DataNascimento,
-                Telefone = viewModel.Telefone
-            };
-        }
     }
 }
 

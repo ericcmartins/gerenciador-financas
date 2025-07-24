@@ -351,19 +351,19 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         public static class Usuario
         {
             public const string GetDadosPessoais = @"
-                SELECT IdUsuario, Nome, Email, Senha, DataNascimento, Telefone 
+                SELECT IdUsuario, Nome, Email, SenhaHash, DataNascimento, Telefone 
                 FROM Usuario 
                 WHERE IdUsuario = @idUsuario";
 
             public const string InsertDadosPessoais = @"
-                INSERT INTO Usuario (Nome, Email, Senha, DataNascimento, Telefone, RoleUsuario)
+                INSERT INTO Usuario (Nome, Email, SenhaHash, DataNascimento, Telefone, RoleUsuario)
                 VALUES (@Nome, @Email, @Senha, @DataNascimento, @Telefone, @RoleUsuario)";
 
             public const string UpdateDadosPessoais = @"
                 UPDATE Usuario 
                 SET Nome = COALESCE(@Nome, Nome),
                     Email = COALESCE(@Email, Email),
-                    Senha = COALESCE(@Senha, Senha),
+                    SenhaHash = COALESCE(@SenhaHash, SenhaHash),
                     DataNascimento = COALESCE(@DataNascimento, DataNascimento),
                     Telefone = COALESCE(@Telefone, Telefone)
                 WHERE IdUsuario = @idUsuario";
@@ -371,8 +371,13 @@ namespace gerenciador.financas.Infra.Vendors.Queries
             public const string DeleteUsuario = @"EXEC sp_ExcluirUsuario @IdUsuario = @idUsuario";
 
             public const string Login = @"
-                SELECT IdUsuario, Email, Senha, RoleUsuario as Role
+                SELECT IdUsuario, Email, SenhaHash, RoleUsuario as Role
                 FROM Usuario
+                WHERE Email = @Email";
+
+            public const string GetDadosPessoaisPorEmail = @"
+                SELECT IdUsuario, Nome, Email, SenhaHash, DataNascimento, Telefone 
+                FROM Usuario 
                 WHERE Email = @Email";
         }
         #endregion

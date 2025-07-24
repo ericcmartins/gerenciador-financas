@@ -32,69 +32,50 @@ namespace gerenciador.financas.Application.Services
             return responseInfra.ToService();
         }
 
-        public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<bool> InsertCadastroUsuario(CadastrarUsuarioRequestViewModel dadosCadastro)
         {
-            if (string.IsNullOrWhiteSpace(dadosPessoais.Email) ||
-                string.IsNullOrWhiteSpace(dadosPessoais.Senha) ||
-                string.IsNullOrWhiteSpace(dadosPessoais.Nome))
+            var usuarioExistente = await _usuarioRepository.GetUsuarioPorEmail(dadosCadastro.Email);
+            if (usuarioExistente != null)
             {
-                _notificationPool.AddNotification(400, "Campos obrigatórios não preenchidos");
+                _notificationPool.AddNotification(409, "Usuário já cadastrado com este e-mail");
                 return false;
             }
 
-            //var usuarioExistente = await _usuarioRepository.GetUsuarioPorEmail(dadosPessoais.Email);
-            //if (usuarioExistente != null)
-            //{
-            //    _notificationPool.AddNotification(409, "Usuário já cadastrado com este e-mail");
-            //    return false;
-            //}
+            var senhaHash = _authService.CalcularHash(dadosCadastro.Senha);
 
-            var senhaHash = _authService.ComputeHash(dadosPessoais.Senha);
-
-            var dadosInfra = new DadosPessoaisRequestInfra
+            var dadosInfra = new CadastrarUsuarioRequestInfra
             {
-                Nome = dadosPessoais.Nome,
-                Email = dadosPessoais.Email,
-                Senha = senhaHash,
-                DataNascimento = dadosPessoais.DataNascimento,
-                Telefone = dadosPessoais.Telefone
+                Nome = dadosCadastro.Nome,
+                Email = dadosCadastro.Email,
+                SenhaHash = senhaHash,
+                DataNascimento = dadosCadastro.DataNascimento,
+                Telefone = dadosCadastro.Telefone
             };
 
-            var resultado = await _usuarioRepository.InsertDadosPessoais(dadosInfra);
+            var resultado = await _usuarioRepository.InsertCadastroUsuario(dadosInfra);
             if (_usuarioRepository.HasNotifications)
                 return false;
 
            return resultado;
         }
 
-        public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais, int idUsuario)
+        public async Task<bool> UpdateDadosPessoais(AtualizarDadosCadastraisRequestViewModel dadosPessoais, int idUsuario)
         {
-            var usuarioAtual = await _usuarioRepository.GetDadosPessoais(idUsuario);
-            if (usuarioAtual == null)
-            {
-                _notificationPool.AddNotification(404, "Usuário não encontrado");
-                return false;
-            }
-
-            string senhaHash;
+            string? senhaHash = null;
 
             if (!string.IsNullOrWhiteSpace(dadosPessoais.Senha))
-                senhaHash = _authService.ComputeHash(dadosPessoais.Senha);
-            else
-                senhaHash = usuarioAtual.Senha; 
+                senhaHash = _authService.CalcularHash(dadosPessoais.Senha);
 
-            var dadosInfra = new DadosPessoaisRequestInfra
+            var dadosRequestInfra = new AtualizarDadosCadastraisRequestInfra
             {
                 Nome = string.IsNullOrWhiteSpace(dadosPessoais.Nome) ? null : dadosPessoais.Nome,
                 Email = string.IsNullOrWhiteSpace(dadosPessoais.Email) ? null : dadosPessoais.Email,
-                Senha = senhaHash,
-                DataNascimento = dadosPessoais.DataNascimento,
+                SenhaHash = senhaHash,
+                DataNascimento = dadosPessoais.DataNascimento == DateTime.MinValue ? null : dadosPessoais.DataNascimento,
                 Telefone = string.IsNullOrWhiteSpace(dadosPessoais.Telefone) ? null : dadosPessoais.Telefone,
-                RoleUsuario = null
             };
 
-
-            var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosInfra, idUsuario);
+            var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosRequestInfra, idUsuario);
 
             if (_usuarioRepository.HasNotifications)
                 return false;
