@@ -4,7 +4,7 @@ using gerenciador.financas.API.ViewModel.Cliente;
 
 namespace gerenciador.financas.API.Validators
 {
-    public class CadastroUsuarioValidator : AbstractValidator<DadosPessoaisRequestViewModel>
+    public class CadastroUsuarioValidator : AbstractValidator<CadastrarUsuarioRequestViewModel>
     {
         public CadastroUsuarioValidator()
         {
@@ -18,22 +18,14 @@ namespace gerenciador.financas.API.Validators
                 .EmailAddress().WithMessage("O formato do e-mail é inválido.");
 
             RuleFor(x => x.DataNascimento)
-                .NotEmpty().WithMessage("A data de nascimento é obrigatória.") 
-                .Must(idadeValida).WithMessage("O usuário deve ser maior de 18 anos.");
+                .NotNull().WithMessage("A data de nascimento é obrigatória.")
+                .Must(data => data <= DateTime.Today.AddYears(-18))
+                .WithMessage("O usuário deve ser maior de 18 anos.");
+
 
             RuleFor(x => x.Telefone)
                 .MaximumLength(20).WithMessage("O telefone não pode exceder 20 caracteres.")
                 .When(x => !string.IsNullOrEmpty(x.Telefone)); 
-        }
-
-        private bool idadeValida(DateTime? dataNascimento)
-        {
-            if (!dataNascimento.HasValue)
-            {
-                return true;
-            }
-
-            return dataNascimento.Value <= DateTime.Today.AddYears(-18);
         }
     }
 }

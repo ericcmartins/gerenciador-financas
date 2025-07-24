@@ -59,7 +59,7 @@ namespace gerenciador.financas.Application.Services
             if (usuario == null)
                 throw new UnauthorizedAccessException("Usuário não encontrado");
 
-            var senhaHash = ComputeHash(senha);
+            var senhaHash = CalcularHash(senha);
 
             if (usuario.Senha != senhaHash)
                 throw new UnauthorizedAccessException("Senha incorreta");

@@ -1,5 +1,5 @@
 using FluentValidation;
-using gerenciador.financas.Application.Services.Validator;
+using gerenciador.financas.API.Validators;
 using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Application.Services;
 using gerenciador.financas.Infra.Vendors;
