@@ -33,7 +33,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             }
 
             var response = await connection.QueryAsync<DespesaResponseInfra>(
-                SqlQueries.Despesa.GetDespesasPorUsuario,
+                SqlQueries.Despesas.GetDespesasPorUsuario,
                 new
                 {
                     IdUsuario = idUsuario,
@@ -64,7 +64,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
-            var response = await connection.QueryAsync<DespesaPorCategoriaResponseInfra>(SqlQueries.Despesa.GetDespesasPorCategoria, new
+            var response = await connection.QueryAsync<DespesaPorCategoriaResponseInfra>(SqlQueries.Despesas.GetDespesasPorCategoria, new
             {
                 IdUsuario = idUsuario,
                 DataInicio = dataInicio,
@@ -92,7 +92,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
-            var response = await connection.QueryAsync<DespesaPorContaResponseInfra>(SqlQueries.Despesa.GetDespesasPorConta, new
+            var response = await connection.QueryAsync<DespesaPorContaResponseInfra>(SqlQueries.Despesas.GetDespesasPorConta, new
             {
                 IdUsuario = idUsuario,
                 DataInicio = dataInicio,
@@ -120,7 +120,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
-            var response = await connection.QueryAsync<DespesaPorMetodoPagamentoResponseInfra>(SqlQueries.Despesa.GetDespesasPorMetodoPagamento, new
+            var response = await connection.QueryAsync<DespesaPorMetodoPagamentoResponseInfra>(SqlQueries.Despesas.GetDespesasPorMetodoPagamento, new
             {
                 IdUsuario = idUsuario,
                 DataInicio = dataInicio,
@@ -148,7 +148,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
-            var response = await connection.ExecuteScalarAsync<decimal>(SqlQueries.Despesa.GetTotalDespesasNoPeriodo, new
+            var response = await connection.ExecuteScalarAsync<decimal>(SqlQueries.Despesas.GetTotalDespesasNoPeriodo, new
             {
                 IdUsuario = idUsuario,
                 DataInicio = dataInicio,
@@ -166,7 +166,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.InsertDespesa, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesas.InsertDespesa, new
             {
                 despesaRequest.Valor,
                 despesaRequest.Descricao,
@@ -191,7 +191,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.UpdateDespesa, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesas.UpdateDespesa, new
             {
                 despesaRequest.Valor,
                 despesaRequest.Descricao,
@@ -217,7 +217,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesa.DeleteDespesa, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesas.DeleteDespesa, new
             {
                 IdUsuario = idUsuario,
                 IdDespesa = idDespesa

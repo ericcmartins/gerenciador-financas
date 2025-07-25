@@ -25,7 +25,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var response = await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(SqlQueries.Usuario.GetDadosPessoais, new { idUsuario });
+            var response = await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(SqlQueries.Usuarios.GetDadosPessoais, new { idUsuario });
 
             if (response == null)
                 _notificationPool.AddNotification(404, "Usuario não encontrado");
@@ -36,7 +36,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public async Task<bool> InsertCadastroUsuario(CadastrarUsuarioRequestInfra dadosCadastro)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.InsertDadosPessoais,
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuarios.InsertDadosPessoais,
                 new
                 {
                     dadosCadastro.Nome,
@@ -60,12 +60,11 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.UpdateDadosPessoais,
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuarios.UpdateDadosPessoais,
                 new
                 {
                     dadosPessoais.Nome,
                     dadosPessoais.Email,
-                    dadosPessoais.SenhaHash,
                     dadosPessoais.DataNascimento,
                     dadosPessoais.Telefone,
                     idUsuario
@@ -84,7 +83,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuario.DeleteUsuario, new { idUsuario });
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Usuarios.DeleteUsuario, new { idUsuario });
             if (linhasAfetadas == 0)
             {
                 _notificationPool.AddNotification(404, "Usuário não encontrado");
@@ -98,10 +97,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var usuario = await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(SqlQueries.Usuario.GetDadosPessoaisPorEmail, new { Email = email });
-
-            if (usuario == null)
-                _notificationPool.AddNotification(404, "Usuário não encontrado");
+            var usuario = await connection.QueryFirstOrDefaultAsync<DadosPessoaisResponseInfra>(SqlQueries.Usuarios.GetDadosPessoaisPorEmail, new { Email = email });
 
             return usuario;
         }

@@ -1,4 +1,5 @@
 ﻿using gerenciador.financas.API.ViewModel.Cliente;
+using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,12 +14,18 @@ namespace gerenciador.financas.Application.Services
     {
         private readonly IConfiguration _configuration;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly NotificationPool _notificationPool;
+
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public AuthService(IConfiguration configuration,
-                           IUsuarioRepository usuarioRepository)
+                           IUsuarioRepository usuarioRepository,
+                           NotificationPool notificationPool)
         {
             _configuration = configuration;
             _usuarioRepository = usuarioRepository;
+            _notificationPool = notificationPool;
         }
         public string CalcularHash(string senha)
         {
@@ -34,10 +41,11 @@ namespace gerenciador.financas.Application.Services
                 return builder.ToString();
             }
         }
-        public string GenerateToken(string email, string role, DateTime expiracao)
+        public string GerarToken(string email, string role, DateTime expiracao)
         {
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -52,20 +60,27 @@ namespace gerenciador.financas.Application.Services
         }
 
 
-        public async Task<LoginResponseViewModel> Login(string email, string senha)
+        public async Task<LoginResponseViewModel> RealizarLogin(string email, string senha)
         {
             var usuario = await _usuarioRepository.GetUsuarioPorEmail(email);
 
             if (usuario == null)
-                throw new UnauthorizedAccessException("Usuário não encontrado");
+            {
+                _notificationPool.AddNotification(400, "Email inválido");
+                return null;
+            }
 
             var senhaHash = CalcularHash(senha);
 
-            if (usuario.Senha != senhaHash)
-                throw new UnauthorizedAccessException("Senha incorreta");
+            if (usuario.SenhaHash != senhaHash)
+            {
+                _notificationPool.AddNotification(400, "Senha incorreta");
+                return null;
+            }
 
-            var expiracao = DateTime.UtcNow.AddHours(2);
-            var token = GenerateToken(email, "User", expiracao);
+            var roleUsuario = usuario.RoleUsuario;
+            var expiracao = DateTime.UtcNow.AddHours(int.Parse(_configuration["Jwt:Duracao"]));
+            var token = GerarToken(email, roleUsuario, expiracao);
 
             return new LoginResponseViewModel
             {

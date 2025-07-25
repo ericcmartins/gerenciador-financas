@@ -25,7 +25,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var response = await connection.QueryAsync<MetodoPagamentoResponseInfra>(SqlQueries.MetodoPagamento.GetMetodosPagamentoUsuario, new { IdUsuario = idUsuario });
+            var response = await connection.QueryAsync<MetodoPagamentoResponseInfra>(SqlQueries.MetodosPagamento.GetMetodosPagamentoUsuario, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
 
@@ -40,7 +40,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.InsertMetodoPagamento, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodosPagamento.InsertMetodoPagamento, new
             {
                 metodoPagamentoRequest.Nome,
                 metodoPagamentoRequest.Descricao,
@@ -64,7 +64,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.UpdateMetodoPagamento, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodosPagamento.UpdateMetodoPagamento, new
             {
                 metodoPagamentoRequest.Nome,
                 metodoPagamentoRequest.Descricao,
@@ -89,7 +89,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodoPagamento.DeleteMetodoPagamento, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodosPagamento.DeleteMetodoPagamento, new
             {
                 IdUsuario = idUsuario,
                 IdMetodo = idMetodoPagamento

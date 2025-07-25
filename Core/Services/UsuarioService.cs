@@ -4,6 +4,7 @@ using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
+using static gerenciador.financas.Infra.Vendors.Queries.SqlQueries;
 
 namespace gerenciador.financas.Application.Services
 {
@@ -37,7 +38,7 @@ namespace gerenciador.financas.Application.Services
             var usuarioExistente = await _usuarioRepository.GetUsuarioPorEmail(dadosCadastro.Email);
             if (usuarioExistente != null)
             {
-                _notificationPool.AddNotification(409, "Usuário já cadastrado com este e-mail");
+                _notificationPool.AddNotification(400, "Usuário já cadastrado com este e-mail");
                 return false;
             }
 
@@ -63,14 +64,10 @@ namespace gerenciador.financas.Application.Services
         {
             string? senhaHash = null;
 
-            if (!string.IsNullOrWhiteSpace(dadosPessoais.Senha))
-                senhaHash = _authService.CalcularHash(dadosPessoais.Senha);
-
             var dadosRequestInfra = new AtualizarDadosCadastraisRequestInfra
             {
                 Nome = string.IsNullOrWhiteSpace(dadosPessoais.Nome) ? null : dadosPessoais.Nome,
                 Email = string.IsNullOrWhiteSpace(dadosPessoais.Email) ? null : dadosPessoais.Email,
-                SenhaHash = senhaHash,
                 DataNascimento = dadosPessoais.DataNascimento == DateTime.MinValue ? null : dadosPessoais.DataNascimento,
                 Telefone = string.IsNullOrWhiteSpace(dadosPessoais.Telefone) ? null : dadosPessoais.Telefone,
             };
@@ -83,6 +80,35 @@ namespace gerenciador.financas.Application.Services
             return resultado;
         }
 
+        public async Task<bool> AlterarSenha(string email, string novaSenha, string telefone)
+        {
+            var usuario = await _usuarioRepository.GetUsuarioPorEmail(email);
+
+            if (usuario == null)
+            {
+                _notificationPool.AddNotification(400, "Email inválido");
+                return false;
+            }
+
+            if (usuario.Telefone == telefone)
+            {
+                var senhaHash = _authService.CalcularHash(novaSenha);
+
+                var dadosRequestInfra = new AtualizarDadosCadastraisRequestInfra
+                {
+                    SenhaHash = senhaHash,
+                };
+
+                var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosRequestInfra, usuario.IdUsuario);
+
+                if (_usuarioRepository.HasNotifications)
+                    return false;
+
+                return resultado;
+            }
+
+            return false;
+        }
 
         public async Task<bool> DeleteConta(int idUsuario)
         {

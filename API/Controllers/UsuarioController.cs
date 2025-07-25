@@ -17,7 +17,7 @@ namespace gerenciador.financas.API.Controllers
         private readonly NotificationPool _notificationPool;
         private readonly IAuthService _authService;
 
-        public UsuarioController(IUsuarioService usuarioService, 
+        public UsuarioController(IUsuarioService usuarioService,
                                  NotificationPool notificationPool,
                                  IAuthService authService)
         {
@@ -26,16 +26,16 @@ namespace gerenciador.financas.API.Controllers
             _authService = authService;
         }
 
-        [HttpGet("usuario/dados")]
+        [HttpGet("usuario/{id}")]
         [ProducesResponseType(typeof(DadosPessoaisResponseViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDadosCadastrais([Required] int idUsuario)
+        public async Task<IActionResult> GetDadosCadastrais([Required][FromRoute] int id)
         {
             try
             {
-                var response = await _usuarioService.GetDadosPessoais(idUsuario);
+                var response = await _usuarioService.GetDadosPessoais(id);
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -109,15 +109,15 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("usuario/dados")]
+        [HttpDelete("usuario/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteDadosCadastrais([Required]int idUsuario)
+        public async Task<IActionResult> DeleteDadosCadastrais([Required][FromRoute]int id)
         {
             try
             {
-                var response = await _usuarioService.DeleteConta(idUsuario);
+                var response = await _usuarioService.DeleteConta(id);
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -136,24 +136,58 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("usuarios/login")]
+        [HttpPost("usuario/login")]
         [ProducesResponseType(typeof(LoginResponseViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponseViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([Required][FromBody] LoginRequestViewModel request)
+        public async Task<IActionResult> Login([Required][FromBody] LoginRequestViewModel loginRequest)
         {
             try
             {
-                var response = await _authService.Login(request.Email, request.Senha);
+                var response = await _authService.RealizarLogin(loginRequest.Email, loginRequest.Senha);
+
+                if (_authService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
                 return Ok(response);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(new ErrorViewModel(401, ex.Message));
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new ErrorViewModel(500, $"Erro interno: {ex.Message}"));
+            }
+        }
+
+        [HttpPut("usuario/alterarSenha")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AlterarSenha([Required][FromBody] AtualizarSenhaRequestViewModel alterarSenhaRequest)
+        {
+            try
+            {
+                var response = await _usuarioService.AlterarSenha(alterarSenhaRequest.Email, alterarSenhaRequest.NovaSenha, alterarSenhaRequest.Telefone);
+                if (_usuarioService.HasNotifications)
+                {
+                    var notificacao = _notificationPool.Notifications.First();
+
+                    var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
+
+                    return StatusCode(errorViewModel.StatusCode, errorViewModel);
+                }
+
+                return NoContent();
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
     }

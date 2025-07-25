@@ -10,7 +10,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
     public static class SqlQueries
     {
         #region Categoria
-        public static class Categoria
+        public static class Categorias
         {
             public const string GetCategorias = @"
                 SELECT IdCategoria, Nome, Descricao, IdUsuario
@@ -36,7 +36,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region Conta
-        public static class Conta
+        public static class Contas
         {
             public const string GetContas = @"
                 SELECT IdConta, NumeroConta, Tipo, Instituicao, IdUsuario
@@ -63,7 +63,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region Despesa
-        public static class Despesa
+        public static class Despesas
         {
             public const string GetDespesasPorUsuario = @"
                 SELECT 
@@ -163,7 +163,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region MetaFinanceira
-        public static class MetaFinanceira
+        public static class MetasFinanceiras
         {
             public const string GetMetasFinanceiras = @"
                 SELECT IdMetaFinanceira, Nome, Descricao, ValorAlvo, ValorAtual, DataInicio, DataLimite, Concluida, IdUsuario
@@ -194,7 +194,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region MetodoPagamento
-        public static class MetodoPagamento
+        public static class MetodosPagamento
         {
             public const string GetMetodosPagamentoUsuario = @"SELECT 
                 mp.IdMetodo,
@@ -232,7 +232,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region MovimentacaoFinanceira
-        public static class MovimentacaoFinanceira
+        public static class MovimentacoesFinanceiras
         {
             public const string GetMovimentacoesPorPeriodo = @"
                 SELECT * FROM fn_MovimentacoesPorUsuarioPeriodo(@IdUsuario, @DataInicio, @DataFim, @TipoMovimentacao);";
@@ -265,7 +265,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region Receita
-        public static class Receita
+        public static class Receitas
         {
             public const string GetReceitasPorId = @"
                 SELECT 
@@ -348,10 +348,10 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region Usuario
-        public static class Usuario
+        public static class Usuarios
         {
             public const string GetDadosPessoais = @"
-                SELECT IdUsuario, Nome, Email, SenhaHash, DataNascimento, Telefone 
+                SELECT IdUsuario, Nome, Email, SenhaHash, RoleUsuario, DataNascimento, Telefone 
                 FROM Usuario 
                 WHERE IdUsuario = @idUsuario";
 

@@ -35,7 +35,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             }
 
             var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(
-                MovimentacaoFinanceira.GetMovimentacoesPorPeriodo,
+                MovimentacoesFinanceiras.GetMovimentacoesPorPeriodo,
                 new
                 {
                     IdUsuario = idUsuario,
@@ -57,7 +57,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var response = await connection.QueryAsync<SaldoPorContaResponseInfra>(
-                MovimentacaoFinanceira.GetSaldoPorConta, new { idUsuario });
+                MovimentacoesFinanceiras.GetSaldoPorConta, new { idUsuario });
 
             var responseList = response.ToList();
 
@@ -72,7 +72,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var response = await connection.QueryAsync<SaldoTotalUsuarioResponseInfra>(
-                MovimentacaoFinanceira.GetSaldoTotalContas, new { idUsuario });
+                MovimentacoesFinanceiras.GetSaldoTotalContas, new { idUsuario });
 
             var responseList = response.ToList();
 
@@ -87,7 +87,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacaoFinanceira.InsertTransferenciaEntreContas, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacoesFinanceiras.InsertTransferenciaEntreContas, new
             {
                 movimentacaoFinanceiraRequest.TipoMovimentacao,
                 movimentacaoFinanceiraRequest.Valor,
@@ -112,7 +112,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacaoFinanceira.UpdateMovimentacaoFinanceira, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacoesFinanceiras.UpdateMovimentacaoFinanceira, new
             {
                 movimentacaoFinanceiraRequest.TipoMovimentacao,
                 movimentacaoFinanceiraRequest.Valor,
@@ -138,7 +138,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacaoFinanceira.DeleteMovimentacaoFinanceira, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MovimentacoesFinanceiras.DeleteMovimentacaoFinanceira, new
             {
                 IdMovimentacao = idMovimentacaoFinanceira
             });

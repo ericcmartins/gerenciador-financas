@@ -4,13 +4,13 @@ using gerenciador.financas.API.ViewModel.Cliente;
 
 namespace gerenciador.financas.API.Validators
 {
-    public class CadastroUsuarioValidator : AbstractValidator<CadastrarUsuarioRequestViewModel>
+    public class CadastrarUsuarioRequestViewModelValidator : AbstractValidator<CadastrarUsuarioRequestViewModel>
     {
-        public CadastroUsuarioValidator()
+        public CadastrarUsuarioRequestViewModelValidator()
         {
             RuleFor(x => x.Nome)
                 .NotEmpty().WithMessage("O nome é obrigatório.")
-                .MaximumLength(100).WithMessage("O nome não pode exceder 100 caracteres.");
+                .MaximumLength(100).WithMessage("O nome não pode exceder 50 caracteres.");
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("O e-mail é obrigatório.") 
@@ -19,9 +19,8 @@ namespace gerenciador.financas.API.Validators
 
             RuleFor(x => x.DataNascimento)
                 .NotNull().WithMessage("A data de nascimento é obrigatória.")
-                .Must(data => data <= DateTime.Today.AddYears(-18))
-                .WithMessage("O usuário deve ser maior de 18 anos.");
-
+                .Must(data => data <= DateTime.Today.AddYears(-12))
+                .WithMessage("O usuário deve ser maior de 12 anos.");
 
             RuleFor(x => x.Telefone)
                 .MaximumLength(20).WithMessage("O telefone não pode exceder 20 caracteres.")

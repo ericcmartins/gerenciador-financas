@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Adiciona serviços ao container.
 var connectionString = builder.Configuration.GetConnectionString("SqlServer");
 
-//services
+//Dependências
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IContaService, ContaService>();
 builder.Services.AddScoped<IDespesaService, DespesaService>();
@@ -23,9 +23,6 @@ builder.Services.AddScoped<IReceitaService, ReceitaService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<NotificationPool>();
-
-
-
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
@@ -37,8 +34,11 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
-
-builder.Services.AddValidatorsFromAssemblyContaining<CadastroUsuarioValidator>();
+//Validators
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarDadosCadastraisRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarSenhaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarUsuarioRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestViewModelValidator>();
 
 
 builder.Services.AddCors(options =>

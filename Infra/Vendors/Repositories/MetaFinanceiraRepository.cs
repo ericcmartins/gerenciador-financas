@@ -24,7 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var response = await connection.QueryAsync<MetaFinanceiraResponseInfra>(SqlQueries.MetaFinanceira.GetMetasFinanceiras, new { IdUsuario = idUsuario });
+            var response = await connection.QueryAsync<MetaFinanceiraResponseInfra>(SqlQueries.MetasFinanceiras.GetMetasFinanceiras, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
 
@@ -39,7 +39,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.InsertMetaFinanceira, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetasFinanceiras.InsertMetaFinanceira, new
             {
                 metaFinanceiraRequest.Nome,
                 metaFinanceiraRequest.Descricao,
@@ -65,7 +65,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.UpdateMetaFinanceira, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetasFinanceiras.UpdateMetaFinanceira, new
             {
                 metaFinanceiraRequest.Descricao,
                 metaFinanceiraRequest.ValorAlvo,
@@ -90,7 +90,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetaFinanceira.DeleteMetaFinanceira, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetasFinanceiras.DeleteMetaFinanceira, new
             {
                 IdUsuario = idUsuario,
                 IdMetaFinanceira = idMetaFinanceira

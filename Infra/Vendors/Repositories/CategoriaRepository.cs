@@ -25,7 +25,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var response = await connection.QueryAsync<CategoriaResponseInfra>(SqlQueries.Categoria.GetCategorias, new { idUsuario });
+            var response = await connection.QueryAsync<CategoriaResponseInfra>(SqlQueries.Categorias.GetCategorias, new { idUsuario });
 
             var responseList = response.ToList();
 
@@ -39,7 +39,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.InsertCategoria, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categorias.InsertCategoria, new
             {
                 categoriaRequest.Nome,
                 categoriaRequest.Descricao,
@@ -60,7 +60,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.UpdateCategoria, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categorias.UpdateCategoria, new
             {
                 categoriaRequest.Nome,
                 categoriaRequest.Descricao,
@@ -82,7 +82,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categoria.DeleteCategoria, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categorias.DeleteCategoria, new
             {
                 IdCategoria = idCategoria,
                 IdUsuario = idUsuario

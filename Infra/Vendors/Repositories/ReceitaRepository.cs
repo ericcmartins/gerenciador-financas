@@ -34,7 +34,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             }
 
             var response = await connection.QueryAsync<ReceitaResponseInfra>(
-                SqlQueries.Receita.GetReceitasPorId, new
+                SqlQueries.Receitas.GetReceitasPorId, new
                 {
                     IdUsuario = idUsuario,
                     DataInicio = dataInicio,
@@ -63,7 +63,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
-            var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receita.GetReceitasPorCategoria, new
+            var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receitas.GetReceitasPorCategoria, new
             {
                 IdUsuario = idUsuario,
                 DataInicio = dataInicio,
@@ -91,7 +91,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
-            var response = await connection.QueryAsync<ReceitaPorContaResponseInfra>(SqlQueries.Receita.GetReceitasPorConta, new
+            var response = await connection.QueryAsync<ReceitaPorContaResponseInfra>(SqlQueries.Receitas.GetReceitasPorConta, new
             {
                 IdUsuario = idUsuario,
                 DataInicio = dataInicio,
@@ -119,7 +119,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             }
 
-            var response = await connection.ExecuteScalarAsync<Decimal>(SqlQueries.Receita.GetTotalReceitasPeriodo, new
+            var response = await connection.ExecuteScalarAsync<Decimal>(SqlQueries.Receitas.GetTotalReceitasPeriodo, new
             {
                 IdUsuario = idUsuario,
                 DataInicio = dataInicio,
@@ -140,7 +140,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.InsertReceita, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.InsertReceita, new
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
@@ -164,7 +164,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.UpdateReceita, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.UpdateReceita, new
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
@@ -189,7 +189,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.DeleteReceita, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.DeleteReceita, new
             {
                 IdUsuario = idUsuario,
                 IdReceita = idReceita

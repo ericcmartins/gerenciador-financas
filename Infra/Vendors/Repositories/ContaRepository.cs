@@ -24,7 +24,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var response = await connection.QueryAsync<ContaResponseInfra>(SqlQueries.Conta.GetContas, new { idUsuario });
+            var response = await connection.QueryAsync<ContaResponseInfra>(SqlQueries.Contas.GetContas, new { idUsuario });
 
             var responseList = response.ToList();
 
@@ -38,7 +38,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.InsertConta, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Contas.InsertConta, new
             {
                 contaRequest.NumeroConta,
                 contaRequest.Tipo,
@@ -59,7 +59,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.UpdateConta, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Contas.UpdateConta, new
             {
                 contaRequest.Tipo,
                 contaRequest.Instituicao,
@@ -81,7 +81,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Conta.DeleteConta, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Contas.DeleteConta, new
             {
                 IdConta = idConta,
                 IdUsuario = idUsuario
