@@ -1,6 +1,6 @@
 namespace gerenciador.financas.Infra.Vendors.Entities
 {
-    public class InserirContaRequestInfra
+    public class CadastrarContaRequestInfra
     {
         public int IdTipoConta { get; set; }
         public string Instituicao { get; set; }

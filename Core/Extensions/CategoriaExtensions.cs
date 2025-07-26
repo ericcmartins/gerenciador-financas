@@ -13,8 +13,8 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Nome = infra.Nome,
                 Descricao = infra.Descricao,
+                Tipo = infra.Tipo,
                 IdCategoria = infra.IdCategoria,
-
             };
         }
 
@@ -24,15 +24,27 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Nome = domain.Nome,
                 Descricao = domain.Descricao,
+                Tipo = domain.Tipo,
                 IdCategoria = domain.IdCategoria,
             };
         }
 
-        public static CategoriaRequestInfra ToInfra(this CategoriaRequestViewModel viewModel)
+        public static CadastrarCategoriaRequestInfra ToInfra(this CadastrarCategoriaRequestViewModel viewModel)
         {
-            return new CategoriaRequestInfra
+            return new CadastrarCategoriaRequestInfra
             {
                 Nome = viewModel.Nome,
+                Tipo = viewModel.Tipo,
+                Descricao = viewModel.Descricao
+            };
+        }
+
+        public static AtualizarCategoriaRequestInfra ToInfra(this AtualizarCategoriaRequestViewModel viewModel)
+        {
+            return new AtualizarCategoriaRequestInfra
+            {
+                Nome = viewModel.Nome,
+                Tipo = viewModel.Tipo,
                 Descricao = viewModel.Descricao
             };
         }

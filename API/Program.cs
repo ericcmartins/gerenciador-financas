@@ -32,13 +32,21 @@ builder.Services.AddScoped<IMovimentacaoFinanceiraRepository, MovimentacaoFinanc
 builder.Services.AddScoped<IReceitaRepository, ReceitaRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 //Validators
 builder.Services.AddValidatorsFromAssemblyContaining<AtualizarDadosCadastraisRequestViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AtualizarSenhaRequestViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CadastrarUsuarioRequestViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarContaRequestViewModel>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarContaRequestViewModel>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarMetodoPagamentoRequestViewModel>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetodoPagamentoRequestViewModel>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarCategoriaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarCategoriaRequestViewModel>();
 
 
 builder.Services.AddCors(options =>
@@ -68,7 +76,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
+app.UseMiddleware<ValidationMiddleware>();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -77,7 +85,7 @@ app.UseCors("Permitir");
 app.UseAuthorization();
 app.MapControllers();
 
-app.UseMiddleware<ValidationMiddleware>();
+
 
 
 app.Run();

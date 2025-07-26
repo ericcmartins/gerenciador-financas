@@ -34,7 +34,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<bool> InsertMetodoPagamento(InserirMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta)
+        public async Task<bool> InsertMetodoPagamento(CadastrarMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 

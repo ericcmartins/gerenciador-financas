@@ -58,7 +58,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertMetodoPagamento([Required][FromBody] InserirMetodoPagamentoRequestViewModel inserirMetodoPagamentoRequest, 
+        public async Task<IActionResult> InsertMetodoPagamento([Required][FromBody] CadastrarMetodoPagamentoRequestViewModel inserirMetodoPagamentoRequest, 
                                                                [Required][FromRoute] int idUsuario, 
                                                                [Required] int idConta)
         {

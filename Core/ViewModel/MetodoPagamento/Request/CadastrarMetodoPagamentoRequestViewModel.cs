@@ -1,6 +1,6 @@
 namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class InserirMetodoPagamentoRequestViewModel
+    public class CadastrarMetodoPagamentoRequestViewModel
      {
         public string? Nome { get; set; }
         public int IdTipoMetodo { get; set; }

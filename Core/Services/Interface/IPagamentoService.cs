@@ -8,7 +8,7 @@ namespace gerenciador.financas.Application.Services
     public interface IPagamentoService : INotifiable
     {
         public Task<List<MetodoPagamento?>> GetMetodosPagamentoUsuario(int idUsuario);
-        public Task<bool> InsertMetodoPagamento(InserirMetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta);
+        public Task<bool> InsertMetodoPagamento(CadastrarMetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta);
         public Task<bool> UpdateMetodoPagamento(AtualizarMetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento);
         public Task<bool> DeleteMetodoPagamento(int idUsuario, int idMetodoPagamento);
     }

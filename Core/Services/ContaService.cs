@@ -2,6 +2,7 @@ using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Application.Extensions;
 using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
+using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
@@ -32,7 +33,7 @@ namespace gerenciador.financas.Application.Services
             return contas;
         }
 
-        public async Task<bool> InsertConta(InserirContaRequestViewModel conta, int idUsuario)
+        public async Task<bool> InsertConta(CadastrarContaRequestViewModel conta, int idUsuario)
         {
             var resultado = await _contaRepository.InsertConta(conta.ToInfra(), idUsuario);
             if (_contaRepository.HasNotifications)

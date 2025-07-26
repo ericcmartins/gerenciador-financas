@@ -9,9 +9,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 {
     public interface ICategoriaRepository : INotifiable
     {
-        public Task<List<CategoriaResponseInfra>?> GetCategorias(int idUsuario);
-        public Task<bool> InsertCategoria(CategoriaRequestInfra categoriaRequest, int idUsuario);
-        public Task<bool> UpdateCategoria(CategoriaRequestInfra categoriaRequest, int idCategoria, int idUsuario);
+        public Task<List<CategoriaResponseInfra>?> GetCategoriasPorUsuario(int idUsuario);
+        public Task<bool> InsertCategoria(CadastrarCategoriaRequestInfra categoriaRequest, int idUsuario);
+        public Task<bool> InsertCategoriasPadraoParaUsuario(int idUsuario);
+        public Task<bool> UpdateCategoria(AtualizarCategoriaRequestInfra categoriaRequest, int idCategoria, int idUsuario);
         public Task<bool> DeleteCategoria(int idCategoria, int idUsuario);
     }
 }

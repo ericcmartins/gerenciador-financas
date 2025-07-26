@@ -22,7 +22,7 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("contas/usuario/{idUsuario")]
+        [HttpGet("usuario/{idUsuario}/contas")]
         [ProducesResponseType(typeof(List<ContaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
@@ -54,11 +54,11 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("conta/usuario/{idUsuario}")]
+        [HttpPost("usuario/{idUsuario}/conta")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertConta([Required][FromBody] InserirContaRequestViewModel contaRequest, 
+        public async Task<IActionResult> InsertConta([Required][FromBody] CadastrarContaRequestViewModel contaRequest, 
                                                      [Required][FromRoute] int idUsuario)
         {
             try
@@ -82,7 +82,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("conta/{idConta}/usuario/{idUsuario}")]
+        [HttpPut("usuario/{idUsuario}/conta/{idConta}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -111,7 +111,7 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("conta/{idConta}/usuario/{idUsuario}")]
+        [HttpDelete("usuario/{idUsuario}/conta/{idConta}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

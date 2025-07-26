@@ -1,6 +1,6 @@
 namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class InserirContaRequestViewModel
+    public class CadastrarContaRequestViewModel
      {
         public int IdTipoConta { get; set; }
         public string Instituicao { get; set; }

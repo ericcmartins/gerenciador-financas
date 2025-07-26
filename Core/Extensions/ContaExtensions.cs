@@ -31,9 +31,9 @@ namespace gerenciador.financas.Application.Extensions
             };
         }
 
-        public static InserirContaRequestInfra ToInfra(this InserirContaRequestViewModel viewModel)
+        public static CadastrarContaRequestInfra ToInfra(this CadastrarContaRequestViewModel viewModel)
         {
-            return new InserirContaRequestInfra
+            return new CadastrarContaRequestInfra
             {
                 IdTipoConta = viewModel.IdTipoConta,
                 Instituicao = viewModel.Instituicao,

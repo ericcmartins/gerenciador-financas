@@ -32,7 +32,7 @@ namespace gerenciador.financas.Application.Services
             return metodosPagamento;
         }
 
-        public async Task<bool> InsertMetodoPagamento(InserirMetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta)
+        public async Task<bool> InsertMetodoPagamento(CadastrarMetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta)
         {
             var resultado = await _pagamentoRepository.InsertMetodoPagamento(metodoPagamentoRequest.ToInfra(), idUsuario, idConta);
             if (_pagamentoRepository.HasNotifications)

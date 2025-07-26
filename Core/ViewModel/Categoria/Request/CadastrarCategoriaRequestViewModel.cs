@@ -1,10 +1,10 @@
-namespace gerenciador.financas.Domain.Entities
+namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class Categoria
-    {
+    public class CadastrarCategoriaRequestViewModel
+     {
         public string Nome { get; set; }
         public string? Descricao { get; set; }
         public string Tipo { get; set; }
-        public int IdCategoria { get; set; }
     }
+
 }

@@ -4,9 +4,9 @@ using gerenciador.financas.API.ViewModel.Cliente;
 
 namespace gerenciador.financas.API.Validators
 {
-    public class InserirContaRequestViewModelValidator : AbstractValidator<InserirContaRequestViewModel>
+    public class CadastrarContaRequestViewModelValidator : AbstractValidator<CadastrarContaRequestViewModel>
     {
-        public InserirContaRequestViewModelValidator()
+        public CadastrarContaRequestViewModelValidator()
         {
             RuleFor(x => x.IdTipoConta)
                 .NotEmpty().WithMessage("O Id de tipo de conta é obrigatório.")

@@ -32,7 +32,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<bool> InsertConta(InserirContaRequestInfra contaRequest, int idUsuario)
+        public async Task<bool> InsertConta(CadastrarContaRequestInfra contaRequest, int idUsuario)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 

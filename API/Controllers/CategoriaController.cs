@@ -22,16 +22,16 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("categorias/cliente")]
+        [HttpGet("usuario/{idUsuario}/categorias")]
         [ProducesResponseType(typeof(List<CategoriaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCategoriasUsuario([Required] int idUsuario)
+        public async Task<IActionResult> GetCategoriasUsuario([Required][FromRoute] int idUsuario)
         {
             try
             {
-                var response = await _categoriaService.GetCategorias(idUsuario);
+                var response = await _categoriaService.GetCategoriasPorUsuario(idUsuario);
                 if (_categoriaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -54,11 +54,11 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("categoria/cliente")]
+        [HttpPost("usuario/{idUsuario}/categoria")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idUsuario)
+        public async Task<IActionResult> InsertCategoria([Required][FromBody] CadastrarCategoriaRequestViewModel categoriaRequest, int idUsuario)
         {
             try
             {
@@ -81,11 +81,13 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("categoria/cliente")]
+        [HttpPut("usuario/{idUsuario}/categoria/{idCategoria}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateCategoria([Required][FromBody] CategoriaRequestViewModel categoriaRequest, int idCategoria, int idUsuario)
+        public async Task<IActionResult> UpdateCategoria([Required][FromBody] AtualizarCategoriaRequestViewModel categoriaRequest, 
+                                                         [Required][FromRoute] int idCategoria, 
+                                                         [Required][FromRoute] int idUsuario)
         {
             try
             {
@@ -108,12 +110,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("categoria/cliente")]
+        [HttpDelete("usuario/{idUsuario}/categoria/{idCategoria}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-        public async Task<IActionResult> DeleteDadosCadastrais([Required]int idCategoria, [Required] int idUsuario)
+        public async Task<IActionResult> DeleteDadosCadastrais([Required][FromRoute] int idCategoria, 
+                                                               [Required][FromRoute] int idUsuario)
         {
             try
             {

@@ -37,9 +37,9 @@ namespace gerenciador.financas.Application.Extensions
             };
         }
 
-        public static InserirMetodoPagamentoRequestInfra ToInfra(this InserirMetodoPagamentoRequestViewModel viewModel)
+        public static CadastrarMetodoPagamentoRequestInfra ToInfra(this CadastrarMetodoPagamentoRequestViewModel viewModel)
         {
-            return new InserirMetodoPagamentoRequestInfra
+            return new CadastrarMetodoPagamentoRequestInfra
             {
                 Nome = viewModel.Nome,
                 IdTipoMetodo = viewModel.IdTipoMetodo,

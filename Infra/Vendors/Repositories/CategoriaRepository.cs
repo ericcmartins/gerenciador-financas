@@ -20,7 +20,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<CategoriaResponseInfra>?> GetCategorias(int idUsuario)
+        public async Task<List<CategoriaResponseInfra>?> GetCategoriasPorUsuario(int idUsuario)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
@@ -35,7 +35,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<bool> InsertCategoria(CategoriaRequestInfra categoriaRequest, int idUsuario)
+        public async Task<bool> InsertCategoria(CadastrarCategoriaRequestInfra categoriaRequest, int idUsuario)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
@@ -43,6 +43,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             {
                 categoriaRequest.Nome,
                 categoriaRequest.Descricao,
+                categoriaRequest.Tipo,
                 IdUsuario = idUsuario
             });
 
@@ -55,15 +56,29 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return true;
         }
 
-        public async Task<bool> UpdateCategoria(CategoriaRequestInfra categoriaRequest, int idCategoria, int idUsuario)
+        public async Task<bool> InsertCategoriasPadraoParaUsuario(int idUsuario)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categorias.InserirCategoriasPadrao, new{ idUsuario });
+
+            if (linhasAfetadas < 1)
+            {
+                _notificationPool.AddNotification(500, "Erro ao cadastrar categorias padrão para o usuário");
+                return false;
+            }
+
+            return true;
+        }
+        public async Task<bool> UpdateCategoria(AtualizarCategoriaRequestInfra categoriaRequest, int idCategoria, int idUsuario)
+        {
+            using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Categorias.UpdateCategoria, new
             {
                 categoriaRequest.Nome,
                 categoriaRequest.Descricao,
+                categoriaRequest.Tipo,
                 IdCategoria = idCategoria,
                 IdUsuario = idUsuario
             });

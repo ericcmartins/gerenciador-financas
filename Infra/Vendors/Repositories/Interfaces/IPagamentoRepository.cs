@@ -10,7 +10,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     public interface IPagamentoRepository : INotifiable
     {
         public Task<List<MetodoPagamentoResponseInfra?>> GetMetodosPagamentoUsuario(int idUsuario);
-        public Task<bool> InsertMetodoPagamento(InserirMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta);
+        public Task<bool> InsertMetodoPagamento(CadastrarMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta);
         public Task<bool> UpdateMetodoPagamento(AtualizarMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento);
         public Task<bool> DeleteMetodoPagamento(int idUsuario, int idMetodoPagamento);
     }

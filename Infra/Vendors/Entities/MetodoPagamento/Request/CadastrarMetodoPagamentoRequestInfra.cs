@@ -1,6 +1,6 @@
 namespace gerenciador.financas.Infra.Vendors.Entities
 {
-    public class InserirMetodoPagamentoRequestInfra
+    public class CadastrarMetodoPagamentoRequestInfra
     {
         public string? Nome { get; set; }
         public int IdTipoMetodo { get; set; }

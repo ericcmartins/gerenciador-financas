@@ -19,10 +19,10 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<Categoria>?> GetCategorias(int idUsuario)
+        public async Task<List<Categoria>?> GetCategoriasPorUsuario(int idUsuario)
         {
-            var responseInfra = await _categoriaRepository.GetCategorias(idUsuario);
-            if (HasNotifications)
+            var responseInfra = await _categoriaRepository.GetCategoriasPorUsuario(idUsuario);
+            if (_categoriaRepository.HasNotifications)
                 return null;
 
             var categoriasUsuario = responseInfra
@@ -32,13 +32,16 @@ namespace gerenciador.financas.Application.Services
             return categoriasUsuario;
         }
 
-        public async Task<bool> InsertCategoria(CategoriaRequestViewModel categoriaRequest, int idUsuario)
+        public async Task<bool> InsertCategoria(CadastrarCategoriaRequestViewModel categoriaRequest, int idUsuario)
         {
             var resultado = await _categoriaRepository.InsertCategoria(categoriaRequest.ToInfra(), idUsuario);
+            if (_categoriaRepository.HasNotifications)
+                return false;
+
             return resultado;
         }
 
-        public async Task<bool> UpdateCategoria(CategoriaRequestViewModel categoriaRequest, int idCategoria, int idUsuario)
+        public async Task<bool> UpdateCategoria(AtualizarCategoriaRequestViewModel categoriaRequest, int idCategoria, int idUsuario)
         {
             var resultado = await _categoriaRepository.UpdateCategoria(categoriaRequest.ToInfra(), idCategoria, idUsuario);
             if (_categoriaRepository.HasNotifications)

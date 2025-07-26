@@ -18,13 +18,14 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 WHERE IdUsuario = @idUsuario";
 
             public const string InsertCategoria = @"
-                INSERT INTO Categoria (Nome, Descricao, IdUsuario)
-                VALUES (@Nome, @Descricao, @IdUsuario)";
+                INSERT INTO Categoria (Nome, Descricao, Tipo, IdUsuario)
+                VALUES (@Nome, @Descricao, @Tipo, @IdUsuario)";
 
             public const string UpdateCategoria = @"
                 UPDATE Categoria
                 SET Nome = COALESCE(@Nome, Nome),
                     Descricao = COALESCE(@Descricao, Descricao)
+                    Tipo = COALESCE(@Tipo, Tipo)
                 WHERE IdCategoria = @IdCategoria
                   AND IdUsuario = @IdUsuario";
 
@@ -32,6 +33,9 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 EXEC sp_ExcluirCategoria 
                     @IdCategoria = @IdCategoria, 
                     @IdUsuario = @IdUsuario";
+
+            public const string InserirCategoriasPadrao = @"
+               EXEC sp_InserirCategoriasPadraoParaUsuario @IdUsuario;";
         }
         #endregion
 
@@ -356,8 +360,15 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 WHERE IdUsuario = @idUsuario";
 
             public const string InsertDadosPessoais = @"
-                INSERT INTO Usuario (Nome, Email, SenhaHash, DataNascimento, Telefone, RoleUsuario)
-                VALUES (@Nome, @Email, @Senha, @DataNascimento, @Telefone, @RoleUsuario)";
+                DECLARE @NovoIdUsuario INT;
+                EXEC sp_CadastrarUsuarioCompleto
+                    @Nome = @Nome,
+                    @Email = @Email,
+                    @SenhaHash = @SenhaHash,
+                    @DataNascimento = @DataNascimento,
+                    @Telefone = @Telefone,
+                    @RoleUsuario = @RoleUsuario,
+                    @NovoIdUsuario = @NovoIdUsuario OUTPUT;";
 
             public const string UpdateDadosPessoais = @"
                 UPDATE Usuario 
