@@ -15,6 +15,9 @@ namespace gerenciador.financas.API.Validators
             RuleFor(x => x.Descricao)
                 .MaximumLength(50).WithMessage("A descrição não pode exceder 50 caracteres.")
                 .When(x => !string.IsNullOrEmpty(x.Descricao));
+
+            RuleFor(x => x.DataReceita)
+                .NotEmpty().WithMessage("A data da receita deve ser informada");
         }
     }
 }

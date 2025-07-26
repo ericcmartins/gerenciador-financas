@@ -19,26 +19,16 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
         }
-        public async Task<List<DespesaResponseInfra?>> GetDespesas(int idUsuario, int? periodo)
+        public async Task<List<DespesaResponseInfra?>> GetDespesasPorUsuario(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.QueryAsync<DespesaResponseInfra>(
                 SqlQueries.Despesas.GetDespesasPorUsuario,
                 new
                 {
                     IdUsuario = idUsuario,
-                    DataInicio = dataInicio,
-                    DataFim = dataFim
+                    Periodo = periodo
                 },
                 commandTimeout: 120
             );
@@ -51,24 +41,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<List<DespesaPorCategoriaResponseInfra?>> GetDespesasPorCategoria(int idUsuario, int? periodo)
+        public async Task<List<DespesaPorCategoriaResponseInfra?>> GetDespesasPorCategoria(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.QueryAsync<DespesaPorCategoriaResponseInfra>(SqlQueries.Despesas.GetDespesasPorCategoria, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             var responseList = response.ToList();
@@ -79,24 +59,15 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<List<DespesaPorContaResponseInfra?>> GetDespesasPorConta(int idUsuario, int? periodo)
+        public async Task<List<DespesaPorContaResponseInfra?>> GetDespesasPorConta(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.QueryAsync<DespesaPorContaResponseInfra>(SqlQueries.Despesas.GetDespesasPorConta, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
+
             });
 
             var responseList = response.ToList();
@@ -107,24 +78,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<List<DespesaPorMetodoPagamentoResponseInfra?>> GetDespesasPorMetodoPagamento(int idUsuario, int? periodo)
+        public async Task<List<DespesaPorMetodoPagamentoResponseInfra?>> GetDespesasPorMetodoPagamento(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.QueryAsync<DespesaPorMetodoPagamentoResponseInfra>(SqlQueries.Despesas.GetDespesasPorMetodoPagamento, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Pe = periodo
             });
 
             var responseList = response.ToList();
@@ -135,24 +96,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<decimal> GetTotalDespesasPeriodo(int idUsuario, int? periodo)
+        public async Task<decimal> GetTotalDespesasPeriodo(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.ExecuteScalarAsync<decimal>(SqlQueries.Despesas.GetTotalDespesasNoPeriodo, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             if (response <= 0)
@@ -161,7 +112,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return response;
         }
 
-        public async Task<bool> InsertDespesa(DespesaRequestInfra despesaRequest, int idUsuario, int idCategoria, int idConta, int idMetodoPagamento)
+        public async Task<bool> InsertDespesa(CadastrarDespesaRequestInfra despesaRequest, int idUsuario, int? idCategoria, int idMetodoPagamento)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
@@ -172,31 +123,28 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
                 despesaRequest.Descricao,
                 despesaRequest.DataDespesa,
                 IdUsuario = idUsuario,
-                IdConta = idConta,
                 IdCategoria = idCategoria,
                 IdMetodoPagamento = idMetodoPagamento
             });
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar despesa");
+                _notificationPool.AddNotification(500, "Erro ao cadastrar despesa na base");
                 return false;
             }
 
             return true;
         }
 
-        public async Task<bool> UpdateDespesa(DespesaRequestInfra despesaRequest, int idUsuario, int idDespesa, int idCategoria, int idConta, int idMetodoPagamento)
+        public async Task<bool> UpdateDespesa(AtualizarDespesaRequestInfra despesaRequest, int idUsuario, int idDespesa, int? idCategoria, int idMetodoPagamento)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Despesas.UpdateDespesa, new
             {
                 despesaRequest.Valor,
                 despesaRequest.Descricao,
                 despesaRequest.DataDespesa,
-                IdConta = idConta,
                 IdCategoria = idCategoria,
                 IdMetodoPagamento = idMetodoPagamento,
                 IdUsuario = idUsuario,
@@ -205,7 +153,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar despesa");
+                _notificationPool.AddNotification(500, "Erro ao atualizar despesa na base");
                 return false;
             }
 

@@ -51,6 +51,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<CadastrarCategoriaRequestVi
 builder.Services.AddValidatorsFromAssemblyContaining<AtualizarReceitaRequestViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CadastrarReceitaRequestViewModelValidator>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarDespesaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarDespesaRequestViewModelValidator>();
+
 
 builder.Services.AddCors(options =>
 {

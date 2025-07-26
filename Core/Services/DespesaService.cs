@@ -19,9 +19,9 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-      public async Task<List<Despesa?>> GetDespesas(int idUsuario, int? periodo)
+      public async Task<List<Despesa?>> GetDespesasPorUsuario(int idUsuario, int periodo)
         {
-            var responseInfra = await _despesaRepository.GetDespesas(idUsuario, periodo);
+            var responseInfra = await _despesaRepository.GetDespesasPorUsuario(idUsuario, periodo);
             if (_despesaRepository.HasNotifications)
                 return null;
 
@@ -31,7 +31,7 @@ namespace gerenciador.financas.Application.Services
 
             return despesas;
         }
-        public async Task<List<DespesaCategoria?>> GetDespesasPorCategoria(int idUsuario, int? periodo)
+        public async Task<List<DespesaCategoria?>> GetDespesasPorCategoria(int idUsuario, int periodo)
         {
             var responseInfra = await _despesaRepository.GetDespesasPorCategoria(idUsuario, periodo);
             if (_despesaRepository.HasNotifications)
@@ -43,7 +43,7 @@ namespace gerenciador.financas.Application.Services
 
             return despesas;
         }
-        public async Task<List<DespesaConta?>> GetDespesasPorConta(int idUsuario, int? periodo)
+        public async Task<List<DespesaConta?>> GetDespesasPorConta(int idUsuario, int periodo)
         {
             var responseInfra = await _despesaRepository.GetDespesasPorConta(idUsuario, periodo);
             if (_despesaRepository.HasNotifications)
@@ -55,7 +55,7 @@ namespace gerenciador.financas.Application.Services
 
             return despesas;
         }
-        public async Task<List<DespesaMetodoPagamento?>> GetDespesasPorMetodoPagamento(int idUsuario, int? periodo)
+        public async Task<List<DespesaMetodoPagamento?>> GetDespesasPorMetodoPagamento(int idUsuario, int periodo)
         {
             var responseInfra = await _despesaRepository.GetDespesasPorMetodoPagamento(idUsuario, periodo);
             if (_despesaRepository.HasNotifications)
@@ -67,7 +67,7 @@ namespace gerenciador.financas.Application.Services
 
             return despesas;
         }
-        public async Task<Decimal?> GetTotalDespesasPeriodo(int idUsuario, int? periodo)
+        public async Task<Decimal?> GetTotalDespesasPeriodo(int idUsuario, int periodo)
         {
             var responseInfra = await _despesaRepository.GetTotalDespesasPeriodo(idUsuario, periodo);
             if (_despesaRepository.HasNotifications)
@@ -76,17 +76,17 @@ namespace gerenciador.financas.Application.Services
             return responseInfra;
         }
         
-        public async Task<bool> InsertDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idCategoria, int idConta, int idMetodoPagamento)
+        public async Task<bool> InsertDespesa(CadastrarDespesaRequestViewModel despesaRequest, int idUsuario, int? idCategoria, int idMetodoPagamento)
         {
-            var resultado = await _despesaRepository.InsertDespesa(despesaRequest.ToInfra(), idUsuario, idCategoria, idConta, idMetodoPagamento);
+            var resultado = await _despesaRepository.InsertDespesa(despesaRequest.ToInfra(), idUsuario, idCategoria, idMetodoPagamento);
             if (_despesaRepository.HasNotifications)
                 return false;
 
             return resultado;
         }
 
-        public async Task<bool> UpdateDespesa(DespesaRequestViewModel despesaRequest, int idUsuario, int idDespesa, int idCategoria, int idConta, int idMetodoPagamento)        {
-            var resultado = await _despesaRepository.UpdateDespesa(despesaRequest.ToInfra(), idUsuario, idDespesa, idCategoria, idConta, idMetodoPagamento);
+        public async Task<bool> UpdateDespesa(AtualizarDespesaRequestViewModel despesaRequest, int idUsuario, int idDespesa, int? idCategoria, int idMetodoPagamento)        {
+            var resultado = await _despesaRepository.UpdateDespesa(despesaRequest.ToInfra(), idUsuario, idDespesa, idCategoria, idMetodoPagamento);
             if (_despesaRepository.HasNotifications)
                 return false;
 
@@ -95,7 +95,7 @@ namespace gerenciador.financas.Application.Services
         
         public async Task<bool> DeleteDespesa(int idUsuario, int idDespesa)
         {
-            var resultado = await _despesaRepository.DeleteDespesa(idUsuario, idDespesa);
+           var resultado = await _despesaRepository.DeleteDespesa(idUsuario, idDespesa);
            if (_despesaRepository.HasNotifications)
                 return false;
 

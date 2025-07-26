@@ -8,7 +8,8 @@ namespace gerenciador.financas.Domain.Entities
 {
     public class ReceitaConta
     {
-        public string NumeroConta { get; set; }
+        public string Instituicao { get; set; }
+        public string TipoConta { get; set; }
         public decimal TotalReceita { get; set; }
     }
 

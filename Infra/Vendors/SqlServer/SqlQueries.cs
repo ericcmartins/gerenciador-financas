@@ -77,84 +77,77 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                     d.Descricao, 
                     d.DataDespesa, 
                     d.IdUsuario, 
-                    c.Nome AS Categoria, 
-                    ct.NumeroConta AS Conta, 
+                    c.Nome AS Categoria, mudar
+                    ct.NumeroConta AS Conta, mudar 
                     mp.Nome AS MetodoPagamento
                 FROM Despesa d
                 LEFT JOIN Categoria c ON c.IdCategoria = d.IdCategoria
                 INNER JOIN Conta ct ON ct.IdConta = d.IdConta
-                LEFT JOIN MetodoPagamento mp ON mp.IdMetodo = d.IdMetodoPagamento
+                INNER JOIN MetodoPagamento mp ON mp.IdMetodo = d.IdMetodoPagamento
                 WHERE d.IdUsuario = @IdUsuario
-                  AND (
-                        ( @DataInicio IS NULL OR d.DataDespesa >= @DataInicio )
-                        AND
-                        ( @DataFim IS NULL OR d.DataDespesa <= @DataFim )
-                      );";
+                  AND d.DataDespesa >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND d.DataDespesa < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))";
 
             public const string GetDespesasPorCategoria = @"
                 SELECT 
-                    c.Nome AS Categoria,
+                    COALESCE(c.Nome, 'Sem Categoria') AS Categoria,
                     SUM(d.Valor) AS TotalDespesa
                 FROM Despesa d
-                INNER JOIN Categoria c ON d.IdCategoria = c.IdCategoria
+                LEFT JOIN Categoria c ON d.IdCategoria = c.IdCategoria
                 WHERE d.IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR d.DataDespesa >= @DataInicio)
-                        AND (@DataFim IS NULL OR d.DataDespesa <= @DataFim)
-                      )
-                GROUP BY c.Nome
-                ORDER BY TotalDespesa DESC;";
+                  AND d.DataDespesa >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND d.DataDespesa < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+                GROUP BY COALESCE(c.Nome, 'Sem Categoria')
+                ORDER BY TotalDespesa DESC;
+            ";
 
             public const string GetDespesasPorConta = @"
                 SELECT 
-                    c.NumeroConta,
+                    COALESCE(ct.Instituicao, 'Sem Conta') AS Instituicao, 
+                    COALESCE(tc.Nome, 'N/A') AS TipoConta,
                     SUM(d.Valor) AS TotalDespesa
                 FROM Despesa d
-                INNER JOIN Conta c ON d.IdConta = c.IdConta
+                LEFT JOIN MetodoPagamento mp ON d.IdMetodoPagamento = mp.IdMetodo
+                LEFT JOIN Conta ct ON mp.IdConta = ct.IdConta
+                LEFT JOIN TipoConta tc ON ct.IdTipoConta = tc.IdTipoConta
                 WHERE d.IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR d.DataDespesa >= @DataInicio)
-                        AND (@DataFim IS NULL OR d.DataDespesa <= @DataFim)
-                      )
-                GROUP BY c.NumeroConta
-                ORDER BY TotalDespesa DESC;";
+                  AND d.DataDespesa >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND d.DataDespesa < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+                GROUP BY COALESCE(ct.Instituicao, 'Sem Conta'), COALESCE(tc.Nome, 'N/A')
+                ORDER BY TotalDespesa DESC;
+            ";
 
             public const string GetDespesasPorMetodoPagamento = @"
                 SELECT 
-                    m.Nome AS MetodoPagamento,
+                    tmp.Nome AS MetodoPagamento,
                     SUM(d.Valor) AS TotalDespesa
                 FROM Despesa d
-                INNER JOIN MetodoPagamento m ON d.IdMetodoPagamento = m.IdMetodo
+                INNER JOIN MetodoPagamento mp ON d.IdMetodoPagamento = mp.IdMetodo
+                INNER JOIN TipoMetodoPagamento tmp ON mp.IdTipoMetodo = tmp.IdTipoMetodo
                 WHERE d.IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR d.DataDespesa >= @DataInicio)
-                        AND (@DataFim IS NULL OR d.DataDespesa <= @DataFim)
-                      )
-                GROUP BY m.Nome
-                ORDER BY TotalDespesa DESC;";
+                  AND d.DataDespesa >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND d.DataDespesa < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+                GROUP BY tmp.Nome
+                ORDER BY TotalDespesa DESC;
+            ";
 
             public const string GetTotalDespesasNoPeriodo = @"
                 SELECT 
                     SUM(Valor) AS TotalDespesa
                 FROM Despesa
-                WHERE IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR DataDespesa >= @DataInicio)
-                        AND (@DataFim IS NULL OR DataDespesa <= @DataFim)
-                      );";
+                WHERE d.IdUsuario = @IdUsuario
+                  AND d.DataDespesa >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND d.DataDespesa < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))";
 
             public const string InsertDespesa = @"
-                INSERT INTO Despesa (Valor, Descricao, DataDespesa, 
-                                     IdUsuario, IdConta, IdCategoria, IdMetodoPagamento)
-                VALUES (@Valor, @Descricao, @DataDespesa, 
-                        @IdUsuario, @IdConta, @IdCategoria, @IdMetodoPagamento)";
+                INSERT INTO Despesa (Valor, Descricao, DataDespesa, IdUsuario, IdCategoria, IdMetodoPagamento)
+                VALUES (@Valor, @Descricao, @DataDespesa, @IdUsuario, @IdCategoria, @IdMetodoPagamento)";
 
             public const string UpdateDespesa = @"
                 UPDATE Despesa
                 SET Valor = COALESCE(@Valor, Valor),
                     Descricao = COALESCE(@Descricao, Descricao),
                     DataDespesa = COALESCE(@DataDespesa, DataDespesa),
-                    IdConta = COALESCE(@IdConta, IdConta),
                     IdCategoria = COALESCE(@IdCategoria, IdCategoria),
                     IdMetodoPagamento = COALESCE(@IdMetodoPagamento, IdMetodoPagamento)
                 WHERE IdUsuario = @IdUsuario
@@ -290,22 +283,28 @@ namespace gerenciador.financas.Infra.Vendors.Queries
             //          );";
 
             public const string GetReceitasPorIdUsuario = @"
-                 SELECT 
-                        r.IdReceita, 
-                        r.Valor, 
-                        r.Descricao, 
-                        r.DataReceita, 
-                        r.IdUsuario, 
-                        c.Nome AS Categoria, 
-                        ct.Instituicao,
-                        tc.Nome As TipoConta
-                    FROM Receita r
-                    LEFT JOIN Categoria c ON c.IdCategoria = r.IdCategoria
-                    LEFT JOIN Conta ct ON ct.IdConta = r.IdConta
-                    LEFT JOIN TipoConta tc ON tc.IdTipoConta = ct.IdTipoConta
-                WHERE r.IdUsuario = @IdUsuario
-                  AND r.DataReceita >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
-                  AND r.DataReceita < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))";
+                SELECT 
+                    d.IdDespesa, 
+                    d.Valor, 
+                    d.Descricao, 
+                    d.DataDespesa, 
+                    d.IdUsuario, 
+                    c.Nome AS Categoria,
+                    ct.Instituicao,
+                    tc.Nome AS TipoConta,
+                    mp.Nome AS MetodoPagamento
+                FROM Despesa d
+                LEFT JOIN Categoria c ON c.IdCategoria = d.IdCategoria
+                LEFT JOIN MetodoPagamento mp ON mp.IdMetodo = d.IdMetodoPagamento
+                LEFT JOIN Conta ct ON ct.IdConta = mp.IdConta
+                LEFT JOIN TipoConta tc ON tc.IdTipoConta = ct.IdTipoConta
+                WHERE 
+                    d.IdUsuario = @IdUsuario
+                    AND d.DataDespesa >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                    AND d.DataDespesa < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+                ORDER BY 
+                    d.DataDespesa DESC;
+            ";
 
             public const string GetTotalReceitasPeriodo = @"
                 SELECT 

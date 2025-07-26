@@ -22,16 +22,16 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("despesas/cliente")]
+        [HttpGet("usuario/{idUsuario}/despesas")]
         [ProducesResponseType(typeof(List<DespesaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDespesasUsuario([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetDespesasPorUsuario([Required][FromRoute] int idUsuario, int periodo)
         {
             try
             {
-                var response = await _despesaService.GetDespesas(idUsuario, periodo);
+                var response = await _despesaService.GetDespesasPorUsuario(idUsuario, periodo);
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -54,12 +54,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpGet("despesas/categoria/cliente")]
+        [HttpGet("usuario/{idUsuario}/despesas/categoria")]
         [ProducesResponseType(typeof(List<DespesaPorCategoriaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDespesasUsuarioPorCategoria([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetDespesasUsuarioPorCategoria([Required][FromRoute] int idUsuario, int periodo)
         {
             try
             {
@@ -86,12 +86,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpGet("despesas/conta/cliente")]
+        [HttpGet("usuario/{idUsuario}/despesas/conta")]
         [ProducesResponseType(typeof(List<DespesaPorContaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDespesasUsuarioPorConta([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetDespesasUsuarioPorConta([Required][FromRoute] int idUsuario, int periodo)
         {
             try
             {
@@ -117,12 +117,12 @@ namespace gerenciador.financas.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
-        [HttpGet("despesas/metodo/cliente")]
+        [HttpGet("usuario/{idUsuario}/despesas/metodoPagamento")]
         [ProducesResponseType(typeof(List<DespesaPorMetodoPagamentoResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDespesasUsuarioPorMetodoPagamento([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetDespesasUsuarioPorMetodoPagamento([Required][FromRoute] int idUsuario, int periodo)
         {
             try
             {
@@ -148,12 +148,12 @@ namespace gerenciador.financas.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
-        [HttpGet("despesas/total/cliente")]
+        [HttpGet("usuario/{idUsuario}/despesas/total")]
         [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetTotalDespesasUsuarioPorPeriodo([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetTotalDespesasUsuarioPorPeriodo([Required][FromRoute] int idUsuario, int periodo)
         {
             try
             {
@@ -176,20 +176,19 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("despesa/cliente")]
+        [HttpPost("usuario/{idUsuario}/despesa")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest,
-                                                         [Required] int idUsuario,
-                                                         [Required] int idCategoria,
-                                                         [Required] int idConta,
+        public async Task<IActionResult> InsertDespesa([Required][FromBody] CadastrarDespesaRequestViewModel despesaRequest,
+                                                         [Required][FromRoute] int idUsuario,
+                                                         [Required] int? idCategoria,
                                                          [Required] int idMetodoPagamento)
 
         {
             try
             {
-                var response = await _despesaService.InsertDespesa(despesaRequest, idUsuario, idCategoria, idConta, idMetodoPagamento);
+                var response = await _despesaService.InsertDespesa(despesaRequest, idUsuario, idCategoria, idMetodoPagamento);
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -208,20 +207,19 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("despesa/cliente")]
+        [HttpPut("usuario/{idUsuario}/despesa/{idDespesa}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateDespesa([Required][FromBody] DespesaRequestViewModel despesaRequest,
-                                                          [Required] int idUsuario,
-                                                          [Required] int idDespesa,
-                                                          [Required] int idCategoria,
-                                                          [Required] int idConta,
+        public async Task<IActionResult> UpdateDespesa([Required][FromBody] AtualizarDespesaRequestViewModel despesaRequest,
+                                                          [Required][FromRoute] int idUsuario,
+                                                          [Required][FromRoute] int idDespesa,
+                                                          [Required] int? idCategoria,
                                                           [Required] int idMetodoPagamento)
         {
             try
             {
-                var response = await _despesaService.UpdateDespesa(despesaRequest, idUsuario, idDespesa, idCategoria, idConta, idMetodoPagamento);
+                var response = await _despesaService.UpdateDespesa(despesaRequest, idUsuario, idDespesa, idCategoria, idMetodoPagamento);
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -240,12 +238,13 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("despesa/cliente")]
+        [HttpDelete("usuario/{idUsuario}/despesa/{idDespesa}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> DeleteDespesa([Required] int idUsuario, [Required] int idDespesa)
+        public async Task<IActionResult> DeleteDespesa([Required][FromRoute] int idUsuario, 
+                                                       [Required][FromRoute] int idDespesa)
         {
             try
             {

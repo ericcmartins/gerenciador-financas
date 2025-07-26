@@ -1,6 +1,6 @@
-namespace gerenciador.financas.Infra.Vendors.Entities
+namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class DespesaRequestInfra
+    public class CadastrarDespesaRequestViewModel
     {
         public decimal Valor { get; set; }
         public string? Descricao { get; set; }

@@ -34,8 +34,9 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new ReceitaConta
             {
-                NumeroConta = infra.NumeroConta,
-                TotalReceita = infra.TotalReceita
+                Instituicao = infra.Instituicao,
+                TipoConta = infra.TipoConta,
+                TotalReceita = infra.TotalReceita,
             };
         }
 
@@ -51,7 +52,8 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new ReceitaPorContaResponseViewModel
             {
-                NumeroConta = domain.NumeroConta,
+                Instituicao = domain.Instituicao,
+                TipoConta = domain.TipoConta,
                 TotalReceita = domain.TotalReceita,
             };
         }
