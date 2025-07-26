@@ -22,16 +22,16 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("contas/cliente")]
+        [HttpGet("contas/usuario/{idUsuario")]
         [ProducesResponseType(typeof(List<ContaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetContasUsuario([Required] int idUsuario)
+        public async Task<IActionResult> GetContasUsuario([Required][FromRoute] int idUsuario)
         {
             try
             {
-                var response = await _contaService.GetContas(idUsuario);
+                var response = await _contaService.GetContasPorUsuario(idUsuario);
                 if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -54,15 +54,16 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("conta/cliente")]
+        [HttpPost("conta/usuario/{idUsuario}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertConta([Required][FromBody] ContaRequestViewModel conta, [Required] int idUsuario)
+        public async Task<IActionResult> InsertConta([Required][FromBody] InserirContaRequestViewModel contaRequest, 
+                                                     [Required][FromRoute] int idUsuario)
         {
             try
             {
-                var response = await _contaService.InsertConta(conta, idUsuario);
+                var response = await _contaService.InsertConta(contaRequest, idUsuario);
                 if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -72,7 +73,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created(string.Empty, "conta inserida com sucesso");
+                return Created(string.Empty, "Conta inserida com sucesso na base");
             }
 
             catch (Exception ex)
@@ -81,15 +82,17 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("conta/cliente")]
+        [HttpPut("conta/{idConta}/usuario/{idUsuario}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateConta([Required][FromBody] ContaRequestViewModel conta, [Required]int idUsuario, [Required] int idConta)
+        public async Task<IActionResult> UpdateConta([Required][FromBody] AtualizarContaRequestViewModel atualizarContaRequest,
+                                                     [Required][FromRoute] int idConta,
+                                                     [Required][FromRoute] int idUsuario)
         {
             try
             {
-                 var response = await _contaService.UpdateConta(conta, idUsuario, idConta);
+                 var response = await _contaService.UpdateConta(atualizarContaRequest, idUsuario, idConta);
                 if (_contaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -108,12 +111,13 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("conta/cliente")]
+        [HttpDelete("conta/{idConta}/usuario/{idUsuario}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> DeleteConta([Required]int idUsuario, [Required]int idConta)
+        public async Task<IActionResult> DeleteConta([Required][FromRoute] int idConta, 
+                                                     [Required][FromRoute] int idUsuario)
         {
             try
             {

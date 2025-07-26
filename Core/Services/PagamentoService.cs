@@ -6,22 +6,22 @@ using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
 {
-    public class MetodoPagamentoService : IMetodoPagamentoService
+    public class PagamentoService : IPagamentoService
     {
-        private readonly IMetodoPagamentoRepository _metodoPagamentoRepository;
+        private readonly IPagamentoRepository _pagamentoRepository;
         private readonly NotificationPool _notificationPool;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public MetodoPagamentoService(IMetodoPagamentoRepository metodoPagamentoRepository, 
+        public PagamentoService(IPagamentoRepository PagamentoRepository, 
                               NotificationPool notificationPool)
         {
-            _metodoPagamentoRepository = metodoPagamentoRepository;
+            _pagamentoRepository = PagamentoRepository;
             _notificationPool = notificationPool;
         }
 
         public async Task<List<MetodoPagamento?>> GetMetodosPagamentoUsuario(int idUsuario)
         {
-            var responseInfra = await _metodoPagamentoRepository.GetMetodosPagamentoUsuario(idUsuario);
+            var responseInfra = await _pagamentoRepository.GetMetodosPagamentoUsuario(idUsuario);
             if (HasNotifications)
                 return null;
 
@@ -32,19 +32,19 @@ namespace gerenciador.financas.Application.Services
             return metodosPagamento;
         }
 
-        public async Task<bool> InsertMetodoPagamento(MetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta)
+        public async Task<bool> InsertMetodoPagamento(InserirMetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta)
         {
-            var resultado = await _metodoPagamentoRepository.InsertMetodoPagamento(metodoPagamentoRequest.ToInfra(), idUsuario, idConta);
-            if (_metodoPagamentoRepository.HasNotifications)
+            var resultado = await _pagamentoRepository.InsertMetodoPagamento(metodoPagamentoRequest.ToInfra(), idUsuario, idConta);
+            if (_pagamentoRepository.HasNotifications)
                 return false;
 
             return resultado;
         }
 
-        public async Task<bool> UpdateMetodoPagamento(MetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento)
+        public async Task<bool> UpdateMetodoPagamento(AtualizarMetodoPagamentoRequestViewModel metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento)
         {
-            var resultado = await _metodoPagamentoRepository.UpdateMetodoPagamento(metodoPagamentoRequest.ToInfra(), idUsuario, idConta, idMetodoPagamento);
-            if (_metodoPagamentoRepository.HasNotifications)
+            var resultado = await _pagamentoRepository.UpdateMetodoPagamento(metodoPagamentoRequest.ToInfra(), idUsuario, idConta, idMetodoPagamento);
+            if (_pagamentoRepository.HasNotifications)
                 return false;
 
             return resultado;
@@ -52,8 +52,8 @@ namespace gerenciador.financas.Application.Services
         
         public async Task<bool> DeleteMetodoPagamento(int idUsuario, int idMetodoPagamento)
         {
-            var resultado = await _metodoPagamentoRepository.DeleteMetodoPagamento(idUsuario, idMetodoPagamento);
-            if (_metodoPagamentoRepository.HasNotifications)
+            var resultado = await _pagamentoRepository.DeleteMetodoPagamento(idUsuario, idMetodoPagamento);
+            if (_pagamentoRepository.HasNotifications)
                 return false;
 
             return resultado;

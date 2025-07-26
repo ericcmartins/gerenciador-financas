@@ -6,14 +6,14 @@ using Microsoft.Data.SqlClient;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public class MetodoPagamentoRepository : IMetodoPagamentoRepository
+    public class PagamentoRepository : IPagamentoRepository
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
         private readonly NotificationPool _notificationPool;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
-        public MetodoPagamentoRepository(ISqlServerConnectionHandler connectionHandler,
+        public PagamentoRepository(ISqlServerConnectionHandler connectionHandler,
                                          NotificationPool notificationPool)
         {
             _connectionHandler = connectionHandler;
@@ -24,18 +24,17 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
             var response = await connection.QueryAsync<MetodoPagamentoResponseInfra>(SqlQueries.MetodosPagamento.GetMetodosPagamentoUsuario, new { IdUsuario = idUsuario });
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontrados métodos de pagamento para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontrados métodos de pagamento para o usuário na base");
 
             return responseList;
         }
 
-        public async Task<bool> InsertMetodoPagamento(MetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta)
+        public async Task<bool> InsertMetodoPagamento(InserirMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
@@ -43,41 +42,38 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodosPagamento.InsertMetodoPagamento, new
             {
                 metodoPagamentoRequest.Nome,
-                metodoPagamentoRequest.Descricao,
+                metodoPagamentoRequest.IdTipoMetodo,
                 metodoPagamentoRequest.Limite,
-                metodoPagamentoRequest.Tipo,
                 IdUsuario = idUsuario,
                 IdConta = idConta
             });
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar método de pagamento");
+                _notificationPool.AddNotification(500, "Erro ao cadastrar método de pagamento na base");
                 return false;
             }
 
             return true;
         }
 
-        public async Task<bool> UpdateMetodoPagamento(MetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento)
+        public async Task<bool> UpdateMetodoPagamento(AtualizarMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodosPagamento.UpdateMetodoPagamento, new
             {
                 metodoPagamentoRequest.Nome,
-                metodoPagamentoRequest.Descricao,
+                metodoPagamentoRequest.IdTipoMetodo,
                 metodoPagamentoRequest.Limite,
-                metodoPagamentoRequest.Tipo,
                 IdConta = idConta,
                 IdUsuario = idUsuario,
                 IdMetodo = idMetodoPagamento
             });
 
-            if (linhasAfetadas != 1)
+            if (linhasAfetadas < 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar método de pagamento");
+                _notificationPool.AddNotification(500, "Erro ao atualizar método de pagamento na base");
                 return false;
             }
 
@@ -88,7 +84,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetodosPagamento.DeleteMetodoPagamento, new
             {
                 IdUsuario = idUsuario,
@@ -97,7 +92,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas == 0)
             {
-                _notificationPool.AddNotification(500, "Erro ao deletar método de pagamento");
+                _notificationPool.AddNotification(500, "Erro ao deletar método de pagamento da base");
                 return false;
             }
 

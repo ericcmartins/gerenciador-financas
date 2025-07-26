@@ -20,48 +20,46 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<ContaResponseInfra?>> GetContas(int idUsuario)
+        public async Task<List<ContaResponseInfra?>> GetContasPorUsuario(int idUsuario)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var response = await connection.QueryAsync<ContaResponseInfra>(SqlQueries.Contas.GetContas, new { idUsuario });
-
             var responseList = response.ToList();
-
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas contas para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas contas para o usuário na base");
 
             return responseList;
         }
 
-        public async Task<bool> InsertConta(ContaRequestInfra contaRequest, int idUsuario)
+        public async Task<bool> InsertConta(InserirContaRequestInfra contaRequest, int idUsuario)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Contas.InsertConta, new
             {
-                contaRequest.NumeroConta,
-                contaRequest.Tipo,
+                contaRequest.IdTipoConta,
                 contaRequest.Instituicao,
+                contaRequest.NumeroConta,
                 IdUsuario = idUsuario
             });
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar conta");
+                _notificationPool.AddNotification(500, "Erro ao cadastrar conta na base");
                 return false;
             }
 
             return true;
         }
 
-        public async Task<bool> UpdateConta(ContaRequestInfra contaRequest, int idUsuario, int idConta)
+        public async Task<bool> UpdateConta(AtualizarContaRequestInfra contaRequest, int idUsuario, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Contas.UpdateConta, new
             {
-                contaRequest.Tipo,
+                contaRequest.IdTipoConta,
                 contaRequest.Instituicao,
                 contaRequest.NumeroConta,
                 IdUsuario = idUsuario,
@@ -70,7 +68,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar a conta");
+                _notificationPool.AddNotification(500, "Erro ao atualizar a conta na base");
                 return false;
             }
 
@@ -89,7 +87,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas == 0)
             {
-                _notificationPool.AddNotification(500, "Erro ao deletar conta");
+                _notificationPool.AddNotification(500, "Erro ao deletar conta da base");
                 return false;
             }
 

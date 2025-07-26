@@ -39,18 +39,19 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         public static class Contas
         {
             public const string GetContas = @"
-                SELECT IdConta, NumeroConta, Tipo, Instituicao, IdUsuario
-                FROM Conta
+                SELECT c.IdConta, c.NumeroConta, t.Nome as TipoConta, c.Instituicao, c.IdUsuario
+                FROM Conta as c
+                INNER JOIN TipoConta as t ON t.IdTipoConta = c.IdTipoConta
                 WHERE IdUsuario = @idUsuario";
 
             public const string InsertConta = @"
-                INSERT INTO Conta (NumeroConta, Tipo, Instituicao, IdUsuario)
-                VALUES (@NumeroConta, @Tipo, @Instituicao, @IdUsuario)";
+                INSERT INTO Conta (NumeroConta, IdTipoConta, Instituicao, IdUsuario)
+                VALUES (@NumeroConta, @IdTipoConta, @Instituicao, @IdUsuario)";
 
             public const string UpdateConta = @"
                 UPDATE Conta
                 SET NumeroConta = COALESCE(@NumeroConta, NumeroConta),
-                    Tipo = COALESCE(@Tipo, Tipo),
+                    IdTipoConta = COALESCE(@IdTipoConta, IdTipoConta),
                     Instituicao = COALESCE(@Instituicao, Instituicao)
                 WHERE IdConta = @IdConta
                   AND IdUsuario = @IdUsuario";
@@ -199,27 +200,26 @@ namespace gerenciador.financas.Infra.Vendors.Queries
             public const string GetMetodosPagamentoUsuario = @"SELECT 
                 mp.IdMetodo,
                 mp.Nome,
-                mp.Descricao,
+                t.Nome as TipoMetodoPagamento,
+                mp.IdTipoMetodo,
                 mp.Limite,
-                mp.Tipo,
                 mp.IdUsuario,
                 mp.IdConta,
                 c.NumeroConta
             FROM MetodoPagamento mp
-            INNER JOIN Conta c ON c.IdConta = mp.IdConta
-            WHERE mp.IdUsuario = @IdUsuario;
-            ";
+            LEFT JOIN Conta c ON c.IdConta = mp.IdConta
+            INNER JOIN TipoMetodoPagamento t ON t.IdTipoMetodo = mp.IdTipoMetodo
+            WHERE mp.IdUsuario = @IdUsuario;";
 
             public const string InsertMetodoPagamento = @"
-                INSERT INTO MetodoPagamento (Nome, Descricao, Limite, Tipo, IdUsuario, IdConta)
-                VALUES (@Nome, @Descricao, @Limite, @Tipo, @IdUsuario, @IdConta)";
+                INSERT INTO MetodoPagamento (Nome, IdTipoMetodo, Limite, IdUsuario, IdConta)
+                VALUES (@Nome, @IdTipoMetodo, @Limite, @IdUsuario, @IdConta)";
 
             public const string UpdateMetodoPagamento = @"
                 UPDATE MetodoPagamento
                 SET Nome = COALESCE(@Nome, Nome),
-                    Descricao = COALESCE(@Descricao, Descricao),
+                    IdTipoMetodo = COALESCE(@IdTipoMetodo, IdTipoMetodo),
                     Limite = COALESCE(@Limite, Limite), 
-                    Tipo = COALESCE(@Tipo, Tipo),
                     IdConta = COALESCE(@IdConta, IdConta)
                 WHERE IdMetodo = @IdMetodo
                   AND IdUsuario = @IdUsuario";

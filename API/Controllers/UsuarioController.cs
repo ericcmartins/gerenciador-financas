@@ -72,7 +72,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created(string.Empty, "usuario inserido com sucesso na base");
+                return Created(string.Empty, "Usuario inserido com sucesso na base");
             }
 
             catch (Exception ex)

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IMetodoPagamentoRepository : INotifiable
+    public interface IPagamentoRepository : INotifiable
     {
         public Task<List<MetodoPagamentoResponseInfra?>> GetMetodosPagamentoUsuario(int idUsuario);
-        public Task<bool> InsertMetodoPagamento(MetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta);
-        public Task<bool> UpdateMetodoPagamento(MetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento);
+        public Task<bool> InsertMetodoPagamento(InserirMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta);
+        public Task<bool> UpdateMetodoPagamento(AtualizarMetodoPagamentoRequestInfra metodoPagamentoRequest, int idUsuario, int idConta, int idMetodoPagamento);
         public Task<bool> DeleteMetodoPagamento(int idUsuario, int idMetodoPagamento);
     }
 }
