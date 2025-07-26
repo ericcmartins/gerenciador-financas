@@ -9,11 +9,11 @@ namespace gerenciador.financas.API.Validators
         public AtualizarCategoriaRequestViewModelValidator()
         {
             RuleFor(x => x.Nome)
-                .MaximumLength(20).WithMessage("O nome da categoria não pode exceder 50 caracteres.")
+                .MaximumLength(50).WithMessage("O nome da categoria não pode exceder 50 caracteres.")
                 .When(x => !string.IsNullOrEmpty(x.Nome));
 
             RuleFor(x => x.Descricao)
-                .MaximumLength(20).WithMessage("A descrição não pode exceder 50 caracteres.")
+                .MaximumLength(50).WithMessage("A descrição não pode exceder 50 caracteres.")
                 .When(x => !string.IsNullOrEmpty(x.Nome));
 
             RuleFor(x => x.Tipo)

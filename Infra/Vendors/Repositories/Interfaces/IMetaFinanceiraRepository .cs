@@ -10,8 +10,8 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     public interface IMetaFinanceiraRepository : INotifiable
     {
         public Task<List<MetaFinanceiraResponseInfra?>> GetMetasFinanceiras(int idUsuario);
-        public Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario);
-        public Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario, int idMetaFinanceira);
+        public Task<bool> InsertMetaFinanceira(CadastrarMetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario);
+        public Task<bool> UpdateMetaFinanceira(AtualizarMetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario, int idMetaFinanceira);
         public Task<bool> DeleteMetaFinanceira(int idMetaFinanceira, int idUsuario);
     }
 }

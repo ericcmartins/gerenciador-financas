@@ -304,7 +304,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                     LEFT JOIN Conta ct ON ct.IdConta = r.IdConta
                     LEFT JOIN TipoConta tc ON tc.IdTipoConta = ct.IdTipoConta
                 WHERE r.IdUsuario = @IdUsuario
-                  AND r.DataReceita >= CAST(DATEADD(DAY, -@QtdDias, GETDATE()) AS DATE)
+                  AND r.DataReceita >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
                   AND r.DataReceita < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))";
 
             public const string GetTotalReceitasPeriodo = @"
@@ -312,10 +312,8 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                     SUM(Valor) AS TotalReceita
                 FROM Receita
                 WHERE IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR DataReceita >= @DataInicio)
-                        AND (@DataFim IS NULL OR DataReceita <= @DataFim)
-                      );";
+                  AND DataReceita >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND DataReceita < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))";
 
             public const string GetReceitasPorCategoria = @"
                 SELECT 
@@ -324,26 +322,23 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 FROM Receita r
                 LEFT JOIN Categoria c ON r.IdCategoria = c.IdCategoria
                 WHERE r.IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR r.DataReceita >= @DataInicio)
-                        AND (@DataFim IS NULL OR r.DataReceita <= @DataFim)
-                      )
+                  AND r.DataReceita >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND r.DataReceita < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
                 GROUP BY c.Nome
                 ORDER BY TotalReceita DESC;";
 
-
             public const string GetReceitasPorConta = @"
                 SELECT 
-                    c.NumeroConta,
+                    c.Instituicao,
+                    tc.Nome as TipoConta,
                     SUM(r.Valor) AS TotalReceita
                 FROM Receita r
                 INNER JOIN Conta c ON r.IdConta = c.IdConta
+                LEFT JOIN TipoConta tc ON tc.IdTipoConta = c.IdTipoConta
                 WHERE r.IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR r.DataReceita >= @DataInicio)
-                        AND (@DataFim IS NULL OR r.DataReceita <= @DataFim)
-                      )
-                GROUP BY c.NumeroConta
+                  AND r.DataReceita >= CAST(DATEADD(DAY, -@Periodo, GETDATE()) AS DATE)
+                  AND r.DataReceita < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+                GROUP BY c.Instituicao, tc.Nome,
                 ORDER BY TotalReceita DESC;";
 
             public const string InsertReceita = @"

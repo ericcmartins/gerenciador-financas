@@ -32,7 +32,7 @@ namespace gerenciador.financas.Application.Services
             return metaFinanceira;
         }
 
-        public async Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario)
+        public async Task<bool> InsertMetaFinanceira(CadastrarMetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario)
         {
             var resultado = await _metaFinanceiraRepository.InsertMetaFinanceira(metaFinanceiraRequest.ToInfra(), idUsuario);
             if (_metaFinanceiraRepository.HasNotifications)
@@ -41,7 +41,7 @@ namespace gerenciador.financas.Application.Services
             return resultado;
         }
 
-        public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario, int idMetaFinanceira)
+        public async Task<bool> UpdateMetaFinanceira(AtualizarMetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario, int idMetaFinanceira)
         {
             var resultado = await _metaFinanceiraRepository.UpdateMetaFinanceira(metaFinanceiraRequest.ToInfra(), idUsuario, idMetaFinanceira);
             if (_metaFinanceiraRepository.HasNotifications)

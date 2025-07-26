@@ -23,48 +23,31 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public async Task<List<ReceitaResponseInfra?>> GetReceitasPorUsuario(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            dataInicio = DateTime.Today.AddDays(-periodo);
-            dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
             
             var response = await connection.QueryAsync<ReceitaResponseInfra>(
                 SqlQueries.Receitas.GetReceitasPorIdUsuario, new
                 {
                     IdUsuario = idUsuario,
-                    DataInicio = dataInicio,
-                    DataFim = dataFim
+                    Periodo = periodo
                 }
             );
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas receitas no período informado para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas para o usuário no período informado");
 
             return responseList;
         }
 
-        public async Task<List<ReceitaPorCategoriaResponseInfra?>> GetReceitasPorCategoria(int idUsuario, int? periodo)
+        public async Task<List<ReceitaPorCategoriaResponseInfra?>> GetReceitasPorCategoria(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receitas.GetReceitasPorCategoria, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             var responseList = response.ToList();
@@ -75,24 +58,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<List<ReceitaPorContaResponseInfra?>> GetReceitasPorConta(int idUsuario, int? periodo)
+        public async Task<List<ReceitaPorContaResponseInfra?>> GetReceitasPorConta(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.QueryAsync<ReceitaPorContaResponseInfra>(SqlQueries.Receitas.GetReceitasPorConta, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             var responseList = response.ToList();
@@ -103,29 +76,19 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<Decimal> GetReceitasTotalPorPeriodo(int idUsuario, int? periodo)
+        public async Task<Decimal> GetReceitasTotalPorPeriodo(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
 
             var response = await connection.ExecuteScalarAsync<Decimal>(SqlQueries.Receitas.GetTotalReceitasPeriodo, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             if (response <= 0)
             {
-                _notificationPool.AddNotification(404, "Não foram encontradas receitas no período informado para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas para o usuário no período informado");
             }
 
             return response;

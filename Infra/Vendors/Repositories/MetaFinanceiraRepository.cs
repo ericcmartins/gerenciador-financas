@@ -29,15 +29,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas metas financeiras para o usuário");
+                _notificationPool.AddNotification(404, "Não foram encontradas metas financeiras para o usuário na base");
 
             return responseList;
         }
 
-        public async Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario)
+        public async Task<bool> InsertMetaFinanceira(CadastrarMetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.MetasFinanceiras.InsertMetaFinanceira, new
             {
@@ -53,14 +52,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar meta");
+                _notificationPool.AddNotification(500, "Erro ao cadastrar meta financeira na base");
                 return false;
             }
 
             return true;
         }
 
-        public async Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario, int idMetaFinanceira)
+        public async Task<bool> UpdateMetaFinanceira(AtualizarMetaFinanceiraRequestInfra metaFinanceiraRequest, int idUsuario, int idMetaFinanceira)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
@@ -78,7 +77,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar meta financeira");
+                _notificationPool.AddNotification(500, "Erro ao atualizar meta financeira na base");
                 return false;
             }
 

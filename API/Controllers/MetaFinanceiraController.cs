@@ -22,12 +22,12 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("metas/cliente")]
+        [HttpGet("usuario/{idUsuario}/metas")]
         [ProducesResponseType(typeof(List<MetaFinanceiraResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetMetasFinanceiras([Required] int idUsuario)
+        public async Task<IActionResult> GetMetasFinanceiras([Required][FromQuery] int idUsuario)
         {
             try
             {
@@ -54,11 +54,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("meta/cliente")]
+        [HttpPost("usuario/{idUsuario}/meta")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertMetaFinanceira([Required][FromBody] MetaFinanceiraRequestViewModel metaFinanceiraRequest, [Required]int idUsuario)
+        public async Task<IActionResult> InsertMetaFinanceira([Required][FromBody] CadastrarMetaFinanceiraRequestViewModel metaFinanceiraRequest, 
+                                                              [Required][FromRoute] int idUsuario)
         {
             try
             {
@@ -81,13 +82,13 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("meta/cliente")]
+        [HttpPut("usuario/{idUsuario}/meta/{idMetaFinanceira}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateMetaFinanceira([Required][FromBody] MetaFinanceiraRequestViewModel metaFinanceiraRequest,
-                                                                  [Required] int idUsuario, 
-                                                                  [Required]int idMetaFinanceira)
+        public async Task<IActionResult> UpdateMetaFinanceira([Required][FromBody] AtualizarMetaFinanceiraRequestViewModel metaFinanceiraRequest,
+                                                              [Required][FromRoute] int idUsuario, 
+                                                              [Required][FromRoute] int idMetaFinanceira)
         {
             try
             {
@@ -110,12 +111,13 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("meta/cliente")]
+        [HttpDelete("usuario/{idUsuario}/meta/{idMetaFinanceira}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> DeleteMetaFinanceira([Required]int idMetaFinanceira, [Required]int idUsuario)
+        public async Task<IActionResult> DeleteMetaFinanceira([Required][FromRoute] int idMetaFinanceira, 
+                                                              [Required][FromRoute] int idUsuario)
         {
             try
             {

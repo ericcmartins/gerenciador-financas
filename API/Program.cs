@@ -39,14 +39,17 @@ builder.Services.AddValidatorsFromAssemblyContaining<AtualizarSenhaRequestViewMo
 builder.Services.AddValidatorsFromAssemblyContaining<CadastrarUsuarioRequestViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestViewModelValidator>();
 
-builder.Services.AddValidatorsFromAssemblyContaining<AtualizarContaRequestViewModel>();
-builder.Services.AddValidatorsFromAssemblyContaining<CadastrarContaRequestViewModel>();
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarContaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarContaRequestViewModelValidator>();
 
-builder.Services.AddValidatorsFromAssemblyContaining<AtualizarMetodoPagamentoRequestViewModel>();
-builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetodoPagamentoRequestViewModel>();
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarMetodoPagamentoRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetodoPagamentoRequestViewModelValidator>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<AtualizarCategoriaRequestViewModelValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CadastrarCategoriaRequestViewModel>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarCategoriaRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarReceitaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarReceitaRequestViewModelValidator>();
 
 
 builder.Services.AddCors(options =>

@@ -1,6 +1,6 @@
-namespace gerenciador.financas.Infra.Vendors.Entities
+namespace gerenciador.financas.API.ViewModel.Cliente
 {
-    public class MetaFinanceiraRequestInfra
+    public class CadastrarMetaFinanceiraRequestViewModel
     {
         public string Nome { get; set; }
         public string? Descricao { get; set; }

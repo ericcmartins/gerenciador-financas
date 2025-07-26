@@ -31,7 +31,7 @@ namespace gerenciador.financas.Application.Services
 
             return receitas;
         }
-        public async Task<List<ReceitaCategoria?>> GetReceitasPorCategoria(int idUsuario, int? periodo)
+        public async Task<List<ReceitaCategoria?>> GetReceitasPorCategoria(int idUsuario, int periodo)
         {
             var responseInfra = await _receitaRepository.GetReceitasPorCategoria(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)
@@ -44,7 +44,7 @@ namespace gerenciador.financas.Application.Services
             return receitas;
         }
 
-        public async Task<List<ReceitaConta?>> GetReceitasPorConta(int idUsuario, int? periodo)
+        public async Task<List<ReceitaConta?>> GetReceitasPorConta(int idUsuario, int periodo)
         {
             var responseInfra = await _receitaRepository.GetReceitasPorConta(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)
@@ -56,7 +56,7 @@ namespace gerenciador.financas.Application.Services
 
             return receitas;
         }
-        public async Task<Decimal?> GetReceitasTotalPorPeriodo(int idUsuario, int? periodo)
+        public async Task<Decimal?> GetReceitasTotalPorPeriodo(int idUsuario, int periodo)
         {
             var responseInfra = await _receitaRepository.GetReceitasTotalPorPeriodo(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)

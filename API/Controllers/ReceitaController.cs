@@ -56,12 +56,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpGet("receitas/categoria/cliente")]
+        [HttpGet("usuario/{idUsuario}/receitas/categoria/total")]
         [ProducesResponseType(typeof(List<ReceitaPorCategoriaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetReceitasUsuarioPorCategoria([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetReceitasTotaisUsuarioPorCategoria([Required][FromRoute] int idUsuario, int periodo)
         {
             try
             {
@@ -88,12 +88,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpGet("receitas/conta/cliente")]
+        [HttpGet("usuario/{idUsuario}/receitas/conta/total")]
         [ProducesResponseType(typeof(List<ReceitaPorContaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetReceitasUsuarioPorConta([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetTotalReceitasUsuarioPorConta([Required] int idUsuario, int periodo)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetTotalReceitasUsuario([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetTotalReceitasUsuario([Required] int idUsuario, int periodo)
         {
             try
             {
