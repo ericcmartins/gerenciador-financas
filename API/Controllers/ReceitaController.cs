@@ -23,16 +23,17 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("receitas/cliente")]
+        [HttpGet("usuario/{idUsuario}/receitas")]
         [ProducesResponseType(typeof(List<ReceitaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetReceitasUsuario([Required] int idUsuario, int? periodo)
+        public async Task<IActionResult> GetReceitasPorUsuario([Required][FromRoute] int idUsuario, 
+                                                                                     int periodo)
         {
             try
             {
-                var response = await _receitaService.GetReceitas(idUsuario, periodo);
+                var response = await _receitaService.GetReceitasPorUsuario(idUsuario, periodo);
                 if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -146,19 +147,18 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("receita/cliente")]
+        [HttpPost("usuario/{idUsuario}/receita")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertReceitas([Required][FromBody] ReceitaRequestViewModel receitaRequest,
-                                                         [Required]int idUsuario,
-                                                         [Required]int idCategoria,
+        public async Task<IActionResult> InsertReceitas([Required][FromBody] CadastrarReceitaRequestViewModel cadastrarReceitaRequest,
+                                                         [Required][FromRoute] int idUsuario,
+                                                         [Required] int idCategoria,
                                                          [Required] int idConta)
-
         {
             try
             {
-                var response = await _receitaService.InsertReceita(receitaRequest, idUsuario , idCategoria, idConta); 
+                var response = await _receitaService.InsertReceita(cadastrarReceitaRequest, idUsuario , idCategoria, idConta); 
                 if (_receitaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -168,7 +168,7 @@ namespace gerenciador.financas.API.Controllers
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
-                return Created(string.Empty, "receita inserida com sucesso");
+                return Created(string.Empty, "Receita inserida com sucesso na base");
             }
 
             catch (Exception ex)
@@ -177,15 +177,15 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("receita/cliente")]
+        [HttpPut("usuario/{idUsuario}/receita/{idReceita}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateReceita([Required][FromBody] ReceitaRequestViewModel receitaRequest, 
-                                                          [Required]int idUsuario,
-                                                          [Required]int idReceita,
-                                                          [Required]int idCategoria,
-                                                          [Required]int idConta)
+        public async Task<IActionResult> UpdateReceita([Required][FromBody] AtualizarReceitaRequestViewModel receitaRequest, 
+                                                          [Required][FromRoute]int idUsuario,
+                                                          [Required][FromRoute]int idReceita,
+                                                          int idCategoria,
+                                                          int idConta)
         {
             try
             {
@@ -208,11 +208,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("receita/cliente")]
+        [HttpDelete("usuario/{idUsuario}/receita/{idReceita}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteReceita([Required] int idUsuario, [Required] int idReceita)
+        public async Task<IActionResult> DeleteReceita([Required][FromRoute] int idUsuario, 
+                                                       [Required][FromRoute] int idReceita)
         {
             try
             {

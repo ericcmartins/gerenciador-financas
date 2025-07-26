@@ -1,6 +1,6 @@
 namespace gerenciador.financas.Infra.Vendors.Entities
 {
-    public class ReceitaRequestInfra
+    public class CadastrarReceitaRequestInfra
     {
         public decimal Valor { get; set; }
         public string? Descricao { get; set; }

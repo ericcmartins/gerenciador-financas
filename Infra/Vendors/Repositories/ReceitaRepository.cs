@@ -20,21 +20,18 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<ReceitaResponseInfra?>> GetReceitas(int idUsuario, int? periodo)
+        public async Task<List<ReceitaResponseInfra?>> GetReceitasPorUsuario(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
             DateTime? dataInicio = null;
             DateTime? dataFim = null;
 
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
-
+            dataInicio = DateTime.Today.AddDays(-periodo);
+            dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
+            
             var response = await connection.QueryAsync<ReceitaResponseInfra>(
-                SqlQueries.Receitas.GetReceitasPorId, new
+                SqlQueries.Receitas.GetReceitasPorIdUsuario, new
                 {
                     IdUsuario = idUsuario,
                     DataInicio = dataInicio,
@@ -135,10 +132,9 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         }
 
 
-        public async Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idCategoria, int idConta)
+        public async Task<bool> InsertReceita(CadastrarReceitaRequestInfra receitaRequest, int idUsuario, int idCategoria, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.InsertReceita, new
             {
@@ -152,14 +148,14 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar receita");
+                _notificationPool.AddNotification(500, "Erro ao cadastrar receita na base");
                 return false;
             }
 
             return true;
         }
 
-        public async Task<bool> UpdateReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
+        public async Task<bool> UpdateReceita(AtualizarReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
@@ -177,7 +173,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar receita");
+                _notificationPool.AddNotification(500, "Erro ao atualizar receita na base");
                 return false;
             }
 
@@ -187,7 +183,6 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         public async Task<bool> DeleteReceita(int idUsuario, int idReceita)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
-
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.DeleteReceita, new
             {

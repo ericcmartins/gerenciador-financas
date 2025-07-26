@@ -271,23 +271,41 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #region Receita
         public static class Receitas
         {
-            public const string GetReceitasPorId = @"
-                SELECT 
-                    r.IdReceita, 
-                    r.Valor, 
-                    r.Descricao, 
-                    r.DataReceita, 
-                    r.IdUsuario, 
-                    c.Nome AS Categoria, 
-                    ct.NumeroConta AS Conta
-                FROM Receita r
-                LEFT JOIN Categoria c ON c.IdCategoria = r.IdCategoria
-                INNER JOIN Conta ct ON ct.IdConta = r.IdConta
+            //public const string GetReceitasPorIdUsuario = @"
+            //    SELECT 
+            //        r.IdReceita, 
+            //        r.Valor, 
+            //        r.Descricao, 
+            //        r.DataReceita, 
+            //        r.IdUsuario, 
+            //        c.Nome AS Categoria, 
+            //        ct.NumeroConta AS Conta
+            //    FROM Receita r
+            //    LEFT JOIN Categoria c ON c.IdCategoria = r.IdCategoria
+            //    INNER JOIN Conta ct ON ct.IdConta = r.IdConta
+            //    WHERE r.IdUsuario = @IdUsuario
+            //      AND (
+            //            (@DataInicio IS NULL OR r.DataReceita >= @DataInicio)
+            //            AND (@DataFim IS NULL OR r.DataReceita <= @DataFim)
+            //          );";
+
+            public const string GetReceitasPorIdUsuario = @"
+                 SELECT 
+                        r.IdReceita, 
+                        r.Valor, 
+                        r.Descricao, 
+                        r.DataReceita, 
+                        r.IdUsuario, 
+                        c.Nome AS Categoria, 
+                        ct.Instituicao,
+                        tc.Nome As TipoConta
+                    FROM Receita r
+                    LEFT JOIN Categoria c ON c.IdCategoria = r.IdCategoria
+                    LEFT JOIN Conta ct ON ct.IdConta = r.IdConta
+                    LEFT JOIN TipoConta tc ON tc.IdTipoConta = ct.IdTipoConta
                 WHERE r.IdUsuario = @IdUsuario
-                  AND (
-                        (@DataInicio IS NULL OR r.DataReceita >= @DataInicio)
-                        AND (@DataFim IS NULL OR r.DataReceita <= @DataFim)
-                      );";
+                  AND r.DataReceita >= CAST(DATEADD(DAY, -@QtdDias, GETDATE()) AS DATE)
+                  AND r.DataReceita < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))";
 
             public const string GetTotalReceitasPeriodo = @"
                 SELECT 
@@ -329,10 +347,8 @@ namespace gerenciador.financas.Infra.Vendors.Queries
                 ORDER BY TotalReceita DESC;";
 
             public const string InsertReceita = @"
-                INSERT INTO Receita (Valor, Descricao, DataReceita, 
-                                     IdUsuario, IdConta, IdCategoria)
-                VALUES (@Valor, @Descricao, @DataReceita, 
-                        @IdUsuario, @IdConta, @IdCategoria)";
+                INSERT INTO Receita (Valor, Descricao, DataReceita, IdUsuario, IdConta, IdCategoria)
+                VALUES (@Valor, @Descricao, @DataReceita, @IdUsuario, @IdConta, @IdCategoria)";
 
             public const string UpdateReceita = @"
                 UPDATE Receita
