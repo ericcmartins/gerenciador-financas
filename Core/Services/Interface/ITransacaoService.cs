@@ -5,9 +5,9 @@ using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Entities;
 namespace gerenciador.financas.Application.Services
 {
-    public interface IMovimentacaoFinanceiraService : INotifiable
+    public interface ITransacaoService : INotifiable
     {
-        public Task<List<MovimentacaoFinanceira?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo, string? tipoMovimentacao);
+        public Task<List<MovimentacaoFinanceira?>> GetMovimentacoesFinanceiras(int idUsuario, int periodo, string? tipoMovimentacao);
         public Task<List<SaldoContas?>> GetSaldoPorConta(int idUsuario);
         public Task<List<SaldoTotalContas?>> GetSaldoTotalContas(int idUsuario);
         public Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino);

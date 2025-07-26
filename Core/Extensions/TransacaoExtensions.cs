@@ -5,7 +5,7 @@ using gerenciador.financas.Infra.Vendors.Entities;
 
 namespace gerenciador.financas.Application.Extensions
 {
-    public static class MovimentacaoFinanceiraExtensions
+    public static class TransacaoExtensions
     {
         public static MovimentacaoFinanceira ToService(this MovimentacaoFinanceiraResponseInfra infra)
         {

@@ -11,15 +11,15 @@ using gerenciador.financas.Infra.Vendors.Entities;
 namespace gerenciador.financas.API.Controllers
 {
     [ApiController]
-    public class MovimentacaoFinanceiraController : Controller
+    public class TransacaoController : Controller
     {
-        private readonly IMovimentacaoFinanceiraService _movimentacaoFinanceiraService;
+        private readonly ITransacaoService _transacaoService;
         private readonly NotificationPool _notificationPool;
 
-        public MovimentacaoFinanceiraController(IMovimentacaoFinanceiraService movimentacaoFinanceiraService,
+        public TransacaoController(ITransacaoService movimentacaoFinanceiraService,
                                  NotificationPool notificationPool)
         {
-            _movimentacaoFinanceiraService = movimentacaoFinanceiraService;
+            _transacaoService = movimentacaoFinanceiraService;
             _notificationPool = notificationPool;
         }
 
@@ -28,12 +28,12 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetMovimentacoeFinanceirasUsuario([Required] int idUsuario, int? periodo, string? tipoMovimentacao)
+        public async Task<IActionResult> GetMovimentacoeFinanceirasUsuario([Required] int idUsuario, int periodo, string? tipoMovimentacao)
         {
             try
             {
-                var response = await _movimentacaoFinanceiraService.GetMovimentacoesFinanceiras(idUsuario, periodo, tipoMovimentacao);
-                if (_movimentacaoFinanceiraService.HasNotifications)
+                var response = await _transacaoService.GetMovimentacoesFinanceiras(idUsuario, periodo, tipoMovimentacao);
+                if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -65,8 +65,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                var response = await _movimentacaoFinanceiraService.GetSaldoPorConta(idUsuario);
-                if (_movimentacaoFinanceiraService.HasNotifications)
+                var response = await _transacaoService.GetSaldoPorConta(idUsuario);
+                if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -97,8 +97,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                var response = await _movimentacaoFinanceiraService.GetSaldoTotalContas(idUsuario);
-                if (_movimentacaoFinanceiraService.HasNotifications)
+                var response = await _transacaoService.GetSaldoTotalContas(idUsuario);
+                if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -132,8 +132,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                var response = await _movimentacaoFinanceiraService.InsertTransferenciaEntreContas(movimentacaoFinanceiraRequestViewModel, idUsuario, idContaOrigem, idContaDestino);
-                if (_movimentacaoFinanceiraService.HasNotifications)
+                var response = await _transacaoService.InsertTransferenciaEntreContas(movimentacaoFinanceiraRequestViewModel, idUsuario, idContaOrigem, idContaDestino);
+                if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -164,8 +164,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                var response = await _movimentacaoFinanceiraService.UpdateMovimentacaoFinanceira(movimentacaoFinanceiraRequestViewModel, idUsuario, idContaOrigem, idContaDestino, idMovimentacaoFinanceira);
-                if (_movimentacaoFinanceiraService.HasNotifications)
+                var response = await _transacaoService.UpdateMovimentacaoFinanceira(movimentacaoFinanceiraRequestViewModel, idUsuario, idContaOrigem, idContaDestino, idMovimentacaoFinanceira);
+                if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 
@@ -193,8 +193,8 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-                var response = await _movimentacaoFinanceiraService.DeleteMovimentacaoFinanceira(idUsuario, idMovimentacaoFinanceira);
-                if (_movimentacaoFinanceiraService.HasNotifications)
+                var response = await _transacaoService.DeleteMovimentacaoFinanceira(idUsuario, idMovimentacaoFinanceira);
+                if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
 

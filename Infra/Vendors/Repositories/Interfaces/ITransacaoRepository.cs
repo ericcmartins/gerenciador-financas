@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
-    public interface IMovimentacaoFinanceiraRepository : INotifiable
+    public interface ITransacaoRepository : INotifiable
     {
-        public Task<List<MovimentacaoFinanceiraResponseInfra?>> GetMovimentacoesFinanceiras(int idUsuario, int? periodo, string? tipoMovimentacao);
+        public Task<List<MovimentacaoFinanceiraResponseInfra?>> GetMovimentacoesFinanceiras(int idUsuario, int periodo, string? tipoMovimentacao);
         public Task<List<SaldoPorContaResponseInfra?>> GetSaldoPorConta(int idUsuario);
         public Task<List<SaldoTotalUsuarioResponseInfra?>> GetSaldoTotalContas(int idUsuario);
         public Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int contaDestino);

@@ -229,7 +229,7 @@ namespace gerenciador.financas.Infra.Vendors.Queries
         #endregion
 
         #region MovimentacaoFinanceira
-        public static class MovimentacoesFinanceiras
+        public static class Transacoes
         {
             public const string GetMovimentacoesPorPeriodo = @"
                 SELECT * FROM fn_MovimentacoesPorUsuarioPeriodo(@IdUsuario, @DataInicio, @DataFim, @TipoMovimentacao);";
