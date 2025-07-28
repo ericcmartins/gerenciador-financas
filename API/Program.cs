@@ -60,7 +60,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<AtualizarMetaFinanceiraRequ
 builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetaFinanceiraRequestViewModelValidator>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<AtualizarTransacaoRequestViewModelValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CadastrarTransacaoRequestInfraValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarTransacaoRequestViewModelValidator>();
 
 builder.Services.AddCors(options =>
 {
@@ -97,8 +97,5 @@ app.UseCors("Permitir");
 
 app.UseAuthorization();
 app.MapControllers();
-
-
-
 
 app.Run();
