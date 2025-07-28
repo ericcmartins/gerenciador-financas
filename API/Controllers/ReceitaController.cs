@@ -119,7 +119,7 @@ namespace gerenciador.financas.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
-        [HttpGet("receitas/total/cliente")]
+        [HttpGet("usuario/{idUsuario}/receitas/total")]
         [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]

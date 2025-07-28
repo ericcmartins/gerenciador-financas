@@ -8,8 +8,13 @@ using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, config) =>
+    config.ReadFrom.Configuration(context.Configuration));
 
 // Adiciona serviços ao container.
 var connectionString = builder.Configuration.GetConnectionString("SqlServer");
@@ -62,6 +67,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetaFinanceiraRequ
 builder.Services.AddValidatorsFromAssemblyContaining<AtualizarTransacaoRequestViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CadastrarTransacaoRequestViewModelValidator>();
 
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Permitir",
@@ -81,6 +87,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {
