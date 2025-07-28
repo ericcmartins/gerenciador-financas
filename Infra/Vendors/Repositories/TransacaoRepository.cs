@@ -25,8 +25,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(
-                Transacoes.GetMovimentacoesPorPeriodo,
+            var response = await connection.QueryAsync<MovimentacaoFinanceiraResponseInfra>(Transacoes.GetMovimentacoesPorPeriodo,
                 new
                 {
                     IdUsuario = idUsuario,
@@ -72,17 +71,16 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             return responseList;
         }
 
-        public async Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino)
+        public async Task<bool> InsertTransferenciaEntreContas(CadastrarTransacaoRequestInfra transacaoRequest, int idUsuario, int idContaOrigem, int idContaDestino)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Transacoes.InsertTransferenciaEntreContas, new
             {
-                movimentacaoFinanceiraRequest.TipoMovimentacao,
-                movimentacaoFinanceiraRequest.Valor,
-                movimentacaoFinanceiraRequest.DataMovimentacao,
-                movimentacaoFinanceiraRequest.Descricao,
+                transacaoRequest.TipoMovimentacao,
+                transacaoRequest.Valor,
+                transacaoRequest.DataMovimentacao,
+                transacaoRequest.Descricao,
                 IdUsuario = idUsuario,
                 IdContaOrigem = idContaOrigem,
                 IdContaDestino = idContaDestino
@@ -90,24 +88,23 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao registrar transferência");
+                _notificationPool.AddNotification(500, "Erro ao registrar transação na base");
                 return false;
             }
 
             return true;
         }
 
-        public async Task<bool> UpdateMovimentacaoFinanceira(MovimentacaoFinanceiraRequestInfra movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira)
+        public async Task<bool> UpdateMovimentacaoFinanceira(AtualizarTransacaoRequestInfra transacaoRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
             var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Transacoes.UpdateMovimentacaoFinanceira, new
             {
-                movimentacaoFinanceiraRequest.TipoMovimentacao,
-                movimentacaoFinanceiraRequest.Valor,
-                movimentacaoFinanceiraRequest.DataMovimentacao,
-                movimentacaoFinanceiraRequest.Descricao,
+                transacaoRequest.Valor,
+                transacaoRequest.DataMovimentacao,
+                transacaoRequest.Descricao,
                 IdUsuario = idUsuario,
                 IdContaOrigem = idContaOrigem,
                 IdContaDestino = idContaDestino,
@@ -116,7 +113,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar transferência");
+                _notificationPool.AddNotification(500, "Erro ao atualizar transação na base");
                 return false;
             }
 

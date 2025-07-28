@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace gerenciador.financas.Application.ViewModel.Cliente
+namespace gerenciador.financas.Infra.Vendors.Entities
 {
-    public class MovimentacaoFinanceiraRequestViewModel
+    public class CadastrarTransacaoRequestInfra
     {
-        public string TipoMovimentacao => "Transferência";
+        public string TipoMovimentacao { get; set; }
         public decimal Valor {  get; set; }
         public DateTime DataMovimentacao { get; set; }
         public string? Descricao { get; set; }

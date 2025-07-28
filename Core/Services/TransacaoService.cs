@@ -61,17 +61,17 @@ namespace gerenciador.financas.Application.Services
             return responseService;
         }
 
-        public async Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino)
+        public async Task<bool> InsertTransferenciaEntreContas(CadastrarTransacaoRequestViewModel transacaoRequest, int idUsuario, int idContaOrigem, int idContaDestino)
         {
-            var resultado = await _transacaoRepository.InsertTransferenciaEntreContas(movimentacaoFinanceiraRequest.ToInfra(), idUsuario, idContaOrigem, idContaDestino);
+            var resultado = await _transacaoRepository.InsertTransferenciaEntreContas(transacaoRequest.ToInfra(), idUsuario, idContaOrigem, idContaDestino);
             if (_transacaoRepository.HasNotifications)
                 return false;
 
             return resultado;
         }
-        public async Task<bool> UpdateMovimentacaoFinanceira(MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira)
+        public async Task<bool> UpdateMovimentacaoFinanceira(AtualizarTransacaoRequestViewModel transacaoRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira)
         {
-            var resultado = await _transacaoRepository.UpdateMovimentacaoFinanceira(movimentacaoFinanceiraRequest.ToInfra(), idUsuario, idContaOrigem, idContaDestino, idMovimentacaoFinanceira);
+            var resultado = await _transacaoRepository.UpdateMovimentacaoFinanceira(transacaoRequest.ToInfra(), idUsuario, idContaOrigem, idContaDestino, idMovimentacaoFinanceira);
             if (_transacaoRepository.HasNotifications)
                 return false;
 

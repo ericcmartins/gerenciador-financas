@@ -10,8 +10,8 @@ namespace gerenciador.financas.Application.Services
         public Task<List<MovimentacaoFinanceira?>> GetMovimentacoesFinanceiras(int idUsuario, int periodo, string? tipoMovimentacao);
         public Task<List<SaldoContas?>> GetSaldoPorConta(int idUsuario);
         public Task<List<SaldoTotalContas?>> GetSaldoTotalContas(int idUsuario);
-        public Task<bool> InsertTransferenciaEntreContas(MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino);
-        public Task<bool> UpdateMovimentacaoFinanceira(MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira);
+        public Task<bool> InsertTransferenciaEntreContas(CadastrarTransacaoRequestViewModel transacaoRequest, int idUsuario, int idContaOrigem, int idContaDestino);
+        public Task<bool> UpdateMovimentacaoFinanceira(AtualizarTransacaoRequestViewModel transacaoRequest, int idUsuario, int idContaOrigem, int idContaDestino, int idMovimentacaoFinanceira);
         public Task<bool> DeleteMovimentacaoFinanceira(int idUsuario, int idMovimentacaoFinanceira);
     }
 }

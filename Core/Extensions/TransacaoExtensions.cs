@@ -73,11 +73,20 @@ namespace gerenciador.financas.Application.Extensions
 
             };
         }
-        public static MovimentacaoFinanceiraRequestInfra ToInfra (this MovimentacaoFinanceiraRequestViewModel viewModel)
+        public static CadastrarTransacaoRequestInfra ToInfra (this CadastrarTransacaoRequestViewModel viewModel)
         {
-            return new MovimentacaoFinanceiraRequestInfra
+            return new CadastrarTransacaoRequestInfra
             {
                 TipoMovimentacao = viewModel.TipoMovimentacao,
+                Valor = viewModel.Valor,
+                DataMovimentacao = viewModel.DataMovimentacao,
+                Descricao = viewModel.Descricao
+            };
+        }
+        public static AtualizarTransacaoRequestInfra ToInfra(this AtualizarTransacaoRequestViewModel viewModel)
+        {
+            return new AtualizarTransacaoRequestInfra
+            {
                 Valor = viewModel.Valor,
                 DataMovimentacao = viewModel.DataMovimentacao,
                 Descricao = viewModel.Descricao

@@ -2,7 +2,9 @@ using FluentValidation;
 using gerenciador.financas.API.Validators;
 using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Application.Services;
+using gerenciador.financas.Application.ViewModel.Cliente;
 using gerenciador.financas.Infra.Vendors;
+using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -54,6 +56,11 @@ builder.Services.AddValidatorsFromAssemblyContaining<CadastrarReceitaRequestView
 builder.Services.AddValidatorsFromAssemblyContaining<AtualizarDespesaRequestViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CadastrarDespesaRequestViewModelValidator>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarMetaFinanceiraRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetaFinanceiraRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarTransacaoRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarTransacaoRequestInfraValidator>();
 
 builder.Services.AddCors(options =>
 {

@@ -247,7 +247,6 @@ namespace gerenciador.financas.Infra.Vendors.Queries
             public const string UpdateMovimentacaoFinanceira = @"
                 UPDATE MovimentacaoFinanceira
                 SET
-                    TipoMovimentacao = COALESCE(@TipoMovimentacao, TipoMovimentacao),
                     Valor = COALESCE(@Valor, Valor),
                     DataMovimentacao = COALESCE(@DataMovimentacao, DataMovimentacao),
                     Descricao = COALESCE(@Descricao, Descricao),

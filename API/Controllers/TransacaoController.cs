@@ -23,12 +23,12 @@ namespace gerenciador.financas.API.Controllers
             _notificationPool = notificationPool;
         }
 
-        [HttpGet("movimentacoes/cliente")]
+        [HttpGet("usuario/{idUsuario}/transacoes")]
         [ProducesResponseType(typeof(List<MovimentacaoFinanceiraResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetMovimentacoeFinanceirasUsuario([Required] int idUsuario, int periodo, string? tipoMovimentacao)
+        public async Task<IActionResult> GetTransacoesUsuario([Required][FromRoute] int idUsuario, int periodo, string? tipoMovimentacao)
         {
             try
             {
@@ -56,12 +56,12 @@ namespace gerenciador.financas.API.Controllers
         }
 
 
-        [HttpGet("saldo/contas/cliente")]
+        [HttpGet("usuario/{idUsuario}/saldo/contas")]
         [ProducesResponseType(typeof(List<SaldoPorContaResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSaldosPorConta([Required] int idUsuario)
+        public async Task<IActionResult> GetSaldosPorConta([Required][FromRoute] int idUsuario)
         {
             try
             {
@@ -88,12 +88,12 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpGet("saldo/total/cliente")]
+        [HttpGet("usuario/{idUsuario}/saldo/total")]
         [ProducesResponseType(typeof(List<SaldoTotalUsuarioResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSaldoTotalUsuario([Required] int idUsuario)
+        public async Task<IActionResult> GetSaldoTotalUsuario([Required][FromRoute] int idUsuario)
         {
             try
             {
@@ -120,19 +120,19 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPost("movimentacao/cliente")]
+        [HttpPost("usuario/{idUsuario}/transacao-contas")]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InsertMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
-                                                 [Required] int idUsuario,
+        public async Task<IActionResult> InsertMovimentacaoFinanceira([Required][FromBody] CadastrarTransacaoRequestViewModel transacaoRequestViewModel,
+                                                 [Required][FromRoute] int idUsuario,
                                                  [Required] int idContaOrigem,
                                                  [Required] int idContaDestino)
 
         {
             try
             {
-                var response = await _transacaoService.InsertTransferenciaEntreContas(movimentacaoFinanceiraRequestViewModel, idUsuario, idContaOrigem, idContaDestino);
+                var response = await _transacaoService.InsertTransferenciaEntreContas(transacaoRequestViewModel, idUsuario, idContaOrigem, idContaDestino);
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -151,20 +151,19 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpPut("movimentacao/cliente")]
+        [HttpPut("usuario/{idUsuario}/transacao-contas/{idTransacao}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateMovimentacaoFinanceira([Required][FromBody] MovimentacaoFinanceiraRequestViewModel movimentacaoFinanceiraRequestViewModel,
-                                                          [Required] int idUsuario,
-                                                          [Required] int idMovimentacaoFinanceira,
+        public async Task<IActionResult> UpdateMovimentacaoFinanceira([Required][FromBody] AtualizarTransacaoRequestViewModel transacaoRequestViewModel,
+                                                          [Required][FromRoute] int idUsuario,
+                                                          [Required][FromRoute] int idTransacao,
                                                           int idContaOrigem,
-                                                          int idContaDestino
-                                                          )
+                                                          int idContaDestino)
         {
             try
             {
-                var response = await _transacaoService.UpdateMovimentacaoFinanceira(movimentacaoFinanceiraRequestViewModel, idUsuario, idContaOrigem, idContaDestino, idMovimentacaoFinanceira);
+                var response = await _transacaoService.UpdateMovimentacaoFinanceira(transacaoRequestViewModel, idUsuario, idContaOrigem, idContaDestino, idTransacao);
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
@@ -183,17 +182,17 @@ namespace gerenciador.financas.API.Controllers
             }
         }
 
-        [HttpDelete("movimentacao/cliente")]
+        [HttpDelete("usuario/{idUsuario}/transacao-contas/{idTransacao}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> DeleteMovimentacaoFinanceira([Required] int idUsuario,
-                                                                       [Required] int idMovimentacaoFinanceira)
+        public async Task<IActionResult> DeleteMovimentacaoFinanceira([Required][FromRoute] int idUsuario,
+                                                                       [Required][FromRoute] int idTransacao)
         {
             try
             {
-                var response = await _transacaoService.DeleteMovimentacaoFinanceira(idUsuario, idMovimentacaoFinanceira);
+                var response = await _transacaoService.DeleteMovimentacaoFinanceira(idUsuario, idTransacao);
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
