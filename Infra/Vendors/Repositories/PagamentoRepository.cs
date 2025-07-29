@@ -3,6 +3,7 @@ using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
@@ -10,14 +11,17 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
         private readonly NotificationPool _notificationPool;
+        private readonly ILogger<PagamentoRepository> _logger;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public PagamentoRepository(ISqlServerConnectionHandler connectionHandler,
-                                         NotificationPool notificationPool)
+                                     NotificationPool notificationPool,
+                                     ILogger<PagamentoRepository> logger)
         {
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
+            _logger = logger;
         }
 
         public async Task<List<MetodoPagamentoResponseInfra?>> GetMetodosPagamentoUsuario(int idUsuario)
@@ -29,7 +33,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var responseList = response.ToList();
 
             if (!responseList.Any())
+            {
+                _logger.LogWarning("Não foram encontrados métodos de pagamento para o usuário {IdUsuario}.", idUsuario);
                 _notificationPool.AddNotification(404, "Não foram encontrados métodos de pagamento para o usuário na base");
+            }
 
             return responseList;
         }
@@ -50,10 +57,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
+                _logger.LogError("Erro ao cadastrar método de pagamento para o usuário {IdUsuario} na conta {IdConta}.", idUsuario, idConta);
                 _notificationPool.AddNotification(500, "Erro ao cadastrar método de pagamento na base");
                 return false;
             }
 
+            _logger.LogInformation("Método de pagamento para o usuário {IdUsuario} na conta {IdConta} cadastrado com sucesso.", idUsuario, idConta);
             return true;
         }
 
@@ -73,10 +82,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas < 1)
             {
+                _logger.LogError("Erro ao atualizar método de pagamento {IdMetodoPagamento} para o usuário {IdUsuario}.", idMetodoPagamento, idUsuario);
                 _notificationPool.AddNotification(500, "Erro ao atualizar método de pagamento na base");
                 return false;
             }
 
+            _logger.LogInformation("Método de pagamento {IdMetodoPagamento} do usuário {IdUsuario} atualizado com sucesso.", idMetodoPagamento, idUsuario);
             return true;
         }
 
@@ -92,10 +103,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas == 0)
             {
+                _logger.LogWarning("Tentativa de exclusão falhou. Método de pagamento {IdMetodoPagamento} do usuário {IdUsuario} não encontrado.", idMetodoPagamento, idUsuario);
                 _notificationPool.AddNotification(500, "Erro ao deletar método de pagamento da base");
                 return false;
             }
 
+            _logger.LogInformation("Método de pagamento {IdMetodoPagamento} do usuário {IdUsuario} excluído com sucesso.", idMetodoPagamento, idUsuario);
             return true;
         }
     }

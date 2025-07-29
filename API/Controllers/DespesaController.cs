@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using gerenciador.financas.Infra.Vendors;
 using Core.ViewModel.gerenciador.financas.API.ViewModels;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace gerenciador.financas.API.Controllers
 {
@@ -14,12 +20,15 @@ namespace gerenciador.financas.API.Controllers
     {
         private readonly IDespesaService _despesaService;
         private readonly NotificationPool _notificationPool;
+        private readonly ILogger<DespesaController> _logger;
 
         public DespesaController(IDespesaService despesaService,
-                                 NotificationPool notificationPool)
+                                   NotificationPool notificationPool,
+                                   ILogger<DespesaController> logger)
         {
             _despesaService = despesaService;
             _notificationPool = notificationPool;
+            _logger = logger;
         }
 
         [HttpGet("usuario/{idUsuario}/despesas")]
@@ -35,9 +44,8 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar despesas do usuário {IdUsuario} para o período {Periodo}: Status Code - {StatusCode}, {Mensagem}", idUsuario, periodo, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
@@ -45,11 +53,13 @@ namespace gerenciador.financas.API.Controllers
                     .Select(d => d.ToViewModel())
                     .ToList();
 
+                _logger.LogInformation("Despesas do usuário {IdUsuario} para o período {Periodo} recuperadas com sucesso - Status Code - {StatusCode}", idUsuario, periodo, StatusCodes.Status200OK);
                 return Ok(viewModel);
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar despesas do usuário {IdUsuario} para o período {Periodo}", idUsuario, periodo);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -67,9 +77,8 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar despesas por categoria do usuário {IdUsuario} para o período {Periodo}: Status Code - {StatusCode}, {Mensagem}", idUsuario, periodo, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
@@ -77,11 +86,13 @@ namespace gerenciador.financas.API.Controllers
                     .Select(d => d.ToViewModel())
                     .ToList();
 
+                _logger.LogInformation("Despesas por categoria do usuário {IdUsuario} para o período {Periodo} recuperadas com sucesso - Status Code - {StatusCode}", idUsuario, periodo, StatusCodes.Status200OK);
                 return Ok(viewModel);
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar despesas por categoria do usuário {IdUsuario} para o período {Periodo}", idUsuario, periodo);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -99,9 +110,8 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar despesas por conta do usuário {IdUsuario} para o período {Periodo}: Status Code - {StatusCode}, {Mensagem}", idUsuario, periodo, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
@@ -109,14 +119,17 @@ namespace gerenciador.financas.API.Controllers
                     .Select(d => d.ToViewModel())
                     .ToList();
 
+                _logger.LogInformation("Despesas por conta do usuário {IdUsuario} para o período {Periodo} recuperadas com sucesso - Status Code - {StatusCode}", idUsuario, periodo, StatusCodes.Status200OK);
                 return Ok(viewModel);
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar despesas por conta do usuário {IdUsuario} para o período {Periodo}", idUsuario, periodo);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
+
         [HttpGet("usuario/{idUsuario}/despesas/metodoPagamento")]
         [ProducesResponseType(typeof(List<DespesaPorMetodoPagamentoResponseViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
@@ -130,9 +143,8 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar despesas por método de pagamento do usuário {IdUsuario} para o período {Periodo}: Status Code - {StatusCode}, {Mensagem}", idUsuario, periodo, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
@@ -140,14 +152,17 @@ namespace gerenciador.financas.API.Controllers
                     .Select(d => d.ToViewModel())
                     .ToList();
 
+                _logger.LogInformation("Despesas por método de pagamento do usuário {IdUsuario} para o período {Periodo} recuperadas com sucesso - Status Code - {StatusCode}", idUsuario, periodo, StatusCodes.Status200OK);
                 return Ok(viewModel);
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar despesas por método de pagamento do usuário {IdUsuario} para o período {Periodo}", idUsuario, periodo);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
+
         [HttpGet("usuario/{idUsuario}/despesas/total")]
         [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
@@ -161,17 +176,18 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar total de despesas do usuário {IdUsuario} para o período {Periodo}: Status Code - {StatusCode}, {Mensagem}", idUsuario, periodo, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Total de despesas do usuário {IdUsuario} para o período {Periodo} recuperado com sucesso - Status Code - {StatusCode}", idUsuario, periodo, StatusCodes.Status200OK);
                 return Ok(response);
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar total de despesas do usuário {IdUsuario} para o período {Periodo}", idUsuario, periodo);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -192,17 +208,18 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao inserir despesa para o usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Despesa para o usuário {IdUsuario} inserida com sucesso - Status Code - {StatusCode}", idUsuario, StatusCodes.Status201Created);
                 return Created(string.Empty, "despesa inserida com sucesso");
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao inserir despesa para o usuário {IdUsuario}", idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -212,10 +229,10 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateDespesa([Required][FromBody] AtualizarDespesaRequestViewModel despesaRequest,
-                                                          [Required][FromRoute] int idUsuario,
-                                                          [Required][FromRoute] int idDespesa,
-                                                          [Required] int? idCategoria,
-                                                          [Required] int idMetodoPagamento)
+                                                         [Required][FromRoute] int idUsuario,
+                                                         [Required][FromRoute] int idDespesa,
+                                                         [Required] int? idCategoria,
+                                                         [Required] int idMetodoPagamento)
         {
             try
             {
@@ -223,17 +240,18 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao atualizar despesa {IdDespesa} para o usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idDespesa, idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Despesa {IdDespesa} do usuário {IdUsuario} atualizada com sucesso - Status Code - {StatusCode}", idDespesa, idUsuario, StatusCodes.Status204NoContent);
                 return NoContent();
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao atualizar despesa {IdDespesa} para o usuário {IdUsuario}", idDespesa, idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -243,8 +261,8 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> DeleteDespesa([Required][FromRoute] int idUsuario, 
-                                                       [Required][FromRoute] int idDespesa)
+        public async Task<IActionResult> DeleteDespesa([Required][FromRoute] int idUsuario,
+                                                         [Required][FromRoute] int idDespesa)
         {
             try
             {
@@ -252,17 +270,18 @@ namespace gerenciador.financas.API.Controllers
                 if (_despesaService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao deletar despesa {IdDespesa} do usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idDespesa, idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Despesa {IdDespesa} do usuário {IdUsuario} deletada com sucesso - Status Code - {StatusCode}", idDespesa, idUsuario, StatusCodes.Status204NoContent);
                 return NoContent();
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao deletar despesa {IdDespesa} do usuário {IdUsuario}", idDespesa, idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }

@@ -6,7 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using gerenciador.financas.Infra.Vendors;
 using Core.ViewModel.gerenciador.financas.API.ViewModels;
-using gerenciador.financas.Domain.Entities;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
 
 namespace gerenciador.financas.API.Controllers
 {
@@ -16,14 +20,17 @@ namespace gerenciador.financas.API.Controllers
         private readonly IUsuarioService _usuarioService;
         private readonly NotificationPool _notificationPool;
         private readonly IAuthService _authService;
+        private readonly ILogger<UsuarioController> _logger;
 
         public UsuarioController(IUsuarioService usuarioService,
-                                 NotificationPool notificationPool,
-                                 IAuthService authService)
+                                   NotificationPool notificationPool,
+                                   IAuthService authService,
+                                   ILogger<UsuarioController> logger)
         {
             _usuarioService = usuarioService;
             _notificationPool = notificationPool;
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpGet("usuario/{id}")]
@@ -39,17 +46,17 @@ namespace gerenciador.financas.API.Controllers
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar dados cadastrais do usuário {Id}: Status Code - {StatusCode}, {Mensagem}", id, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Dados cadastrais do usuário {Id} recuperados com sucesso - Status Code - {StatusCode}", id, StatusCodes.Status200OK);
                 return Ok(response.ToViewModel());
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar dados cadastrais do usuário {Id}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -62,21 +69,21 @@ namespace gerenciador.financas.API.Controllers
         {
             try
             {
-               var response = await _usuarioService.InsertCadastroUsuario(dadosCadastro);
+                var response = await _usuarioService.InsertCadastroUsuario(dadosCadastro);
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao cadastrar usuário com email {Email}: Status Code - {StatusCode}, {Mensagem}", dadosCadastro.Email, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Usuário com email {Email} cadastrado com sucesso - Status Code - {StatusCode}", dadosCadastro.Email, StatusCodes.Status201Created);
                 return Created(string.Empty, "Usuario inserido com sucesso na base");
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao cadastrar usuário com email {Email}", dadosCadastro.Email);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -94,17 +101,17 @@ namespace gerenciador.financas.API.Controllers
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao atualizar dados pessoais do usuário {Id}: Status Code - {StatusCode}, {Mensagem}", id, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Dados pessoais do usuário {Id} atualizados com sucesso - Status Code - {StatusCode}", id, StatusCodes.Status204NoContent);
                 return NoContent();
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao atualizar dados pessoais do usuário {Id}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -113,7 +120,7 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteDadosCadastrais([Required][FromRoute]int id)
+        public async Task<IActionResult> DeleteDadosCadastrais([Required][FromRoute] int id)
         {
             try
             {
@@ -121,17 +128,17 @@ namespace gerenciador.financas.API.Controllers
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao deletar usuário {Id}: Status Code - {StatusCode}, {Mensagem}", id, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Usuário {Id} deletado com sucesso - Status Code - {StatusCode}", id, StatusCodes.Status204NoContent);
                 return NoContent();
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao deletar usuário {Id}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -150,16 +157,17 @@ namespace gerenciador.financas.API.Controllers
                 if (_authService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao realizar login para o email {Email}: Status Code - {StatusCode}, {Mensagem}", loginRequest.Email, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Login para o email {Email} realizado com sucesso - Status Code - {StatusCode}", loginRequest.Email, StatusCodes.Status200OK);
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao realizar login para o email {Email}", loginRequest.Email);
                 return StatusCode(500, new ErrorViewModel(500, $"Erro interno: {ex.Message}"));
             }
         }
@@ -176,17 +184,17 @@ namespace gerenciador.financas.API.Controllers
                 if (_usuarioService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao alterar senha para o email {Email}: Status Code - {StatusCode}, {Mensagem}", alterarSenhaRequest.Email, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Senha para o email {Email} alterada com sucesso - Status Code - {StatusCode}", alterarSenhaRequest.Email, StatusCodes.Status204NoContent);
                 return NoContent();
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao alterar senha para o email {Email}", alterarSenhaRequest.Email);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }

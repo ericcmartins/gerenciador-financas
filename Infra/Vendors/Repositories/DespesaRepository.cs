@@ -3,6 +3,7 @@ using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
@@ -10,14 +11,17 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
         private readonly NotificationPool _notificationPool;
+        private readonly ILogger<DespesaRepository> _logger;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public DespesaRepository(ISqlServerConnectionHandler connectionHandler,
-                                     NotificationPool notificationPool)
+                                     NotificationPool notificationPool,
+                                     ILogger<DespesaRepository> logger)
         {
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
+            _logger = logger;
         }
         public async Task<List<DespesaResponseInfra?>> GetDespesasPorUsuario(int idUsuario, int periodo)
         {
@@ -36,7 +40,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var responseList = response.ToList();
 
             if (!responseList.Any())
+            {
+                _logger.LogWarning("Não foram encontradas despesas no período {Periodo} para o usuário {IdUsuario}.", periodo, idUsuario);
                 _notificationPool.AddNotification(404, "Não foram encontradas despesas no período informado para o usuário");
+            }
 
             return responseList;
         }
@@ -54,7 +61,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var responseList = response.ToList();
 
             if (!responseList.Any())
+            {
+                _logger.LogWarning("Não foram encontradas despesas por categoria no período {Periodo} para o usuário {IdUsuario}.", periodo, idUsuario);
                 _notificationPool.AddNotification(404, "Não foram encontradas despesas por categoria para o usuário no período informado");
+            }
 
             return responseList;
         }
@@ -73,7 +83,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var responseList = response.ToList();
 
             if (!responseList.Any())
+            {
+                _logger.LogWarning("Não foram encontradas despesas por conta no período {Periodo} para o usuário {IdUsuario}.", periodo, idUsuario);
                 _notificationPool.AddNotification(404, "Não foram encontradas despesas por conta para o usuário no período informado");
+            }
 
             return responseList;
         }
@@ -91,7 +104,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             var responseList = response.ToList();
 
             if (!responseList.Any())
+            {
+                _logger.LogWarning("Não foram encontradas despesas por método de pagamento no período {Periodo} para o usuário {IdUsuario}.", periodo, idUsuario);
                 _notificationPool.AddNotification(404, "Não foram encontradas despesas por método de pagamento para o usuário no período informado");
+            }
 
             return responseList;
         }
@@ -107,7 +123,10 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
             });
 
             if (response <= 0)
+            {
+                _logger.LogWarning("Não foi encontrado total de despesas no período {Periodo} para o usuário {IdUsuario}.", periodo, idUsuario);
                 _notificationPool.AddNotification(404, "Não foram encontradas despesas no período informado para o usuário");
+            }
 
             return response;
         }
@@ -129,10 +148,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
+                _logger.LogError("Erro ao cadastrar despesa para o usuário {IdUsuario}. Categoria: {IdCategoria}, Método de Pagamento: {IdMetodoPagamento}.", idUsuario, idCategoria, idMetodoPagamento);
                 _notificationPool.AddNotification(500, "Erro ao cadastrar despesa na base");
                 return false;
             }
 
+            _logger.LogInformation("Despesa para o usuário {IdUsuario} cadastrada com sucesso.", idUsuario);
             return true;
         }
 
@@ -153,10 +174,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
+                _logger.LogError("Erro ao atualizar despesa {IdDespesa} para o usuário {IdUsuario}.", idDespesa, idUsuario);
                 _notificationPool.AddNotification(500, "Erro ao atualizar despesa na base");
                 return false;
             }
 
+            _logger.LogInformation("Despesa {IdDespesa} do usuário {IdUsuario} atualizada com sucesso.", idDespesa, idUsuario);
             return true;
         }
 
@@ -173,10 +196,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas == 0)
             {
+                _logger.LogWarning("Tentativa de exclusão falhou. Despesa {IdDespesa} do usuário {IdUsuario} não encontrada.", idDespesa, idUsuario);
                 _notificationPool.AddNotification(500, "Erro ao deletar despesa");
                 return false;
             }
 
+            _logger.LogInformation("Despesa {IdDespesa} do usuário {IdUsuario} excluída com sucesso.", idDespesa, idUsuario);
             return true;
         }
 

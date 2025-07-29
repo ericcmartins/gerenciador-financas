@@ -4,6 +4,7 @@ using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
+using Microsoft.Extensions.Logging;
 using static gerenciador.financas.Infra.Vendors.Queries.SqlQueries;
 
 namespace gerenciador.financas.Application.Services
@@ -13,15 +14,18 @@ namespace gerenciador.financas.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IAuthService _authService;
         private readonly NotificationPool _notificationPool;
+        private readonly ILogger<UsuarioService> _logger;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public UsuarioService(IUsuarioRepository usuarioRepository, 
+        public UsuarioService(IUsuarioRepository usuarioRepository,
                               NotificationPool notificationPool,
-                              IAuthService authService)
+                              IAuthService authService,
+                              ILogger<UsuarioService> logger)
         {
             _usuarioRepository = usuarioRepository;
             _notificationPool = notificationPool;
             _authService = authService;
+            _logger = logger;
         }
 
         public async Task<Usuario?> GetDadosPessoais(int idUsuario)
@@ -86,6 +90,7 @@ namespace gerenciador.financas.Application.Services
 
             if (usuario == null)
             {
+                _logger.LogWarning("Tentativa de alterar senha falhou para o email {Email}: Email inválido.", email);
                 _notificationPool.AddNotification(400, "Email inválido");
                 return false;
             }

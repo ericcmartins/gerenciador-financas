@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using gerenciador.financas.Infra.Vendors;
 using Core.ViewModel.gerenciador.financas.API.ViewModels;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using gerenciador.financas.Infra.Vendors.Entities;
 
 namespace gerenciador.financas.API.Controllers
@@ -15,12 +21,15 @@ namespace gerenciador.financas.API.Controllers
     {
         private readonly ITransacaoService _transacaoService;
         private readonly NotificationPool _notificationPool;
+        private readonly ILogger<TransacaoController> _logger;
 
         public TransacaoController(ITransacaoService movimentacaoFinanceiraService,
-                                 NotificationPool notificationPool)
+                                   NotificationPool notificationPool,
+                                   ILogger<TransacaoController> logger)
         {
             _transacaoService = movimentacaoFinanceiraService;
             _notificationPool = notificationPool;
+            _logger = logger;
         }
 
         [HttpGet("usuario/{idUsuario}/transacoes")]
@@ -36,9 +45,8 @@ namespace gerenciador.financas.API.Controllers
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar transações do usuário {IdUsuario} para o período {Periodo}: Status Code - {StatusCode}, {Mensagem}", idUsuario, periodo, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
@@ -46,11 +54,12 @@ namespace gerenciador.financas.API.Controllers
                     .Select(mf => mf.ToViewModel())
                     .ToList();
 
+                _logger.LogInformation("Transações do usuário {IdUsuario} para o período {Periodo} recuperadas com sucesso - Status Code - {StatusCode}", idUsuario, periodo, StatusCodes.Status200OK);
                 return Ok(viewModel);
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar transações do usuário {IdUsuario} para o período {Periodo}", idUsuario, periodo);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -69,9 +78,8 @@ namespace gerenciador.financas.API.Controllers
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar saldos por conta do usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
@@ -79,11 +87,12 @@ namespace gerenciador.financas.API.Controllers
                     .Select(sc => sc.ToViewModel())
                     .ToList();
 
+                _logger.LogInformation("Saldos por conta do usuário {IdUsuario} recuperados com sucesso - Status Code - {StatusCode}", idUsuario, StatusCodes.Status200OK);
                 return Ok(viewModel);
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar saldos por conta do usuário {IdUsuario}", idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -101,9 +110,8 @@ namespace gerenciador.financas.API.Controllers
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao buscar saldo total do usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
@@ -111,11 +119,12 @@ namespace gerenciador.financas.API.Controllers
                     .Select(sc => sc.ToViewModel())
                     .ToList();
 
+                _logger.LogInformation("Saldo total do usuário {IdUsuario} recuperado com sucesso - Status Code - {StatusCode}", idUsuario, StatusCodes.Status200OK);
                 return Ok(viewModel);
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao buscar saldo total do usuário {IdUsuario}", idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -125,9 +134,9 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InsertMovimentacaoFinanceira([Required][FromBody] CadastrarTransacaoRequestViewModel transacaoRequestViewModel,
-                                                 [Required][FromRoute] int idUsuario,
-                                                 [Required] int idContaOrigem,
-                                                 [Required] int idContaDestino)
+                                                                 [Required][FromRoute] int idUsuario,
+                                                                 [Required] int idContaOrigem,
+                                                                 [Required] int idContaDestino)
 
         {
             try
@@ -136,17 +145,17 @@ namespace gerenciador.financas.API.Controllers
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao inserir transferência entre contas para o usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Transferência entre contas para o usuário {IdUsuario} inserida com sucesso - Status Code - {StatusCode}", idUsuario, StatusCodes.Status201Created);
                 return Created(string.Empty, "movimentação entre contas inserida com sucesso");
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao inserir transferência entre contas para o usuário {IdUsuario}", idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -156,10 +165,10 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateMovimentacaoFinanceira([Required][FromBody] AtualizarTransacaoRequestViewModel transacaoRequestViewModel,
-                                                          [Required][FromRoute] int idUsuario,
-                                                          [Required][FromRoute] int idTransacao,
-                                                          int idContaOrigem,
-                                                          int idContaDestino)
+                                                                 [Required][FromRoute] int idUsuario,
+                                                                 [Required][FromRoute] int idTransacao,
+                                                                 [Required] int idContaOrigem,
+                                                                 [Required] int idContaDestino)
         {
             try
             {
@@ -167,17 +176,17 @@ namespace gerenciador.financas.API.Controllers
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao atualizar transação {IdTransacao} para o usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idTransacao, idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Transação {IdTransacao} do usuário {IdUsuario} atualizada com sucesso - Status Code - {StatusCode}", idTransacao, idUsuario, StatusCodes.Status204NoContent);
                 return NoContent();
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao atualizar transação {IdTransacao} para o usuário {IdUsuario}", idTransacao, idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
@@ -186,7 +195,6 @@ namespace gerenciador.financas.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
         public async Task<IActionResult> DeleteMovimentacaoFinanceira([Required][FromRoute] int idUsuario,
                                                                        [Required][FromRoute] int idTransacao)
         {
@@ -196,21 +204,19 @@ namespace gerenciador.financas.API.Controllers
                 if (_transacaoService.HasNotifications)
                 {
                     var notificacao = _notificationPool.Notifications.First();
-
+                    _logger.LogWarning("Falha ao deletar transação {IdTransacao} do usuário {IdUsuario}: Status Code - {StatusCode}, {Mensagem}", idTransacao, idUsuario, notificacao.StatusCode, notificacao.Mensagem);
                     var errorViewModel = new ErrorViewModel(notificacao.StatusCode, notificacao.Mensagem);
-
                     return StatusCode(errorViewModel.StatusCode, errorViewModel);
                 }
 
+                _logger.LogInformation("Transação {IdTransacao} do usuário {IdUsuario} deletada com sucesso - Status Code - {StatusCode}", idTransacao, idUsuario, StatusCodes.Status204NoContent);
                 return NoContent();
             }
-
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro interno ao deletar transação {IdTransacao} do usuário {IdUsuario}", idTransacao, idUsuario);
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
     }
 }
-
-
