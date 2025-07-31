@@ -1,6 +1,8 @@
 ﻿using gerenciador.financas.API.ViewModel.Cliente;
+using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,18 +15,27 @@ namespace gerenciador.financas.Application.Services
     {
         private readonly IConfiguration _configuration;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly NotificationPool _notificationPool;
+        private readonly ILogger<AuthService> _logger;
+
+        public bool HasNotifications => _notificationPool.HasNotications;
+        public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public AuthService(IConfiguration configuration,
-                           IUsuarioRepository usuarioRepository)
+                           IUsuarioRepository usuarioRepository,
+                           NotificationPool notificationPool,
+                           ILogger<AuthService> logger)
         {
             _configuration = configuration;
             _usuarioRepository = usuarioRepository;
+            _notificationPool = notificationPool;
+            _logger = logger;
         }
-        public string ComputeHash(string password)
+        public string CalcularHash(string senha)
         {
             using (var hash = SHA256.Create())
             {
-                var passwordBytes = Encoding.UTF8.GetBytes(password);
+                var passwordBytes = Encoding.UTF8.GetBytes(senha);
                 var hashBytes = hash.ComputeHash(passwordBytes);
                 var builder = new StringBuilder();
                 for (var i = 0; i < hashBytes.Length; i++)
@@ -34,10 +45,11 @@ namespace gerenciador.financas.Application.Services
                 return builder.ToString();
             }
         }
-        public string GenerateToken(string email, string role, DateTime expiracao)
+        public string GerarToken(string email, string role, DateTime expiracao)
         {
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -51,21 +63,31 @@ namespace gerenciador.financas.Application.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-
-        public async Task<LoginResponseViewModel> Login(string email, string senha)
+        public async Task<LoginResponseViewModel> RealizarLogin(string email, string senha)
         {
             var usuario = await _usuarioRepository.GetUsuarioPorEmail(email);
 
             if (usuario == null)
-                throw new UnauthorizedAccessException("Usuário não encontrado");
+            {
+                _notificationPool.AddNotification(400, "Email inválido");
+                _logger.LogWarning("Falha no login para {Email}: Email inválido.", email);
+                return null;
+            }
 
-            var senhaHash = ComputeHash(senha);
+            var senhaHash = CalcularHash(senha);
 
-            if (usuario.Senha != senhaHash)
-                throw new UnauthorizedAccessException("Senha incorreta");
+            if (usuario.SenhaHash != senhaHash)
+            {
+                _notificationPool.AddNotification(400, "Senha incorreta");
+                _logger.LogWarning("Falha no login para {Email}: Senha incorreta.", email);
+                return null;
+            }
 
-            var expiracao = DateTime.UtcNow.AddHours(2);
-            var token = GenerateToken(email, "User", expiracao);
+            var roleUsuario = usuario.RoleUsuario;
+            var expiracao = DateTime.UtcNow.AddHours(int.Parse(_configuration["Jwt:Duracao"]));
+            var token = GerarToken(email, roleUsuario, expiracao);
+
+            _logger.LogInformation("Login para o usuário {IdUsuario} ({Email}) realizado com sucesso. Token gerado.", usuario.IdUsuario, email);
 
             return new LoginResponseViewModel
             {

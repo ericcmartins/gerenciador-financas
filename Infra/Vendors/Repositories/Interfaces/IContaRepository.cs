@@ -9,9 +9,9 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 {
     public interface IContaRepository : INotifiable
     {
-        public Task<List<ContaResponseInfra?>> GetContas(int idUsuario);
-        public Task<bool> InsertConta(ContaRequestInfra contaRequest, int idUsuario);
-        public Task<bool> UpdateConta(ContaRequestInfra contaRequest, int idUsuario, int idConta);
+        public Task<List<ContaResponseInfra?>> GetContasPorUsuario(int idUsuario);
+        public Task<bool> InsertConta(CadastrarContaRequestInfra contaRequest, int idUsuario);
+        public Task<bool> UpdateConta(AtualizarContaRequestInfra contaRequest, int idUsuario, int idConta);
         public Task<bool> DeleteConta(int idConta, int idUsuario);
     }
 }

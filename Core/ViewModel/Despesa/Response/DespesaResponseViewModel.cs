@@ -2,12 +2,14 @@ namespace gerenciador.financas.Application.ViewModel.Cliente
 {
     public class DespesaResponseViewModel
     {
+        public int IdDespesa { get; set; }
         public decimal Valor { get; set; }
         public string? Descricao { get; set; }
         public DateTime DataDespesa { get; set; }
-        public string? Conta { get; set; }
+        public int IdUsuario { get; set; }
         public string? Categoria { get; set; }
-        public string? MetodoPagamento { get; set; }
-        public int IdDespesa { get; set; }
+        public string? Instituicao { get; set; }
+        public string? TipoConta { get; set; }
+        public string MetodoPagamento { get; set; }
     }
 }

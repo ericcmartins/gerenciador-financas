@@ -2,6 +2,7 @@ using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Application.Extensions;
 using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
+using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
 
 namespace gerenciador.financas.Application.Services
@@ -19,9 +20,9 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<Conta>?> GetContas(int idUsuario)
+        public async Task<List<Conta>?> GetContasPorUsuario(int idUsuario)
         {
-            var responseInfra = await _contaRepository.GetContas(idUsuario);
+            var responseInfra = await _contaRepository.GetContasPorUsuario(idUsuario);
             if (HasNotifications)
                 return null;
 
@@ -32,7 +33,7 @@ namespace gerenciador.financas.Application.Services
             return contas;
         }
 
-        public async Task<bool> InsertConta(ContaRequestViewModel conta, int idUsuario)
+        public async Task<bool> InsertConta(CadastrarContaRequestViewModel conta, int idUsuario)
         {
             var resultado = await _contaRepository.InsertConta(conta.ToInfra(), idUsuario);
             if (_contaRepository.HasNotifications)
@@ -41,7 +42,7 @@ namespace gerenciador.financas.Application.Services
             return resultado;
         }
 
-        public async Task<bool> UpdateConta(ContaRequestViewModel conta, int idUsuario, int idConta)
+        public async Task<bool> UpdateConta(AtualizarContaRequestViewModel conta, int idUsuario, int idConta)
         {
             var resultado = await _contaRepository.UpdateConta(conta.ToInfra(), idUsuario, idConta);
             if (_contaRepository.HasNotifications)

@@ -3,6 +3,7 @@ using Dapper;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Queries;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
 namespace gerenciador.financas.Infra.Vendors.Repositories
 {
@@ -10,137 +11,109 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
     {
         private readonly ISqlServerConnectionHandler _connectionHandler;
         private readonly NotificationPool _notificationPool;
+        private readonly ILogger<ReceitaRepository> _logger;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
 
         public ReceitaRepository(ISqlServerConnectionHandler connectionHandler,
-                                     NotificationPool notificationPool)
+                                     NotificationPool notificationPool,
+                                     ILogger<ReceitaRepository> logger)
         {
             _connectionHandler = connectionHandler;
             _notificationPool = notificationPool;
+            _logger = logger;
         }
 
-        public async Task<List<ReceitaResponseInfra?>> GetReceitas(int idUsuario, int? periodo)
+        public async Task<List<ReceitaResponseInfra?>> GetReceitasPorUsuario(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
-
             var response = await connection.QueryAsync<ReceitaResponseInfra>(
-                SqlQueries.Receita.GetReceitasPorId, new
+                SqlQueries.Receitas.GetReceitasPorIdUsuario, new
                 {
                     IdUsuario = idUsuario,
-                    DataInicio = dataInicio,
-                    DataFim = dataFim
+                    Periodo = periodo
                 }
             );
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
-                _notificationPool.AddNotification(404, "Não foram encontradas receitas no período informado para o usuário");
+            {
+                _logger.LogWarning("Não foram encontradas receitas para o usuário {IdUsuario} no período {Periodo}.", idUsuario, periodo);
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas para o usuário no período informado");
+            }
 
             return responseList;
         }
 
-        public async Task<List<ReceitaPorCategoriaResponseInfra?>> GetReceitasPorCategoria(int idUsuario, int? periodo)
+        public async Task<List<ReceitaPorCategoriaResponseInfra?>> GetReceitasPorCategoria(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
-
-            var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receita.GetReceitasPorCategoria, new
+            var response = await connection.QueryAsync<ReceitaPorCategoriaResponseInfra>(SqlQueries.Receitas.GetReceitasPorCategoria, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
+            {
+                _logger.LogWarning("Não foram encontradas receitas por categoria para o usuário {IdUsuario} no período {Periodo}.", idUsuario, periodo);
                 _notificationPool.AddNotification(404, "Não foram encontradas receitas por categoria para o usuário no período informado");
+            }
 
             return responseList;
         }
 
-        public async Task<List<ReceitaPorContaResponseInfra?>> GetReceitasPorConta(int idUsuario, int? periodo)
+        public async Task<List<ReceitaPorContaResponseInfra?>> GetReceitasPorConta(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
-
-            var response = await connection.QueryAsync<ReceitaPorContaResponseInfra>(SqlQueries.Receita.GetReceitasPorConta, new
+            var response = await connection.QueryAsync<ReceitaPorContaResponseInfra>(SqlQueries.Receitas.GetReceitasPorConta, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             var responseList = response.ToList();
 
             if (!responseList.Any())
+            {
+                _logger.LogWarning("Não foram encontradas receitas por conta para o usuário {IdUsuario} no período {Periodo}.", idUsuario, periodo);
                 _notificationPool.AddNotification(404, "Não foram encontradas receitas por conta para o usuário no período informado");
+            }
 
             return responseList;
         }
 
-        public async Task<Decimal> GetReceitasTotalPorPeriodo(int idUsuario, int? periodo)
+        public async Task<Decimal> GetReceitasTotalPorPeriodo(int idUsuario, int periodo)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-            DateTime? dataInicio = null;
-            DateTime? dataFim = null;
-
-            if (periodo.HasValue)
-            {
-                dataInicio = DateTime.Today.AddDays(-periodo.Value);
-                dataFim = DateTime.Today.AddDays(1).AddTicks(-1);
-            }
-
-            var response = await connection.ExecuteScalarAsync<Decimal>(SqlQueries.Receita.GetTotalReceitasPeriodo, new
+            var response = await connection.ExecuteScalarAsync<Decimal>(SqlQueries.Receitas.GetTotalReceitasPeriodo, new
             {
                 IdUsuario = idUsuario,
-                DataInicio = dataInicio,
-                DataFim = dataFim
+                Periodo = periodo
             });
 
             if (response <= 0)
             {
-                _notificationPool.AddNotification(404, "Não foram encontradas receitas no período informado para o usuário");
+                _logger.LogWarning("Não foi encontrado total de receitas para o usuário {IdUsuario} no período {Periodo}.", idUsuario, periodo);
+                _notificationPool.AddNotification(404, "Não foram encontradas receitas para o usuário no período informado");
             }
 
             return response;
         }
 
 
-        public async Task<bool> InsertReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idCategoria, int idConta)
+        public async Task<bool> InsertReceita(CadastrarReceitaRequestInfra receitaRequest, int idUsuario, int idCategoria, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.InsertReceita, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.InsertReceita, new
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
@@ -152,19 +125,21 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao cadastrar receita");
+                _logger.LogError("Erro ao cadastrar receita para o usuário {IdUsuario}. Categoria: {IdCategoria}, Conta: {IdConta}.", idUsuario, idCategoria, idConta);
+                _notificationPool.AddNotification(500, "Erro ao cadastrar receita na base");
                 return false;
             }
 
+            _logger.LogInformation("Receita para o usuário {IdUsuario} cadastrada com sucesso. Categoria: {IdCategoria}, Conta: {IdConta}.", idUsuario, idCategoria, idConta);
             return true;
         }
 
-        public async Task<bool> UpdateReceita(ReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
+        public async Task<bool> UpdateReceita(AtualizarReceitaRequestInfra receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
 
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.UpdateReceita, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.UpdateReceita, new
             {
                 receitaRequest.Valor,
                 receitaRequest.Descricao,
@@ -177,10 +152,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas != 1)
             {
-                _notificationPool.AddNotification(500, "Erro ao atualizar receita");
+                _logger.LogError("Erro ao atualizar receita {IdReceita} para o usuário {IdUsuario}.", idReceita, idUsuario);
+                _notificationPool.AddNotification(500, "Erro ao atualizar receita na base");
                 return false;
             }
 
+            _logger.LogInformation("Receita {IdReceita} do usuário {IdUsuario} atualizada com sucesso.", idReceita, idUsuario);
             return true;
         }
 
@@ -188,8 +165,7 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
         {
             using var connection = await _connectionHandler.CreateConnectionAsync();
 
-
-            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receita.DeleteReceita, new
+            var linhasAfetadas = await connection.ExecuteAsync(SqlQueries.Receitas.DeleteReceita, new
             {
                 IdUsuario = idUsuario,
                 IdReceita = idReceita
@@ -197,10 +173,12 @@ namespace gerenciador.financas.Infra.Vendors.Repositories
 
             if (linhasAfetadas == 0)
             {
+                _logger.LogWarning("Tentativa de exclusão falhou. Receita {IdReceita} do usuário {IdUsuario} não encontrada.", idReceita, idUsuario);
                 _notificationPool.AddNotification(500, "Erro ao deletar receita");
                 return false;
             }
 
+            _logger.LogInformation("Receita {IdReceita} do usuário {IdUsuario} excluída com sucesso.", idReceita, idUsuario);
             return true;
         }
 

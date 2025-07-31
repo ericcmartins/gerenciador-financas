@@ -1,36 +1,72 @@
+using FluentValidation;
+using gerenciador.financas.API.Validators;
+using gerenciador.financas.API.ViewModel.Cliente;
 using gerenciador.financas.Application.Services;
+using gerenciador.financas.Application.ViewModel.Cliente;
 using gerenciador.financas.Infra.Vendors;
+using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, config) =>
+    config.ReadFrom.Configuration(context.Configuration));
 
 // Adiciona serviços ao container.
 var connectionString = builder.Configuration.GetConnectionString("SqlServer");
 
-//services
+//Dependências
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IContaService, ContaService>();
 builder.Services.AddScoped<IDespesaService, DespesaService>();
 builder.Services.AddScoped<IMetaFinanceiraService, MetaFinanceiraService>();
-builder.Services.AddScoped<IMetodoPagamentoService, MetodoPagamentoService>();
-builder.Services.AddScoped<IMovimentacaoFinanceiraService, MovimentacaoFinanceiraService>();
+builder.Services.AddScoped<IPagamentoService, PagamentoService>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
 builder.Services.AddScoped<IReceitaService, ReceitaService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<NotificationPool>();
-
-
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
 builder.Services.AddScoped<IMetaFinanceiraRepository, MetaFinanceiraRepository>();
-builder.Services.AddScoped<IMetodoPagamentoRepository, MetodoPagamentoRepository>();
-builder.Services.AddScoped<IMovimentacaoFinanceiraRepository, MovimentacaoFinanceiraRepository>();
+builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
+builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
 builder.Services.AddScoped<IReceitaRepository, ReceitaRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddSingleton<ISqlServerConnectionHandler>(provider => new SqlServerConnectionHandler(connectionString));
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+//Validators
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarDadosCadastraisRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarSenhaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarUsuarioRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarContaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarContaRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarMetodoPagamentoRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetodoPagamentoRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarCategoriaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarCategoriaRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarReceitaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarReceitaRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarDespesaRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarDespesaRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarMetaFinanceiraRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarMetaFinanceiraRequestViewModelValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<AtualizarTransacaoRequestViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CadastrarTransacaoRequestViewModelValidator>();
+
 
 builder.Services.AddCors(options =>
 {
@@ -51,6 +87,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {
@@ -59,7 +96,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
+app.UseMiddleware<ValidationMiddleware>();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 

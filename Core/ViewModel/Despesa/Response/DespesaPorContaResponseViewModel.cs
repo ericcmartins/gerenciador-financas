@@ -8,7 +8,8 @@ namespace gerenciador.financas.Application.ViewModel.Cliente
 {
     public class DespesaPorContaResponseViewModel
     {
-        public string NumeroConta { get; set; }
+        public string Instituicao { get; set; }
+        public string TipoConta { get; set; }
         public decimal TotalDespesa { get; set; }
     }
 

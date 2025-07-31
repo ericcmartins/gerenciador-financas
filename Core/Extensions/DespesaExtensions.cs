@@ -11,13 +11,15 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new Despesa
             {
+                IdDespesa = infra.IdDespesa,                
                 Valor = infra.Valor,
                 Descricao = infra.Descricao,
                 DataDespesa = infra.DataDespesa,
-                Conta = infra.Conta,
+                IdUsuario = infra.IdUsuario,
                 Categoria = infra.Categoria,
+                Instituicao = infra.Instituicao,
+                TipoConta = infra.TipoConta,
                 MetodoPagamento = infra.MetodoPagamento,
-                IdDespesa = infra.IdDespesa,
             };
         }
         public static DespesaCategoria ToService(this DespesaPorCategoriaResponseInfra infra)
@@ -32,7 +34,8 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new DespesaConta
             {
-                NumeroConta = infra.NumeroConta,
+                Instituicao = infra.Instituicao,
+                TipoConta = infra.TipoConta,
                 TotalDespesa = infra.TotalDespesa,
             };
         }
@@ -56,7 +59,8 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new DespesaPorContaResponseViewModel
             {
-                NumeroConta = domain.NumeroConta,
+                Instituicao = domain.Instituicao,
+                TipoConta = domain.TipoConta,
                 TotalDespesa = domain.TotalDespesa,
             };
         }
@@ -72,18 +76,29 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new DespesaResponseViewModel
             {
+                IdDespesa = domain.IdDespesa,
                 Valor = domain.Valor,
                 Descricao = domain.Descricao,
                 DataDespesa = domain.DataDespesa,
-                Conta = domain.Conta,
+                IdUsuario = domain.IdUsuario,
                 Categoria = domain.Categoria,
+                Instituicao = domain.Instituicao,
+                TipoConta = domain.TipoConta,
                 MetodoPagamento = domain.MetodoPagamento,
-                IdDespesa = domain.IdDespesa,
             };
         }
-        public static DespesaRequestInfra ToInfra(this DespesaRequestViewModel viewModel)
+        public static CadastrarDespesaRequestInfra ToInfra(this CadastrarDespesaRequestViewModel viewModel)
         {
-            return new DespesaRequestInfra
+            return new CadastrarDespesaRequestInfra
+            {
+                Valor = viewModel.Valor,
+                Descricao = viewModel.Descricao,
+                DataDespesa = viewModel.DataDespesa
+            };
+        }
+        public static AtualizarDespesaRequestInfra ToInfra(this AtualizarDespesaRequestViewModel viewModel)
+        {
+            return new AtualizarDespesaRequestInfra
             {
                 Valor = viewModel.Valor,
                 Descricao = viewModel.Descricao,

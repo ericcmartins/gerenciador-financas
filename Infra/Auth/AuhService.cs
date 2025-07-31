@@ -62,7 +62,7 @@ namespace gerenciador.financas.Infra.Vendors.Auth
 
             var senhaHash = ComputeHash(senha);
 
-            if (usuario.Senha != senhaHash)
+            if (usuario.SenhaHash != senhaHash)
                 throw new UnauthorizedAccessException("Senha incorreta");
 
             return GenerateToken(email, "User");

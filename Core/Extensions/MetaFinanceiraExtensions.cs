@@ -35,9 +35,21 @@ namespace gerenciador.financas.Application.Extensions
             };
         }
 
-        public static MetaFinanceiraRequestInfra ToInfra(this MetaFinanceiraRequestViewModel viewModel)
+        public static CadastrarMetaFinanceiraRequestInfra ToInfra(this CadastrarMetaFinanceiraRequestViewModel viewModel)
         {
-            return new MetaFinanceiraRequestInfra
+            return new CadastrarMetaFinanceiraRequestInfra
+            {
+                Nome = viewModel.Nome,
+                Descricao = viewModel.Descricao,
+                ValorAlvo = viewModel.ValorAlvo,
+                ValorAtual = viewModel.ValorAtual,
+                DataInicio = viewModel.DataInicio,
+                DataLimite = viewModel.DataLimite
+            };
+        }
+        public static AtualizarMetaFinanceiraRequestInfra ToInfra(this AtualizarMetaFinanceiraRequestViewModel viewModel)
+        {
+            return new AtualizarMetaFinanceiraRequestInfra
             {
                 Nome = viewModel.Nome,
                 Descricao = viewModel.Descricao,

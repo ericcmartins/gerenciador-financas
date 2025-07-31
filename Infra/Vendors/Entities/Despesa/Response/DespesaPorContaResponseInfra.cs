@@ -8,7 +8,8 @@ namespace gerenciador.financas.Infra.Vendors.Entities
 {
     public class DespesaPorContaResponseInfra
     {
-        public string NumeroConta { get; set; }
+        public string Instituicao { get; set; }
+        public string TipoConta { get; set; }
         public decimal TotalDespesa { get; set; }
     }
 

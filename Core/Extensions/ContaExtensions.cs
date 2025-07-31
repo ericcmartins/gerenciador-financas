@@ -12,10 +12,10 @@ namespace gerenciador.financas.Application.Extensions
             return new Conta
             {
                 NumeroConta = infra.NumeroConta,
-                Tipo = infra.Tipo,
+                TipoConta = infra.TipoConta,
                 Instituicao = infra.Instituicao,
-                IdConta = infra.IdConta
-
+                IdConta = infra.IdConta,
+                IdUsuario = infra.IdUsuario,
             };
         }
 
@@ -24,20 +24,30 @@ namespace gerenciador.financas.Application.Extensions
             return new ContaResponseViewModel
             {
                 NumeroConta = domain.NumeroConta,
-                Tipo = domain.Tipo,
+                TipoConta = domain.TipoConta,
                 Instituicao = domain.Instituicao,
-                IdConta = domain.IdConta
+                IdConta = domain.IdConta,
+                IdUsuario = domain.IdUsuario,
             };
         }
 
-        public static ContaRequestInfra ToInfra(this ContaRequestViewModel viewModel)
+        public static CadastrarContaRequestInfra ToInfra(this CadastrarContaRequestViewModel viewModel)
         {
-            return new ContaRequestInfra
+            return new CadastrarContaRequestInfra
             {
-                NumeroConta = viewModel.NumeroConta,
-                Tipo = viewModel.Tipo,
-                Instituicao = viewModel.Instituicao
+                IdTipoConta = viewModel.IdTipoConta,
+                Instituicao = viewModel.Instituicao,
+                NumeroConta = viewModel.NumeroConta
+            };
+        }
 
+        public static AtualizarContaRequestInfra ToInfra(this AtualizarContaRequestViewModel viewModel)
+        {
+            return new AtualizarContaRequestInfra
+            {
+                IdTipoConta = viewModel.IdTipoConta,
+                Instituicao = viewModel.Instituicao,
+                NumeroConta = viewModel.NumeroConta
             };
         }
     }

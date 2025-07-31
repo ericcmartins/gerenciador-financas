@@ -13,8 +13,8 @@ namespace gerenciador.financas.Application.Extensions
             {
                 Nome = infra.Nome,
                 Email = infra.Email,
-                Senha = infra.Senha,
-                Role = infra.Role,
+                Senha = infra.SenhaHash,
+                Role = infra.RoleUsuario,
                 DataNascimento = infra.DataNascimento,
                 Telefone = infra.Telefone
             };
@@ -27,23 +27,11 @@ namespace gerenciador.financas.Application.Extensions
                 Nome = domain.Nome,
                 Email = domain.Email,
                 Senha = domain.Senha,
-                Role = domain.Role,
                 DataNascimento = domain.DataNascimento,
                 Telefone = domain.Telefone
             };
         }
 
-        public static DadosPessoaisRequestInfra ToInfra(this DadosPessoaisRequestViewModel viewModel)
-        {
-            return new DadosPessoaisRequestInfra
-            {
-                Nome = viewModel.Nome,
-                Email = viewModel.Email,
-                Senha = viewModel.Senha,
-                DataNascimento= viewModel.DataNascimento,
-                Telefone = viewModel.Telefone
-            };
-        }
     }
 }
 

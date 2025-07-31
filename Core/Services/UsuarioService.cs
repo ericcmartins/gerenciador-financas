@@ -4,6 +4,8 @@ using gerenciador.financas.Domain.Entities;
 using gerenciador.financas.Infra.Vendors;
 using gerenciador.financas.Infra.Vendors.Entities;
 using gerenciador.financas.Infra.Vendors.Repositories;
+using Microsoft.Extensions.Logging;
+using static gerenciador.financas.Infra.Vendors.Queries.SqlQueries;
 
 namespace gerenciador.financas.Application.Services
 {
@@ -12,15 +14,18 @@ namespace gerenciador.financas.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IAuthService _authService;
         private readonly NotificationPool _notificationPool;
+        private readonly ILogger<UsuarioService> _logger;
         public bool HasNotifications => _notificationPool.HasNotications;
         public IReadOnlyCollection<Notification> Notifications => _notificationPool.Notifications;
-        public UsuarioService(IUsuarioRepository usuarioRepository, 
+        public UsuarioService(IUsuarioRepository usuarioRepository,
                               NotificationPool notificationPool,
-                              IAuthService authService)
+                              IAuthService authService,
+                              ILogger<UsuarioService> logger)
         {
             _usuarioRepository = usuarioRepository;
             _notificationPool = notificationPool;
             _authService = authService;
+            _logger = logger;
         }
 
         public async Task<Usuario?> GetDadosPessoais(int idUsuario)
@@ -32,69 +37,46 @@ namespace gerenciador.financas.Application.Services
             return responseInfra.ToService();
         }
 
-        public async Task<bool> InsertDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais)
+        public async Task<bool> InsertCadastroUsuario(CadastrarUsuarioRequestViewModel dadosCadastro)
         {
-            if (string.IsNullOrWhiteSpace(dadosPessoais.Email) ||
-                string.IsNullOrWhiteSpace(dadosPessoais.Senha) ||
-                string.IsNullOrWhiteSpace(dadosPessoais.Nome))
+            var usuarioExistente = await _usuarioRepository.GetUsuarioPorEmail(dadosCadastro.Email);
+            if (usuarioExistente != null)
             {
-                _notificationPool.AddNotification(400, "Campos obrigatórios não preenchidos");
+                _notificationPool.AddNotification(400, "Usuário já cadastrado com este e-mail");
                 return false;
             }
 
-            //var usuarioExistente = await _usuarioRepository.GetUsuarioPorEmail(dadosPessoais.Email);
-            //if (usuarioExistente != null)
-            //{
-            //    _notificationPool.AddNotification(409, "Usuário já cadastrado com este e-mail");
-            //    return false;
-            //}
+            var senhaHash = _authService.CalcularHash(dadosCadastro.Senha);
 
-            var senhaHash = _authService.ComputeHash(dadosPessoais.Senha);
-
-            var dadosInfra = new DadosPessoaisRequestInfra
+            var dadosInfra = new CadastrarUsuarioRequestInfra
             {
-                Nome = dadosPessoais.Nome,
-                Email = dadosPessoais.Email,
-                Senha = senhaHash,
-                DataNascimento = dadosPessoais.DataNascimento,
-                Telefone = dadosPessoais.Telefone
+                Nome = dadosCadastro.Nome,
+                Email = dadosCadastro.Email,
+                SenhaHash = senhaHash,
+                DataNascimento = dadosCadastro.DataNascimento,
+                Telefone = dadosCadastro.Telefone
             };
 
-            var resultado = await _usuarioRepository.InsertDadosPessoais(dadosInfra);
+            var resultado = await _usuarioRepository.InsertCadastroUsuario(dadosInfra);
             if (_usuarioRepository.HasNotifications)
                 return false;
 
            return resultado;
         }
 
-        public async Task<bool> UpdateDadosPessoais(DadosPessoaisRequestViewModel dadosPessoais, int idUsuario)
+        public async Task<bool> UpdateDadosPessoais(AtualizarDadosCadastraisRequestViewModel dadosPessoais, int idUsuario)
         {
-            var usuarioAtual = await _usuarioRepository.GetDadosPessoais(idUsuario);
-            if (usuarioAtual == null)
-            {
-                _notificationPool.AddNotification(404, "Usuário não encontrado");
-                return false;
-            }
+            string? senhaHash = null;
 
-            string senhaHash;
-
-            if (!string.IsNullOrWhiteSpace(dadosPessoais.Senha))
-                senhaHash = _authService.ComputeHash(dadosPessoais.Senha);
-            else
-                senhaHash = usuarioAtual.Senha; 
-
-            var dadosInfra = new DadosPessoaisRequestInfra
+            var dadosRequestInfra = new AtualizarDadosCadastraisRequestInfra
             {
                 Nome = string.IsNullOrWhiteSpace(dadosPessoais.Nome) ? null : dadosPessoais.Nome,
                 Email = string.IsNullOrWhiteSpace(dadosPessoais.Email) ? null : dadosPessoais.Email,
-                Senha = senhaHash,
-                DataNascimento = dadosPessoais.DataNascimento,
+                DataNascimento = dadosPessoais.DataNascimento == DateTime.MinValue ? null : dadosPessoais.DataNascimento,
                 Telefone = string.IsNullOrWhiteSpace(dadosPessoais.Telefone) ? null : dadosPessoais.Telefone,
-                RoleUsuario = null
             };
 
-
-            var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosInfra, idUsuario);
+            var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosRequestInfra, idUsuario);
 
             if (_usuarioRepository.HasNotifications)
                 return false;
@@ -102,6 +84,36 @@ namespace gerenciador.financas.Application.Services
             return resultado;
         }
 
+        public async Task<bool> AlterarSenha(string email, string novaSenha, string telefone)
+        {
+            var usuario = await _usuarioRepository.GetUsuarioPorEmail(email);
+
+            if (usuario == null)
+            {
+                _logger.LogWarning("Tentativa de alterar senha falhou para o email {Email}: Email inválido.", email);
+                _notificationPool.AddNotification(400, "Email inválido");
+                return false;
+            }
+
+            if (usuario.Telefone == telefone)
+            {
+                var senhaHash = _authService.CalcularHash(novaSenha);
+
+                var dadosRequestInfra = new AtualizarDadosCadastraisRequestInfra
+                {
+                    SenhaHash = senhaHash,
+                };
+
+                var resultado = await _usuarioRepository.UpdateDadosPessoais(dadosRequestInfra, usuario.IdUsuario);
+
+                if (_usuarioRepository.HasNotifications)
+                    return false;
+
+                return resultado;
+            }
+
+            return false;
+        }
 
         public async Task<bool> DeleteConta(int idUsuario)
         {

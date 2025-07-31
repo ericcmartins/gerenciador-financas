@@ -8,15 +8,17 @@ namespace gerenciador.financas.Application.Extensions
     public static class ReceitaExtensions
     {
         public static Receita ToService(this ReceitaResponseInfra infra)
-        {
+        { 
             return new Receita
             {
+                IdReceita = infra.IdReceita,
                 Valor = infra.Valor,
                 Descricao = infra.Descricao,
                 DataReceita = infra.DataReceita,
-                Conta = infra.Conta,
-                Categoria = infra.Categoria     ,
-                IdReceita = infra.IdReceita
+                IdUsuario = infra.IdUsuario,
+                Categoria = infra.Categoria,
+                Instituicao = infra.Instituicao,
+                TipoConta = infra.TipoConta                
             };
         }
 
@@ -32,8 +34,9 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new ReceitaConta
             {
-                NumeroConta = infra.NumeroConta,
-                TotalReceita = infra.TotalReceita
+                Instituicao = infra.Instituicao,
+                TipoConta = infra.TipoConta,
+                TotalReceita = infra.TotalReceita,
             };
         }
 
@@ -49,7 +52,8 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new ReceitaPorContaResponseViewModel
             {
-                NumeroConta = domain.NumeroConta,
+                Instituicao = domain.Instituicao,
+                TipoConta = domain.TipoConta,
                 TotalReceita = domain.TotalReceita,
             };
         }
@@ -58,17 +62,28 @@ namespace gerenciador.financas.Application.Extensions
         {
             return new ReceitaResponseViewModel
             {
+                IdReceita = domain.IdReceita,
                 Valor = domain.Valor,
                 Descricao = domain.Descricao,
                 DataReceita = domain.DataReceita,
-                Conta = domain.Conta,
                 Categoria = domain.Categoria,
-                IdReceita = domain.IdReceita
+                Instituicao = domain.Instituicao,
+                TipoConta = domain.TipoConta
             };
         }
-        public static ReceitaRequestInfra ToInfra(this ReceitaRequestViewModel viewModel)
+        public static CadastrarReceitaRequestInfra ToInfra(this CadastrarReceitaRequestViewModel viewModel)
         {
-            return new ReceitaRequestInfra
+            return new CadastrarReceitaRequestInfra
+            {
+                Valor = viewModel.Valor,
+                Descricao = viewModel.Descricao,
+                DataReceita = viewModel.DataReceita,
+
+            };
+        }
+        public static AtualizarReceitaRequestInfra ToInfra(this AtualizarReceitaRequestViewModel viewModel)
+        {
+            return new AtualizarReceitaRequestInfra
             {
                 Valor = viewModel.Valor,
                 Descricao = viewModel.Descricao,

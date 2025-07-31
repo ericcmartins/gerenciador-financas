@@ -8,8 +8,8 @@ namespace gerenciador.financas.Application.Services
     public interface IMetaFinanceiraService : INotifiable
     {
         public Task<List<MetaFinanceira?>> GetMetasFinanceiras(int idUsuario);
-        public Task<bool> InsertMetaFinanceira(MetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario);
-        public Task<bool> UpdateMetaFinanceira(MetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario, int idMetaFinanceira);
+        public Task<bool> InsertMetaFinanceira(CadastrarMetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario);
+        public Task<bool> UpdateMetaFinanceira(AtualizarMetaFinanceiraRequestViewModel metaFinanceiraRequest, int idUsuario, int idMetaFinanceira);
         public Task<bool> DeleteMetaFinanceira(int idMetaFinanceira, int idUsuario);
     }
 }

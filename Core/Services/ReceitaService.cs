@@ -19,9 +19,9 @@ namespace gerenciador.financas.Application.Services
             _notificationPool = notificationPool;
         }
 
-        public async Task<List<Receita?>> GetReceitas(int idUsuario, int? periodo)
+        public async Task<List<Receita?>> GetReceitasPorUsuario(int idUsuario, int periodo)
         {
-            var responseInfra = await _receitaRepository.GetReceitas(idUsuario, periodo);
+            var responseInfra = await _receitaRepository.GetReceitasPorUsuario(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)
                 return null;
 
@@ -31,7 +31,7 @@ namespace gerenciador.financas.Application.Services
 
             return receitas;
         }
-        public async Task<List<ReceitaCategoria?>> GetReceitasPorCategoria(int idUsuario, int? periodo)
+        public async Task<List<ReceitaCategoria?>> GetReceitasPorCategoria(int idUsuario, int periodo)
         {
             var responseInfra = await _receitaRepository.GetReceitasPorCategoria(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)
@@ -44,7 +44,7 @@ namespace gerenciador.financas.Application.Services
             return receitas;
         }
 
-        public async Task<List<ReceitaConta?>> GetReceitasPorConta(int idUsuario, int? periodo)
+        public async Task<List<ReceitaConta?>> GetReceitasPorConta(int idUsuario, int periodo)
         {
             var responseInfra = await _receitaRepository.GetReceitasPorConta(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)
@@ -56,7 +56,7 @@ namespace gerenciador.financas.Application.Services
 
             return receitas;
         }
-        public async Task<Decimal?> GetReceitasTotalPorPeriodo(int idUsuario, int? periodo)
+        public async Task<Decimal?> GetReceitasTotalPorPeriodo(int idUsuario, int periodo)
         {
             var responseInfra = await _receitaRepository.GetReceitasTotalPorPeriodo(idUsuario, periodo);
             if (_receitaRepository.HasNotifications)
@@ -65,7 +65,7 @@ namespace gerenciador.financas.Application.Services
             return responseInfra;
         }
 
-        public async Task<bool> InsertReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idCategoria, int idConta)
+        public async Task<bool> InsertReceita(CadastrarReceitaRequestViewModel receitaRequest, int idUsuario, int idCategoria, int idConta)
         {
             var resultado = await _receitaRepository.InsertReceita(receitaRequest.ToInfra(), idUsuario, idCategoria, idConta);
             if (_receitaRepository.HasNotifications)
@@ -74,7 +74,7 @@ namespace gerenciador.financas.Application.Services
             return resultado;
         }
 
-        public async Task<bool> UpdateReceita(ReceitaRequestViewModel receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
+        public async Task<bool> UpdateReceita(AtualizarReceitaRequestViewModel receitaRequest, int idUsuario, int idReceita, int idCategoria, int idConta)
         {
             var resultado = await _receitaRepository.UpdateReceita(receitaRequest.ToInfra(), idUsuario, idReceita, idCategoria, idConta);
             if (_receitaRepository.HasNotifications)
@@ -88,7 +88,6 @@ namespace gerenciador.financas.Application.Services
             var resultado = await _receitaRepository.DeleteReceita(idUsuario, idReceita);
            if (_receitaRepository.HasNotifications)
                 return false;
-
 
             return resultado;
         }
